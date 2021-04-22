@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TipoTarea;
-use App\Models\EstadoTarea;
-use Illuminate\Http\Request;
+use App\Models\EstadoEstudio;
 use App\Models\TipoIdentificacion;
 
 class ConfigController extends Controller
@@ -16,17 +14,11 @@ class ConfigController extends Controller
 
         return $tipo_identificacion;
     }
-    public function estadoTareas()
+    public function estadoEstudio()
     {
-        $estado = EstadoTarea::all()->toArray();
+        $estado = EstadoEstudio::all()->toArray();
 
         return $estado;
-    }
-    public function tipoTareas()
-    {
-        $tipo_tarea = TipoTarea::where('is_deleted',0)->get()->toArray();
-
-        return $tipo_tarea;
     }
 
 }

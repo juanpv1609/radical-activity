@@ -225,14 +225,8 @@ export default {
             items: [
 
 
-                { title: "Clientes", link: "/clientes", icon: "mdi-face" },
-                {
-                    title: "Contratos",
-                    link: "/contratos",
-                    icon: "mdi-book"
-                },
-                { title: "Tareas", link: "/tareas", icon: "mdi-list-status" },
-                {
+                { title: "Personal", link: "/personal", icon: "mdi-face" },
+                /* {
                     title: "Reportes",
                     icon: "mdi-chart-bar",
                     subLinks: [
@@ -241,16 +235,15 @@ export default {
                         { title: "Tareas & Usuario", link: "/reporte-usuario", icon: ""},
                         { title: "Contratos", link: "/reporte-allContratos", icon: ""},
                     ],
-                },
+                }, */
                 {
                     title: "Configuracion",
                     icon: "mdi-cogs",
                     subLinks: [
                         { title: "Usuarios", link: "/usuarios", icon: "mdi-account-multiple"},
-                         { title: "Areas", link: "/areas", icon: "mdi-view-quilt" },
-                        { title: "Tipo Tareas", link: "/tipo-tareas", icon: "mdi-ballot" },
-                        { title: "Frecuencias", link: "/frecuencias", icon: "mdi-clock-fast" },
                         { title: "Paises", link: "/paises", icon: "mdi-earth" },
+                        { title: "Certificaciones", link: "/certificaciones", icon: "mdi-certificate" },
+                        { title: "Niveles", link: "/nivel-estudio", icon: "mdi-graph-outline" },
                     ],
                 },
             ],
