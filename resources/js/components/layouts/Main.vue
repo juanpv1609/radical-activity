@@ -22,7 +22,7 @@
                             <v-list-item-title>{{ item.title }}</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
-                    <v-list-group v-else-if="(item.subLinks) && ($store.state.user.role==2)"  :key="item.title"
+                    <v-list-group v-else-if="(item.subLinks) "  :key="item.title"
                         no-action :prepend-icon="item.icon" color="blue">
                         <template v-slot:activator >
                                     <v-list-item-title>{{ item.title }}</v-list-item-title>
