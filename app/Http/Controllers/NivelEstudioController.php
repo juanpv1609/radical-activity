@@ -24,7 +24,7 @@ class NivelEstudioController extends Controller
             'estado' => 1,
             'is_deleted' => 0,
         ];
-        $nivel_estudio = NivelEstudio::where($arr)->get();
+        $nivel_estudio = NivelEstudio::where($arr)->orderBy('descripcion')->get();
         return $nivel_estudio;
     }
 

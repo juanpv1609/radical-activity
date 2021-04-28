@@ -8,6 +8,7 @@ import Home from "../components/Home.vue";
 import Pais from "../components/pais/Pais.vue";
 import Personal from "../components/personal/Personal.vue";
 import PersonalNew from "../components/personal/PersonalNew.vue";
+import PersonalEdit from "../components/personal/PersonalEdit.vue";
 import Certificaciones from "../components/certificaciones/Certificaciones.vue";
 import NivelEstudio from "../components/nivelEstudio/NivelEstudio.vue";
 
@@ -67,6 +68,14 @@ const router = new VueRouter({
             name: "personal-new",
             path: "/personal-new",
             component: PersonalNew,
+            meta: {
+          requiresAuth: true,
+        },
+        },
+        {
+            name: "personal-edit",
+            path: "/personal/edit/:id",
+            component: PersonalEdit,
             meta: {
           requiresAuth: true,
         },

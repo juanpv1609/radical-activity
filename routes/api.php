@@ -55,6 +55,7 @@ Route::middleware('api')->group(function () {
     Route::get('estado-estudio', [ConfigController::class,'estadoEstudio']);
 
     Route::resource('persona', PersonaController::class);
+    Route::get('persona-estudios/{id}', [PersonaController::class,'estudios']);
     Route::resource('nivel-estudio', NivelEstudioController::class);
     Route::get('get-nivel-estudio', [NivelEstudioController::class,'listarNiveles']);
     Route::resource('certificaciones', CertificacionesController::class);

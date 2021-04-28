@@ -1,7 +1,7 @@
 <template>
     <div>
         <h3 class="d-flex justify-space-between mb-6 pt-4">
-            Nuevo Registro
+            Editar Registro
                 <v-btn
                     class="mx-2"
                     dark
@@ -25,7 +25,7 @@
                                     <v-col cols="12">
                                         <v-card outlined   elevation="1">
                                         <v-card-text height="150"
-                                        width="160">
+                                        width="155">
                                             <v-img class="d-flex justify-space-center"
                                                 max-height="150"
                                                 max-width="150"
@@ -49,7 +49,6 @@
 
                                     </v-col>
                                 </v-row>
-
                             </v-col>
                             <v-col cols="12" md="10">
                                 <v-row >
@@ -74,7 +73,6 @@
                                     <v-col cols="12" md="4">
                                         <v-text-field
                                             v-model="persona.ci"
-                                            :rules="Rules.ci"
                                             :counter="10"
                                             label="CI (Documento de identidad)*"
                                             required
@@ -161,9 +159,9 @@
                         </v-row>
                         <v-row>
                             <v-col cols="12">
-
                                 <template v-if="estudios.length>0">
-                                    <v-subheader class="text-primary">
+
+                                        <v-subheader class="text-primary">
                                             <v-badge
                                             :content="estudios.length"
                                             :value="estudios.length"
@@ -173,68 +171,68 @@
                                         <strong>ESTUDIOS</strong>
                                         </v-badge>
                                     </v-subheader>
+                                <v-simple-table  dense  fixed-header height="200px">
+                                    <template v-slot:default>
+                                    <thead>
+                                        <tr>
+                                        <th class="text-left">
+                                            Institucion
+                                        </th>
+                                        <th class="text-left">
+                                            Descripcion
+                                        </th>
+                                        <th class="text-left">
+                                            Inicio
+                                        </th>
+                                        <th class="text-left">
+                                            Fin
+                                        </th>
+                                        <th class="text-left">
+                                            Estado
+                                        </th>
+                                        <th class="text-left">
+                                            Eliminar
+                                        </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr
+                                        v-for="item in estudios"
+                                        :key="item.id"
+                                        >
+                                        <td>{{ item.institucion }}</td>
+                                        <td>{{ item.descripcion }}</td>
+                                        <td>{{ item.fecha_inicio }}</td>
+                                        <td>{{ item.fecha_fin }}</td>
+                                        <td> <v-chip v-if="item.estado_estudio_id==1"
 
-                        <v-simple-table  dense  fixed-header height="200px">
-                            <template v-slot:default>
-                            <thead>
-                                <tr>
-                                <th class="text-left">
-                                    Institucion
-                                </th>
-                                <th class="text-left">
-                                    Descripcion
-                                </th>
-                                <th class="text-left">
-                                    Inicio
-                                </th>
-                                <th class="text-left">
-                                    Fin
-                                </th>
-                                <th class="text-left">
-                                    Estado
-                                </th>
-                                <th class="text-left">
-                                    Eliminar
-                                </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr
-                                v-for="item in estudios"
-                                :key="item.id"
-                                >
-                                <td>{{ item.institucion }}</td>
-                                <td>{{ item.descripcion }}</td>
-                                <td>{{ item.fecha_inicio }}</td>
-                                <td>{{ item.fecha_fin }}</td>
-                                <td> <v-chip v-if="item.estado_estudio_id==1"
-                                        class="ma-2"
-                                        color="success"
-                                        small
-                                        >Terminado
-                                        </v-chip>
-                                         <v-chip v-else-if="item.estado_estudio_id==2"
-                                        class="ma-2"
-                                        color="primary"
-                                        small
-                                        >En curso
-                                        </v-chip>
-                                        <v-chip v-else
-                                        class="ma-2"
-                                        color="error"
-                                        small
-                                        >Abandonado
-                                        </v-chip>
-                                </td>
-                                <td>
-                                    <v-btn small icon color="error" @click="deleteEducacion(item)">
-                                        <v-icon dark>mdi-delete</v-icon>
-                                     </v-btn>
-                                </td>
-                                </tr>
-                            </tbody>
-                            </template>
-                        </v-simple-table>
+                                                color="success"
+                                                small
+                                                >Terminado
+                                                </v-chip>
+                                                <v-chip v-else-if="item.estado_estudio_id==2"
+
+                                                color="primary"
+                                                small
+                                                >En curso
+                                                </v-chip>
+                                                <v-chip v-else
+
+                                                color="error"
+                                                small
+                                                >Abandonado
+                                                </v-chip>
+                                        </td>
+                                        <td>
+                                            <v-btn small icon color="error" @click="deleteEducacion(item)">
+                                                <v-icon dark>mdi-delete</v-icon>
+                                            </v-btn>
+                                        </td>
+                                        </tr>
+                                    </tbody>
+                                    </template>
+                                </v-simple-table>
+
                         </template>
                             </v-col>
                         </v-row>
@@ -243,8 +241,8 @@
                 <br>
                 <v-card elevation="2" outlined shaped >
                     <v-subheader class="text-primary">
-                        <strong>AÑADIR EDUCACION</strong>
-                    </v-subheader>
+                                <strong>AÑADIR EDUCACION</strong>
+                            </v-subheader>
                     <v-card-text>
                                 <v-row >
                                     <v-col cols="12" md="6">
@@ -273,7 +271,7 @@
                                         <v-dialog
                                                 ref="menu_fecha_inicio_estudio"
                                                 v-model="menu_fecha_inicio_estudio"
-                                                :close-on-content-click="false"
+                                                :close-on-content-click="true"
                                                 :return-value.sync="date"
                                                 persistent
                                                 width="290px"
@@ -312,11 +310,12 @@
                                                 </v-date-picker>
                                             </v-dialog>
                                     </v-col>
+
                                     <v-col cols="12" md="2">
                                         <v-dialog
                                                 ref="menu_fecha_fin_estudio"
                                                 v-model="menu_fecha_fin_estudio"
-                                                :close-on-content-click="false"
+                                                :close-on-content-click="true"
                                                 :return-value.sync="date"
                                                 persistent
                                                 width="290px"
@@ -371,7 +370,6 @@
                                             item-value="id"
                                             v-model="estudio.nivel_id"
                                             label="Nivel / Tipo de estudio"
-                                            :rules="Rules.estudio_pais"
                                             dense
                                         ></v-autocomplete>
                                     </v-col>
@@ -383,10 +381,10 @@
                                             item-value="id"
                                             v-model="estudio.estado_estudio_id"
                                             label="Estado de estudio"
-                                            :rules="Rules.estudio_pais"
                                             dense
                                         ></v-autocomplete>
                                     </v-col>
+
                                     <v-col cols="12" md="6">
                                         <v-file-input
                                             multiple
@@ -399,7 +397,6 @@
                                             dense
                                         ></v-file-input>
                                     </v-col>
-
                                     <v-col cols="12" md="12" v-if="estudio.nivel_id==7">
                                         <v-autocomplete
                                             :items="certificaciones"
@@ -408,6 +405,7 @@
                                             item-value="id"
                                             v-model="estudio.certificado"
                                             label="Seleccione una certificación"
+                                            dense
 
                                         >
                                         <template v-slot:append-outer>
@@ -431,22 +429,24 @@
                                             dense
                                             ></v-textarea>
                                     </v-col>
-
                                     <v-col cols="12" >
                                             <v-btn
                                             block
                                             dark
                                             color="green"
                                             @click="addEducacion"
+
                                         ><v-icon dark>
                                                     mdi-plus
                                                 </v-icon>
                                             AÑADIR EDUCACION
                                         </v-btn>
                                     </v-col>
+
                                 </v-row>
                             </v-card-text>
                 </v-card>
+                <br>
                     </v-form>
                     <template>
                 <v-row justify="center">
@@ -491,14 +491,6 @@
                                 >
                                     Guardar
                                 </v-btn>
-                                <v-btn
-                                    v-else
-                                    color="primary"
-
-                                    @click="updateCertificate"
-                                >
-                                    Actualizar
-                                </v-btn>
                             </v-card-actions>
                         </v-card>
                     </v-dialog>
@@ -518,6 +510,7 @@ export default {
             menu_fecha_fin_estudio:false,
             url_persona_foto:null,
             persona_foto:null,
+            personas: [],
             paises: [],
             nivel_estudio: [],
             estado_estudio: [],
@@ -564,7 +557,7 @@ export default {
                 ],
                 ci: [
                     v => !!v || 'Este campo es requerido',
-                    v => v.length <= 10 || 'Este campo debe tener como máximo 10 caracteres',
+                    v => v.length = 10 || 'Este campo debe tener como máximo 10 caracteres',
                 ],
                 email: [
                     v => !!v || 'Este campo es requerido',
@@ -591,6 +584,7 @@ export default {
       },
     },
     created() {
+
         this.initialData();
     },
     methods: {
@@ -654,7 +648,6 @@ export default {
               const selectedFile = item;
                 const reader = new FileReader();
                 var file;
-
                 reader.onload = ()=> {
                     file = reader.result;
                     if (file) {
@@ -662,13 +655,10 @@ export default {
                             if (!(documento === "" || documento === null || documento === undefined)) {
                                 documento = documento.substring(documento.indexOf(",") + 1);
                                 files.push(documento);
-
-
                             }
                         }
                     };
                     reader.readAsDataURL(selectedFile)
-                    //console.log(files);
             }
           }else{
               files =  null
@@ -693,8 +683,8 @@ export default {
                 titulo:this.estudio.descripcion,
                 documentos:this.crearDocumentos(this.estudio.documentos)
           })
-          this.estudio={}
           console.log(this.estudios);
+          this.estudio={}
       },
       deleteEducacion(el) {
                 let i = this.estudios.map(data => data.id).indexOf(el.id);
@@ -708,25 +698,56 @@ export default {
 
             console.log(this.persona);
               this.axios
-                .post("/api/persona", this.persona)
+              .patch(`/api/persona/${this.$route.params.id}`, this.persona)
                 .then(response => {
                     this.dialog = false;
                     this.loading = false;
-                    this.persona = {};
-                    this.estudios = [];
-                    this.estudio = {};
-                    this.initialData();
+                    this.initialData()
 
                 })
                 .catch(err => console.log(err))
                 .finally(() => (this.loading = false));
         },
         initialData(){
-
+            this.axios.get(`/api/persona/${this.$route.params.id}`).then(response => {
+            //this.estudios = response.data;
+            this.persona.nombre  =  response.data[0].persona.nombre;
+            this.persona.apellido= response.data[0].persona.apellido;
+            this.persona.ci= response.data[0].persona.ci;
+            this.persona.email= response.data[0].persona.email;
+            this.persona.pais_id= response.data[0].persona.pais_id;
+            this.persona.nacionalidad_id= response.data[0].persona.nacionalidad_id;
+            this.persona.telefono= response.data[0].persona.telefono;
+            this.date= response.data[0].persona.fecha_nacimiento;
+            this.save(this.date);
+            //this.persona.foto= response.data[0].persona.foto;
+            this.persona.fotoString = response.data[0].persona.foto;
+            //this.crearFoto();
+            this.url_persona_foto= 'data:image/png;base64,'+response.data[0].persona.foto;
+            var arrayEstudios=[];
+            response.data.forEach(element => {
+                    arrayEstudios.push({
+                        id: element.id,
+                        institucion: element.institucion,
+                        pais_id: element.pais_id,
+                        duracion_horas: element.duracion_horas || null,
+                        fecha_inicio: element.fecha_inicio,
+                        fecha_fin: element.fecha_fin,
+                        nivel_id: element.nivel_id,
+                        certificado: element.certificado || null,
+                        estado_estudio_id: element.estado_estudio_id,
+                        descripcion: element.descripcion,
+                        titulo: element.descripcion,
+                        documentos:(element.documentos) ? element.documentos.split(",") : null
+                })
+            });
+          this.estudios = arrayEstudios;
+            console.log(this.estudios);
+            this.loading = false;
+        });
         this.axios.get("/api/paises/").then(response => {
                 this.paises = response.data;
                 //console.log(response.data);
-                this.loading=false
             });
              this.axios.get("/api/get-nivel-estudio/").then(response => {
                 this.nivel_estudio = response.data;
