@@ -38,7 +38,7 @@ Vue.config.productionTip = false
 axios.defaults.withCredentials = true;
 //axios.defaults.baseURL = 'http://127.0.0.1:8000';
 axios.defaults.baseURL = process.env.MIX_APP_URL;
-//axios.defaults.baseURL = 'http://10.1.1.130';
+//axios.defaults.baseURL = 'http://10.1.1.130:81';
 Vue.use(VueAxios, axios);
 Vue.use(Vuex);
 

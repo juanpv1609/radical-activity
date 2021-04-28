@@ -19,9 +19,9 @@ const router = new VueRouter({
         {
             name: "home",
             path: "/",
-            component: Home,
+            component: Personal,
             meta: {
-                requiresAuth: true,
+                requiresAuth: false,
               },
         },
         {
@@ -45,7 +45,7 @@ const router = new VueRouter({
             path: "/usuarios",
             component: AllUsuarios,
             meta: {
-          requiresAuth: true,
+          requiresAuth: false,
         },
         },
         {
@@ -53,7 +53,7 @@ const router = new VueRouter({
             path: "/paises",
             component: Pais,
             meta: {
-          requiresAuth: true,
+          requiresAuth: false,
         },
         },
         {
@@ -61,7 +61,7 @@ const router = new VueRouter({
             path: "/personal",
             component: Personal,
             meta: {
-          requiresAuth: true,
+          requiresAuth: false,
         },
         },
         {
@@ -69,7 +69,7 @@ const router = new VueRouter({
             path: "/personal-new",
             component: PersonalNew,
             meta: {
-          requiresAuth: true,
+          requiresAuth: false,
         },
         },
         {
@@ -77,7 +77,7 @@ const router = new VueRouter({
             path: "/personal/edit/:id",
             component: PersonalEdit,
             meta: {
-          requiresAuth: true,
+          requiresAuth: false,
         },
         },
         {
@@ -85,7 +85,7 @@ const router = new VueRouter({
             path: "/certificaciones",
             component: Certificaciones,
             meta: {
-          requiresAuth: true,
+          requiresAuth: false,
         },
         },
         {
@@ -93,7 +93,7 @@ const router = new VueRouter({
             path: "/nivel-estudio",
             component: NivelEstudio,
             meta: {
-          requiresAuth: true,
+          requiresAuth: false,
         },
         },
     ]
