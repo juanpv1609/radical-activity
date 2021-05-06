@@ -230,7 +230,7 @@ export default {
                     title: "Reportes",
                     icon: "mdi-chart-bar",
                     subLinks: [
-                        { title: "General", link: "/reporte-general", icon: "mdi-certificate"},
+                        // { title: "General", link: "/reporte-general", icon: "mdi-certificate"},
                         { title: "Certificacion", link: "/reporte-certificacion", icon: "mdi-certificate"},
                         { title: "Persona", link: "/reporte-persona", icon: "mdi-face"},
                     ],

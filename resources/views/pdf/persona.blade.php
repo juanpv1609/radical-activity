@@ -78,7 +78,7 @@
                             </tr>
                             <tr>
                                 <td>Emitido por:</td>
-                                <td>{{\auth()->user()->name}}</td>
+                                <td>{{ isset(\auth()->user()->name) ? \auth()->user()->name : "DEMO"}}</td>
                             </tr>
                              <tr>
                                 <td>Total estudios:</td>

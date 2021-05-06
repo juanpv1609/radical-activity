@@ -115,7 +115,7 @@
                             </tr>
                             <tr>
                                 <td>Emitido por:</td>
-                                <td>{{ \auth()->user()->name }}</td>
+                                <td>{{ isset(\auth()->user()->name) ? \auth()->user()->name : "DEMO" }}</td>
                             </tr>
                             <td>Total Personas:</td>
                             <td>{{ $dataCertificaciones[0]['total_personas'] }}</td>
