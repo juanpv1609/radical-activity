@@ -69,6 +69,7 @@ Route::middleware('api')->group(function () {
     Route::get('send-mail-user/{tarea}', [SendMailController::class, 'sendMailUser']);
 
     Route::get('reporte-certificaciones/{certificaciones}', [ReportesController::class, 'reporteCertificaciones']);
+    Route::get('reporte-persona/{persona}', [ReportesController::class, 'reportePersona']);
 
 
 });

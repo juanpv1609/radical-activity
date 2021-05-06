@@ -10,7 +10,7 @@
                         v-model="valid"
                         lazy-validation>
                         <v-row>
-                    <v-col cols="12">
+                    <v-col cols="12" md="8">
                         <v-autocomplete
                                 deletable-chips
                                 multiple
@@ -45,10 +45,13 @@
                                     <v-divider class="mt-2"></v-divider>
                                 </template>
                             </v-autocomplete>
+
+
                         </v-col>
-
-
-                            <v-btn  block color="primary" :loading="loadingUpload" dark  @click="generarReporte">Generar Reporte</v-btn>
+                        <v-col cols="12" md="4">
+                            <v-btn  block color="primary" :loading="loadingUpload" :disabled="!selectedCertificacion.length>0" dark
+                                @click="generarReporte">Generar Reporte</v-btn>
+                                </v-col>
                         </v-row>
 
                     </v-form>
@@ -105,8 +108,8 @@ export default {
       },
         async generarReporte(){
             if (this.$refs.form.validate()) {
-                //this.loading = true;
-                //this.loadingUpload=true;
+                this.loading = true;
+                this.loadingUpload=true;
                 let url;
                 console.log(this.selectedCertificacion);
                 var arrayCertificacionesID = [];

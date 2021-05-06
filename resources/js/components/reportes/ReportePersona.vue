@@ -12,64 +12,31 @@
                         <v-row>
                             <v-col
                             cols="12"
+                             md="6"
+                            >
+                            <v-autocomplete
+
+                                clearable
+                                :items="personas"
+
+                                item-text="persona_nombre"
+                                item-value="id"
+                                v-model="persona"
+                                label="Seleccione una persona"
+                                dense
+                                return-object
+                                :rules="Rules.persona"
+                                required
 
                             >
-                            <v-select :items="contratos"
-                                            v-model="contrato"
-                                                label="Seleccione un Contrato"
-                                                @change="setDates"
-                                                >
-                                            <template slot="selection" slot-scope="data">
-                                                <!-- HTML that describe how select should render selected items -->
-                                                ({{ data.item.cliente.nombre_comercial }}) {{ data.item.observacion }}
-                                            </template>
-                                            <template slot="item" slot-scope="data">
-                                                <!-- HTML that describe how select should render items when the select is open -->
-                                               ({{ data.item.cliente.nombre_comercial }}) {{ data.item.observacion }}
-                                            </template>
-                                        </v-select>
+                            </v-autocomplete>
+
                             </v-col>
+                            <v-col cols="12" md="6">
+                             <v-btn  block color="primary" :loading="loadingUpload" :disabled="!valid"  dark  @click="generarReporte">Generar Reporte</v-btn>
+                             </v-col>
                         </v-row>
-                        <v-row>
-                    <v-col cols="12">
-                        <v-row>
-                            <v-col
-                            cols="12"
-                            sm="6"
-                            >
-                            <v-date-picker
-                                v-model="dates"
-                                range
-                                width="500"
 
-                            ></v-date-picker>
-                            </v-col>
-
-
-                            <v-col
-                            cols="12"
-                            sm="6"
-                            >
-                            <v-row>
-                                <v-col cols="12" >
-                                    <v-text-field
-                                v-model="b"
-                                label="Rango de fechas"
-                                prepend-icon="mdi-calendar"
-
-                                :rules="dateRules"
-                            ></v-text-field>
-                                </v-col>
-
-
-                                <v-btn  block color="primary" :loading="loadingUpload" dark  @click="generarReporte">Generar Reporte</v-btn>
-                            </v-row>
-
-
-                            </v-col>
-                        </v-row>
-                    </v-col>
-                </v-row>
                         </v-form>
 
 
@@ -82,65 +49,44 @@
 export default {
      data() {
         return {
-            contratos: [],
-            contrato:null,
+            personas: [],
+            persona:{},
             loading: false,
             loadingUpload: false,
-            dates: [],
             a:null,
             valid: true,
-            dateRules: [
-                 v => !!v || 'Date range is required',
-             ],
+             Rules : {
+                persona: [
+                    v => !!v || 'Este campo es requerido'
+                ],
+             }
         };
     },
-    computed: {
-
-      b: {
-    // getter
-            get: function () {
-                this.a=this.dates.join(' ~ ')
-                return this.a
-            },
-            // setter
-            set: function (newValue) {
-                this.a = newValue;
+    created() {
+         this.axios.get("/api/persona/").then(response => {
+                    this.personas = response.data;
+                    for (const iterator of this.personas) {
+                        iterator.persona_nombre = iterator.nombre+' '+iterator.apellido
+                    }
+                    console.log(response.data);
+                });
 
 
-            }
+    },
+    computed:{
+        personaNombre(elem){
+            return elem.nombre+' '+elem.apellido
         }
     },
-    created() {
-         this.axios.get("/api/contratos/").then(response => {
-                                this.contratos = response.data;
-                                console.log(response.data);
-                            });
-
-
-    },
     methods: {
-        customFilter (item, queryText, itemText) {
-        const textOne = item.name.toUpperCase()
-        const textTwo = item.abbr.toUpperCase()
-        const searchText = queryText.toUpperCase()
 
-        return textOne.indexOf(searchText) > -1 ||
-          textTwo.indexOf(searchText) > -1
-      },
-        setDates(contrato){
-            console.log(contrato);
-             this.dates[0] = contrato.fecha_inicio;
-             this.dates[1] = contrato.fecha_fin;
-             //this.dateRangeText.set = this.dates;
-             this.b = this.dates;
-        },
         async generarReporte(){
             if (this.$refs.form.validate()) {
                 this.loading = true;
                 this.loadingUpload=true;
                 let url;
              await   this.axios
-                    .get(`/api/reporte-tareas-contrato/${this.dates[0]}/${this.dates[1]}/${this.contrato.id}`)
+                    .get(`/api/reporte-persona/${this.persona.id}`)
                     .then(response => {
                         url=response.config.baseURL+response.config.url;
 
@@ -148,16 +94,17 @@ export default {
 
                     this.loading = false;
                     this.loadingUpload=false;
-                    this.dates = [];
+                    //this.dates = [];
                     this.valid = true;
                     window.open(url,'_blank');
+            }else{
+                alert("invalido")
             }
+
 
         }
     }
 }
 </script>
 
-<style>
 
-</style>

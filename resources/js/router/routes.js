@@ -112,7 +112,7 @@ const router = new VueRouter({
         {
             name: "reporte-persona",
             path: "/reporte-persona",
-            component: ReporteGeneral,
+            component: ReportePersona,
             meta: {
           requiresAuth: false,
         },
@@ -120,7 +120,7 @@ const router = new VueRouter({
         {
             name: "reporte-general",
             path: "/reporte-general",
-            component: ReportePersona,
+            component: ReporteGeneral,
             meta: {
           requiresAuth: false,
         },
