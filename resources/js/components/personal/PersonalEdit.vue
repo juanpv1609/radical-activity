@@ -33,16 +33,6 @@
                                                 ></v-img>
                                                 <v-icon v-else size="160" class="d-flex justify-space-center">mdi-account</v-icon>
                                         </v-card-text>
-                                        <v-file-input
-                                            small-chips
-                                            accept="image/*"
-                                            v-model="persona.foto"
-                                            label="Fotografia"
-                                            @change="onFotoChange"
-                                            prepend-icon="mdi-camera"
-                                            dense
-                                            >
-                                        </v-file-input>
 
 
                                         </v-card>
@@ -111,6 +101,18 @@
                                             :rules="Rules.nacionalidad_id"
                                             dense
                                         ></v-autocomplete>
+                                    </v-col>
+                                    <v-col cols="12" md="4">
+                                        <v-file-input
+                                            small-chips
+                                            accept="image/*"
+                                            v-model="persona.foto"
+                                            label="Fotografia"
+                                            @change="onFotoChange"
+                                            prepend-icon="mdi-camera"
+                                            dense
+                                            >
+                                        </v-file-input>
                                     </v-col>
                                     <v-col cols="12" md="4">
                                         <v-text-field
@@ -245,6 +247,17 @@
                             </v-subheader>
                     <v-card-text>
                                 <v-row >
+                                    <v-col cols="12" md="12">
+                                        <v-textarea
+                                            clearable
+                                            clear-icon="mdi-close-circle"
+                                            label="Descripción / Título"
+                                            v-model="estudio.descripcion"
+                                            :rules="Rules.estudio_descripcion"
+                                            rows="1"
+                                            dense
+                                            ></v-textarea>
+                                    </v-col>
                                     <v-col cols="12" md="6">
                                         <v-text-field
                                             v-model="estudio.institucion"
@@ -370,6 +383,7 @@
                                             item-value="id"
                                             v-model="estudio.nivel_id"
                                             label="Nivel / Tipo de estudio"
+                                            :rules="Rules.estudio_nivel"
                                             dense
                                         ></v-autocomplete>
                                     </v-col>
@@ -381,6 +395,7 @@
                                             item-value="id"
                                             v-model="estudio.estado_estudio_id"
                                             label="Estado de estudio"
+                                            :rules="Rules.estudio_estado"
                                             dense
                                         ></v-autocomplete>
                                     </v-col>
@@ -419,16 +434,7 @@
                                         </v-autocomplete>
 
                                     </v-col>
-                                    <v-col cols="12" md="12">
-                                        <v-textarea
-                                            clearable
-                                            clear-icon="mdi-close-circle"
-                                            label="Descripcion / Titulo"
-                                            v-model="estudio.descripcion"
-                                            rows="1"
-                                            dense
-                                            ></v-textarea>
-                                    </v-col>
+
                                     <v-col cols="12" >
                                             <v-btn
                                             block
@@ -572,7 +578,16 @@ export default {
                 estudio_institucion: [
                     v => !!v || 'Este campo es requerido'
                 ],
+                estudio_descripcion: [
+                    v => !!v || 'Este campo es requerido'
+                ],
                 estudio_pais: [
+                    v => !!v || 'Este campo es requerido'
+                ],
+                estudio_nivel: [
+                    v => !!v || 'Este campo es requerido'
+                ],
+                estudio_estado: [
                     v => !!v || 'Este campo es requerido'
                 ],
             }

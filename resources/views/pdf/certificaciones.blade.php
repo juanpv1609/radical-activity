@@ -50,6 +50,17 @@
     .text-success{color:#5cb85c!important}
     .text-info{color:#5bc0de!important}
     .text-primary{color:#0275d8!important}
+    .column {
+  float: left;
+  width: 50%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
 </style>
 </head>
 <body style="font-size: 11px;-webkit-text-size-adjust: none">
@@ -70,76 +81,76 @@
                     </table>
                 </td>
                 <td style="vertical-align: bottom;text-align: right;margin-top: -25px">
-                    <table width="100%">
-                        <tbody>
-                            <tr>
-                                <td>Fecha inicial</td>
-                                <td>{{ \Carbon\Carbon::createFromFormat('Y-m-d',$tareas->fecha_inicial)->format('d-m-Y') }}</td>
-                            </tr>
-                            <tr>
-                                <td>Fecha final</td>
-                                <td>{{ \Carbon\Carbon::createFromFormat('Y-m-d',$tareas->fecha_final)->format('d-m-Y') }}</td>
-                            </tr>
-                            {{-- <tr>
-                                <td>Generado por</td>
-                                <td>{{ auth()->user()->name }}</td>
-                            </tr>
-                            <tr>
-                                <td>Fecha creacion</td>
-                                <td>{{ \Carbon\Carbon::now()->format('d-m-Y') }}</td>
-                            </tr> --}}
-                            <tr>
-                                <td>Tareas pendientes</td>
-                                <td>{{ $tareas->tareas_pendientes  }}</td>
-                            </tr>
-                            <tr>
-                                <td>Tareas terminadas</td>
-                                <td>{{ $tareas->tareas_terminadas }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+
                 </td>
             </tr>
         </table>
 
         <h4 class="text-center">
-            REPORTE DE TAREAS
+            REPORTE DE CERTIFICACIONES
         </h4>
-        @if (count($tareas)>0)
-        <table class="table table-striped table-sm" width="100%">
-            <thead>
-                <tr>
-                    <th>FECHA</th>
-                    <th>RESPONSABLE</th>
-                    <th>CLIENTE</th>
-                    <th>TAREA</th>
-                    <th>ENTREGABLE</th>
-                    <th>ESTADO</th>
-                </tr>
-            </thead>
-            <tbody>
-                    @foreach ($tareas as $item)
+        @if (count($dataCertificaciones)>0)
+         {{-- <table border="1">
+
+            <tr>
+                @foreach ($dataCertificaciones as $item)
+                <th style="width: 10%"><p style="font-size: 10px;text-align: center">
+                    <strong style="font-size: 28px; " class="text-primary">{{ $item['total'] }}</strong> <br>
+                    {{ $item['certificacion'] }}
+                </p>
+                </th>
+                @endforeach
+            </tr>
+        </table> --}}
+        <div class="row">
+            @foreach ($dataCertificaciones as $item)
+            <div class="column">
+                <p style="font-size: 10px;text-align: center">
+                    <strong style="font-size: 28px; " class="text-primary">{{ $item['total'] }}</strong> <br>
+                    {{ $item['certificacion'] }}
+                </p>
+            </div>
+            @endforeach
+          </div>
+        @foreach ($dataCertificaciones as $item)
+        @if ($item['total']>0)
+
+            <table class="table table-striped table-sm" width="100%">
+                <thead  >
+                    <tr style="background: #000;color:#FFF">
+                        <th colspan="3">{{ $item['certificacion'] }}</th>
+                    </tr>
                     <tr>
-                        <td>{{ $item->fecha }}</td>
-                        <td>{{ $item->usuario->name }}</td>
-                        <td>{{ $item->contrato->cliente->nombre_comercial }}</td>
-                        <td>{{ $item->tipo->nombre }}</td>
-                        <td>{{ $item->descripcion }}</td>
-                        <td class="text-center">
-                            <strong class="text-{{ $item->estado_tarea->color }}">
-                                {{ strtoupper($item->estado_tarea->descripcion) }}
-                            </strong>
-                        </td>
+                        <td>Persona</td>
+                        <td>Pais</td>
+                        <td>Status</td>
                     </tr>
 
-                @endforeach
+                </thead>
 
+                <tbody>
+                        @foreach ($item['personas'] as $person)
+                        <tr>
+                            <td >{{ $person['nombre'] }}</td>
+                            <td >{{ $person['pais'] }}</td>
+                            <td >{{ $person['estado'] }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                <br>
+        @endif
+            @endforeach
 
-            </tbody>
-        </table>
         @else
          <p class="text-info">No se encontraron resultados </p>
         @endif
+        <table class="table table-striped table-sm" width="100%">
+
+            <tbody>
+
+            </tbody>
+        </table>
 
     </div>
 <script type="text/php">

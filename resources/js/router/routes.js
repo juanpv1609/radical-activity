@@ -11,6 +11,10 @@ import PersonalNew from "../components/personal/PersonalNew.vue";
 import PersonalEdit from "../components/personal/PersonalEdit.vue";
 import Certificaciones from "../components/certificaciones/Certificaciones.vue";
 import NivelEstudio from "../components/nivelEstudio/NivelEstudio.vue";
+//REPORTES
+import ReporteCertificacion from "../components/reportes/ReporteCertificacion.vue";
+import ReporteGeneral from "../components/reportes/ReporteGeneral.vue";
+import ReportePersona from "../components/reportes/ReportePersona.vue";
 
 const router = new VueRouter({
     mode: 'history',
@@ -92,6 +96,31 @@ const router = new VueRouter({
             name: "nivel-estudio",
             path: "/nivel-estudio",
             component: NivelEstudio,
+            meta: {
+          requiresAuth: false,
+        },
+        },
+        //REPORTES
+        {
+            name: "reporte-certificacion",
+            path: "/reporte-certificacion",
+            component: ReporteCertificacion,
+            meta: {
+          requiresAuth: false,
+        },
+        },
+        {
+            name: "reporte-persona",
+            path: "/reporte-persona",
+            component: ReporteGeneral,
+            meta: {
+          requiresAuth: false,
+        },
+        },
+        {
+            name: "reporte-general",
+            path: "/reporte-general",
+            component: ReportePersona,
             meta: {
           requiresAuth: false,
         },

@@ -1,7 +1,7 @@
 <template >
 <div>
      <v-app  >
-        <v-navigation-drawer  app v-model="drawer" absolute  :width="220"
+        <v-navigation-drawer  app v-model="drawer" :width="220"
                            >
             <v-list-item >
                 <v-list-item-content >
@@ -11,9 +11,9 @@
                 </v-list-item-content>
             </v-list-item>
 
-            <v-list dense nav>
+            <v-list dense shaped>
                 <div v-for="item in items" :key="item.title">
-                    <v-list-item v-if="!item.subLinks" link :to="item.link" color="blue">
+                    <v-list-item v-if="!item.subLinks" link :to="item.link" color="orange darken-4">
                         <v-list-item-icon>
                             <v-icon>{{ item.icon }}</v-icon>
                         </v-list-item-icon>
@@ -23,7 +23,7 @@
                         </v-list-item-content>
                     </v-list-item>
                     <v-list-group v-else-if="(item.subLinks) "  :key="item.title"
-                        no-action :prepend-icon="item.icon" color="blue">
+                        no-action :prepend-icon="item.icon" color="orange darken-4">
                         <template v-slot:activator >
                                     <v-list-item-title>{{ item.title }}</v-list-item-title>
                          </template>
@@ -52,7 +52,7 @@
             </template> -->
         </v-navigation-drawer >
 
-            <v-app-bar  app color="accent-4" absolute dense dark>
+            <v-app-bar  app  absolute dense dark class="grey darken-4">
                 <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
 
@@ -100,7 +100,7 @@
 
             </v-container>
         </v-main>
-        <v-footer dense app fixed flat padless
+        <v-footer dense app fixed flat padless  class="grey darken-4" dark
         >
         <v-col cols="4" class="text-left">
                 <router-link to="/"> Acerca de</router-link>
@@ -226,16 +226,15 @@ export default {
 
 
                 { title: "Personal", link: "/personal", icon: "mdi-face" },
-                /* {
+                 {
                     title: "Reportes",
                     icon: "mdi-chart-bar",
                     subLinks: [
-                        { title: "Tareas", link: "/reporte-tareas", icon: ""},
-                        { title: "Tareas & Contrato", link: "/reporte-contratos", icon: ""},
-                        { title: "Tareas & Usuario", link: "/reporte-usuario", icon: ""},
-                        { title: "Contratos", link: "/reporte-allContratos", icon: ""},
+                        { title: "General", link: "/reporte-general", icon: "mdi-certificate"},
+                        { title: "Certificacion", link: "/reporte-certificacion", icon: "mdi-certificate"},
+                        { title: "Persona", link: "/reporte-persona", icon: "mdi-face"},
                     ],
-                }, */
+                },
                 {
                     title: "Configuracion",
                     icon: "mdi-cogs",
