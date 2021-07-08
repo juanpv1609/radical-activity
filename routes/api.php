@@ -8,10 +8,13 @@ use App\Http\Controllers\PaisController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\PersonaController;
+use App\Http\Controllers\HorariosController;
 use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\SendMailController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\ActividadesController;
 use App\Http\Controllers\NivelEstudioController;
+use App\Http\Controllers\TipoActividadController;
 use App\Http\Controllers\CertificacionesController;
 
 
@@ -45,6 +48,9 @@ Route::middleware('api')->group(function () {
 
 
     Route::resource('paises', PaisController::class);
+    Route::resource('horarios', HorariosController::class);
+    Route::resource('actividades', ActividadesController::class);
+    Route::resource('tipo-actividad', TipoActividadController::class);
     Route::resource('usuarios', UserController::class);
     Route::get('usuarios-all', [UserController::class,'indexAll']);
     Route::post('usuario-updatePassword', [UserController::class,'usuarioUpdatePassword']);

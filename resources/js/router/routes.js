@@ -2,129 +2,77 @@ import VueRouter from 'vue-router';
 import store from '../store/store';
 import Register from "../components/auth/Register.vue";
 import Login from "../components/auth/Login.vue";
+import Home from "../components/Home.vue";
 
 import AllUsuarios from "../components/usuario/AllUsuarios.vue";
-import Home from "../components/Home.vue";
-import Pais from "../components/pais/Pais.vue";
-import Personal from "../components/personal/Personal.vue";
-import PersonalNew from "../components/personal/PersonalNew.vue";
-import PersonalEdit from "../components/personal/PersonalEdit.vue";
-import Certificaciones from "../components/certificaciones/Certificaciones.vue";
-import NivelEstudio from "../components/nivelEstudio/NivelEstudio.vue";
+import Actividad from "../components/actividad/Actividad.vue";
+import ActividadNew from "../components/actividad/ActividadNew.vue";
 //REPORTES
-import ReporteCertificacion from "../components/reportes/ReporteCertificacion.vue";
-import ReporteGeneral from "../components/reportes/ReporteGeneral.vue";
-import ReportePersona from "../components/reportes/ReportePersona.vue";
+
+import ReporteResumen from "../components/reportes/ReporteResumen.vue";
 
 const router = new VueRouter({
-    mode: 'history',
+    mode: "history",
     routes: [
         { path: "*", redirect: "/" },
         {
             name: "home",
-            path: "/",
-            component: Personal,
+            path: "/home",
+            component: Home,
             meta: {
-                requiresAuth: false,
-              },
+                requiresAuth: true
+            }
         },
         {
             path: "/register",
             name: "register",
             component: Register,
             meta: {
-          requiresAuth: false,
-        },
+                requiresAuth: false
+            }
         },
         {
             path: "/login",
             name: "login",
             component: Login,
             meta: {
-          requiresAuth: false,
-        },
+                requiresAuth: false
+            }
         },
         {
             name: "usuarios",
             path: "/usuarios",
             component: AllUsuarios,
             meta: {
-          requiresAuth: false,
-        },
-        },
-        {
-            name: "paises",
-            path: "/paises",
-            component: Pais,
-            meta: {
-          requiresAuth: false,
-        },
+                requiresAuth: true
+            }
         },
         {
-            name: "personal",
-            path: "/personal",
-            component: Personal,
+            name: "actividad",
+            path: "/actividad",
+            component: Actividad,
             meta: {
-          requiresAuth: false,
-        },
+                requiresAuth: true
+            }
         },
         {
-            name: "personal-new",
-            path: "/personal-new",
-            component: PersonalNew,
+            name: "actividad-new",
+            path: "/actividad-new",
+            component: ActividadNew,
             meta: {
-          requiresAuth: false,
-        },
-        },
-        {
-            name: "personal-edit",
-            path: "/personal/edit/:id",
-            component: PersonalEdit,
-            meta: {
-          requiresAuth: false,
-        },
-        },
-        {
-            name: "certificaciones",
-            path: "/certificaciones",
-            component: Certificaciones,
-            meta: {
-          requiresAuth: false,
-        },
-        },
-        {
-            name: "nivel-estudio",
-            path: "/nivel-estudio",
-            component: NivelEstudio,
-            meta: {
-          requiresAuth: false,
-        },
+                requiresAuth: true
+            }
         },
         //REPORTES
+
         {
-            name: "reporte-certificacion",
-            path: "/reporte-certificacion",
-            component: ReporteCertificacion,
+            name: "reporte-resumen",
+            path: "/reporte-resumen",
+            component: ReporteResumen,
             meta: {
-          requiresAuth: false,
-        },
-        },
-        {
-            name: "reporte-persona",
-            path: "/reporte-persona",
-            component: ReportePersona,
-            meta: {
-          requiresAuth: false,
-        },
-        },
-        {
-            name: "reporte-general",
-            path: "/reporte-general",
-            component: ReporteGeneral,
-            meta: {
-          requiresAuth: false,
-        },
-        },
+                requiresAuth: false
+            }
+        }
     ]
 });
 
