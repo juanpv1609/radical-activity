@@ -161,7 +161,8 @@ export default {
     },
     created() {
         const query =
-            this.$store.state.user.role == 2 //ADMIN
+            ((this.$store.state.user.role == 2)//ADMIN
+            || this.$store.state.user.role == 3) //SUPERVISOR
                 ? `actividades`
                 : `actividades/${this.$store.state.user.id}`;
         this.axios.get(`/api/${query}`).then(response => {

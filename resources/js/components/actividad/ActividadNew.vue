@@ -280,9 +280,7 @@
                                             icon
                                             color="error"
                                             x-small
-                                            @click="
-                                                deleteActivityLine(row.item)
-                                            "
+                                            @click="deleteActivityLine(row.item)"
                                         >
                                             <v-icon dark>mdi-delete</v-icon>
                                         </v-btn>

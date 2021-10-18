@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
+use App\Models\Actividad;
+use App\Models\TipoActividad;
+use App\Models\EstadoActividad;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Actividades extends Model
 {
@@ -17,6 +21,8 @@ class Actividades extends Model
         'observacion',
         'colaboradores',
         'estado',
+        'verificada',
+        'is_verified_by'
     ];
     public $timestamps = false;
     protected $guarded = [];
@@ -32,5 +38,9 @@ class Actividades extends Model
     public function status()
     {
         return $this->belongsTo(EstadoActividad::class, 'estado', 'id');
+    }
+    public function verificador()
+    {
+        return $this->belongsTo(User::class, 'is_verified_by', 'id');
     }
 }

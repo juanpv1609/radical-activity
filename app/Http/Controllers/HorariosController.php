@@ -14,14 +14,28 @@ class HorariosController extends Controller
      */
     public function index()
     {
-        $horarios = Horario::all()->toArray();
 
-        return ($horarios);
+        $cond=['estado' => 1];
+
+        $horarios = Horario::where($cond)->get()->toArray();
+
+        return $horarios;
+
     }
 
     public function store(Request $request)
     {
-        //
+        $horario = new Horario([
+            'nombre' => $request->input('nombre'),
+            'descripcion' => $request->input('descripcion'),
+            'inicio' => $request->input('inicio'),
+            'fin' => $request->input('fin'),
+            'estado' => 1,
+        ]);
+        $horario->save();
+
+        return response()->json('horario created!');
+
     }
 
     /**
@@ -32,13 +46,19 @@ class HorariosController extends Controller
      */
     public function show($id)
     {
-        //
+        $horario = Horario::find($id);
+        return response()->json($horario);
+
     }
 
 
     public function update(Request $request, $id)
     {
-        //
+         $horario = Horario::find($id);
+        $horario->update($request->all());
+
+        return response()->json('horario updated!');
+
     }
 
     /**
@@ -49,6 +69,12 @@ class HorariosController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $horario = Horario::find($id);
+        $horario->estado=0;
+        $horario->save();
+        //$area->delete();
+
+        return response()->json('horario deleted!');
+
     }
 }

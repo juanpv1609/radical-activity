@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-app>
-            <v-navigation-drawer app v-model="drawer" :width="220">
+            <v-navigation-drawer app v-model="drawer"  :width="220" :mini-variant.sync="mini">
                 <v-list-item>
                     <v-list-item-content>
                         <v-list-item-title class="title">
@@ -69,9 +69,9 @@
             </template> -->
             </v-navigation-drawer>
 
-            <v-app-bar app absolute dense dark class="grey darken-4">
+            <v-app-bar app color="accent-4" absolute dense dark>
                 <v-app-bar-nav-icon
-                    @click="drawer = !drawer"
+                    @click.stop="mini = !mini"
                 ></v-app-bar-nav-icon>
 
                 <v-spacer></v-spacer>
@@ -110,14 +110,14 @@
             </v-app-bar>
 
             <!-- Sizes your content based upon application components -->
-            <v-main>
+            <v-main style="background:#F5F5F5;">
                 <!-- Provides the application the proper gutter -->
                 <v-container fluid>
                     <!-- If using vue-router -->
                     <router-view></router-view>
                 </v-container>
             </v-main>
-            <v-footer dense app fixed flat padless class="grey darken-4" dark>
+            <!-- <v-footer dense app fixed flat padless class="grey darken-4" dark>
                 <v-col cols="4" class="text-left">
                     <router-link to="/"> Acerca de</router-link>
                 </v-col>
@@ -129,7 +129,7 @@
                     reservados
                 </v-col>
                 <v-col class="text-end" cols="4">Version 1.0 </v-col>
-            </v-footer>
+            </v-footer> -->
         </v-app>
         <template>
             <v-row justify="center">
@@ -214,6 +214,7 @@
 export default {
     data() {
         return {
+            mini:true,
             dialog: false,
             drawer: true,
             form: {
@@ -255,17 +256,13 @@ export default {
                             link: "/usuarios",
                             icon: "mdi-account-multiple"
                         },
+                         { title: "Areas", link: "/areas", icon: "mdi-view-quilt" },
                         { title: "Paises", link: "/paises", icon: "mdi-earth" },
-                        {
-                            title: "Certificaciones",
-                            link: "/certificaciones",
-                            icon: "mdi-certificate"
-                        },
-                        {
-                            title: "Niveles",
-                            link: "/nivel-estudio",
-                            icon: "mdi-graph-outline"
-                        }
+                        { title: "Perfil Laboral", link: "/perfil-puesto", icon: "mdi-sitemap" },
+                        { title: "Horarios", link: "/horarios", icon: "mdi-clock-check" },
+                        { title: "Tipo Actividad", link: "/tipo-actividad", icon: "mdi-clock-check" },
+
+
                     ]
                 }
             ],

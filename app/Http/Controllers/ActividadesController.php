@@ -19,17 +19,37 @@ class ActividadesController extends Controller
      */
     public function index()
     {
-        $actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->get()->toArray();
+        //$actividades = Actividades::with('actividad.usuario_id', 'actividad.horario', 'tipo', 'status')->get()->toArray();
+
+        //return ($actividades);
+        $usuario_estandar= User::where('role',1)->get()->toArray();
+        $arrayUsuarios = [];
+         foreach ($usuario_estandar as $usuario) {
+             //$actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->where('dia', $item['id'])->get()->toArray();
+             array_push($arrayUsuarios, $usuario['id']);
+         }
+
+         $actividad = Actividad::whereIn('usuario_id', $arrayUsuarios)->get()->toArray();
+
+         $arrayActividades = [];
+         //dd($actividad);
+         foreach ($actividad as $item) {
+             //$actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->where('dia', $item['id'])->get()->toArray();
+             array_push($arrayActividades, $item['id']);
+            }
+            $actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->whereIn('dia', $arrayActividades)->get()->toArray();
+
 
         return ($actividades);
+
     }
 
     public function store(Request $request)
     {
         $arrayActivities = $request->input("activities");
         $actividad = new Actividad([
-            'usuario'        => $request->input('usuario'),
-            'horario'        => $request->input('horario'),
+            'usuario_id'        => $request->input('usuario'),
+            'horario_id'        => $request->input('horario'),
             'fecha'          => $request->input('fecha'),
             'destinatarios'  => implode(",", $request->input('destinatarios')),
         ]);
@@ -45,6 +65,9 @@ class ActividadesController extends Controller
                 'h_fin' => $item['h_fin'],
                 'observacion' => $item['observacion'],
                 'estado' => $item['estado'] ? 1 : 0,
+                'verificada' => 0,
+                //'is_verified_by' => $item['is_verified_by'],
+
 
             ];
             $actividades = new Actividades($aux);
@@ -73,7 +96,14 @@ class ActividadesController extends Controller
 
     public function show($id)
     {
-        $actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->where('actividad.usuario', $id)->get()->toArray();
+        $actividad = Actividad::where('usuario_id',$id)->get()->toArray();
+        $arrayActividades = [];
+         foreach ($actividad as $item) {
+                //$actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->where('dia', $item['id'])->get()->toArray();
+                array_push($arrayActividades, $item['id']);
+            }
+            $actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->whereIn('dia', $arrayActividades)->get()->toArray();
+
 
         return ($actividades);
     }

@@ -5,12 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TipoIdentificacion extends Model
+class Area extends Model
 {
-    protected $table = 'tipo_identificacion';
+    use HasFactory;
+    protected $table = 'areas';
     protected $fillable = ['nombre',
-                            'estado'];
+                            'descripcion',
+                            'estado','is_deleted'];
     //public $timestamps = false;
     protected $guarded = [];
-    use HasFactory;
 }

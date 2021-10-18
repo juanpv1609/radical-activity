@@ -7,6 +7,11 @@ import Home from "../components/Home.vue";
 import AllUsuarios from "../components/usuario/AllUsuarios.vue";
 import Actividad from "../components/actividad/Actividad.vue";
 import ActividadNew from "../components/actividad/ActividadNew.vue";
+import AllAreas from "../components/area/AllAreas.vue";
+import Pais from "../components/pais/Pais.vue";
+import PerfilPuesto from "../components/perfilPuesto/PerfilPuesto.vue";
+import Horarios from "../components/horario/AllHorarios.vue";
+import TipoActividad from "../components/tipoActividad/AllTipoActividad.vue";
 //REPORTES
 
 import ReporteResumen from "../components/reportes/ReporteResumen.vue";
@@ -17,7 +22,7 @@ const router = new VueRouter({
         { path: "*", redirect: "/" },
         {
             name: "home",
-            path: "/home",
+            path: "/",
             component: Home,
             meta: {
                 requiresAuth: true
@@ -52,7 +57,7 @@ const router = new VueRouter({
             path: "/actividad",
             component: Actividad,
             meta: {
-                requiresAuth: true
+                requiresAuth: false
             }
         },
         {
@@ -60,8 +65,48 @@ const router = new VueRouter({
             path: "/actividad-new",
             component: ActividadNew,
             meta: {
+                requiresAuth: false
+            }
+        },
+        {
+            name: "areas",
+            path: "/areas",
+            component: AllAreas,
+            meta: {
                 requiresAuth: true
             }
+        },
+        {
+            name: "paises",
+            path: "/paises",
+            component: Pais,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            name: "perfil-puesto",
+            path: "/perfil-puesto",
+            component: PerfilPuesto,
+            meta: {
+                requiresAuth: true,
+            },
+        },
+        {
+            name: "horarios",
+            path: "/horarios",
+            component: Horarios,
+            meta: {
+                requiresAuth: true,
+            },
+        },
+        {
+            name: "tipo-actividad",
+            path: "/tipo-actividad",
+            component: TipoActividad,
+            meta: {
+                requiresAuth: true,
+            },
         },
         //REPORTES
 

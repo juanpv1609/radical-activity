@@ -15,14 +15,23 @@ class TipoActividadController extends Controller
      */
     public function index()
     {
-        $tipoActividad = TipoActividad::all()->toArray();
+        $cond=['is_deleted' =>0];
+
+        $tipoActividad = TipoActividad::where($cond)->get()->toArray();
 
         return ($tipoActividad);
     }
 
     public function store(Request $request)
     {
-        //
+        $tipoActividad = new TipoActividad([
+            'descripcion' => $request->input('descripcion'),
+            'estado' => $request->input('estado'),
+        ]);
+        $tipoActividad->save();
+
+        return response()->json('tipoActividad created!');
+
     }
 
     /**
@@ -33,13 +42,19 @@ class TipoActividadController extends Controller
      */
     public function show($id)
     {
-        //
+         $tipoActividad = TipoActividad::find($id);
+        return response()->json($tipoActividad);
+
     }
 
 
     public function update(Request $request, $id)
     {
-        //
+        $tipoActividad = TipoActividad::find($id);
+        $tipoActividad->update($request->all());
+
+        return response()->json('tipoActividad updated!');
+
     }
 
     /**
@@ -50,6 +65,12 @@ class TipoActividadController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $tipoActividad = TipoActividad::find($id);
+        $tipoActividad->is_deleted=1;
+        $tipoActividad->save();
+        //$area->delete();
+
+        return response()->json('tipoActividad deleted!');
+
     }
 }

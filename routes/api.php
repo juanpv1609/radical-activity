@@ -4,6 +4,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AreaController;
 use App\Http\Controllers\PaisController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ConfigController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\SendMailController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ActividadesController;
 use App\Http\Controllers\NivelEstudioController;
+use App\Http\Controllers\PerfilPuestoController;
 use App\Http\Controllers\TipoActividadController;
 use App\Http\Controllers\CertificacionesController;
 
@@ -46,6 +48,7 @@ Route::middleware('api')->group(function () {
     Route::post('logout', [LoginController::class,'logout']);
 
 
+    Route::resource('areas', AreaController::class);
 
     Route::resource('paises', PaisController::class);
     Route::resource('horarios', HorariosController::class);
@@ -54,20 +57,7 @@ Route::middleware('api')->group(function () {
     Route::resource('usuarios', UserController::class);
     Route::get('usuarios-all', [UserController::class,'indexAll']);
     Route::post('usuario-updatePassword', [UserController::class,'usuarioUpdatePassword']);
-
-
-    Route::get('tipo-identificacion', [ConfigController::class,'identificacion']);
-    Route::get('estado-tareas', [ConfigController::class,'estadoTareas']);
-    Route::get('tipo-tareas', [ConfigController::class,'tipoTareas']);
-    Route::get('estado-estudio', [ConfigController::class,'estadoEstudio']);
-
-    Route::resource('persona', PersonaController::class);
-    Route::get('persona-estudios/{id}', [PersonaController::class,'estudios']);
-    Route::resource('nivel-estudio', NivelEstudioController::class);
-    Route::get('get-nivel-estudio', [NivelEstudioController::class,'listarNiveles']);
-    Route::resource('certificaciones', CertificacionesController::class);
-    Route::resource('certificaciones', CertificacionesController::class);
-    Route::get('get-certificaciones', [CertificacionesController::class,'listarCertificaciones']);
+    Route::resource('perfil-puesto', PerfilPuestoController::class);
 
 
 // send mails
