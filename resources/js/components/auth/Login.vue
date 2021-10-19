@@ -117,7 +117,7 @@
             this.$store.dispatch("login", this.form).then(()=>{
                this.loading = false;
                 //this.$router.push({ path: this.redirect || "/contratos" }, () => { }, () => { });
-               this.$router.push({ name: 'tareas' }).then(()=>{
+               this.$router.push({ name: 'actividad' }).then(()=>{
                    this.$store.commit('SET_LAYOUT', 'main-layout')
                    }).catch(() => [])
 

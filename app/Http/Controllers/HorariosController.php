@@ -17,7 +17,7 @@ class HorariosController extends Controller
 
         $cond=['estado' => 1];
 
-        $horarios = Horario::where($cond)->get()->toArray();
+        $horarios = Horario::where($cond)->orderBy('nombre')->get()->toArray();
 
         return $horarios;
 

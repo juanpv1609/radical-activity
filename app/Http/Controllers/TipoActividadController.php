@@ -17,7 +17,7 @@ class TipoActividadController extends Controller
     {
         $cond=['is_deleted' =>0];
 
-        $tipoActividad = TipoActividad::where($cond)->get()->toArray();
+        $tipoActividad = TipoActividad::where($cond)->orderBy('descripcion')->get()->toArray();
 
         return ($tipoActividad);
     }

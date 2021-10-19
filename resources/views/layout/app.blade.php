@@ -6,11 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" value="{{ csrf_token() }}" />
 
-    <title>Activity</title>
+    <title>Control de Actividades</title>
 
     <link href="{{ mix('css/app.css') }}" type="text/css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
     <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+    <link rel="icon"
+      type="image/png"
+      href="{{ asset('/img/icon.png') }}">
   <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
 </head>
 

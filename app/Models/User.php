@@ -54,4 +54,10 @@ class User extends Authenticatable
     {
         return [];
     } */
+    public function rol(){
+    	return $this->belongsTo(Role::class, 'role', 'id');
+    }
+    public function puesto(){
+    	return $this->belongsTo(PerfilPuesto::class, 'cargo', 'id');
+    }
 }

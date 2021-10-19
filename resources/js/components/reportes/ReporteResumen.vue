@@ -7,7 +7,7 @@
 
             <v-card-text>
                 <v-form ref="form" v-model="valid">
-                    <v-row>
+                    <!-- <v-row>
                         <v-col cols="12" sm="4">
                             <v-menu
                                 v-model="menu"
@@ -46,7 +46,7 @@
                                 item-text="name"
                                 item-value="id"
                                 v-model="selectedUsuarios"
-                                label="Seleccione una o varios usuarios"
+                                label="Seleccione uno o varios usuarios"
                                 dense
                                 return-object
                             >
@@ -83,6 +83,18 @@
                                 >Generar Reporte</v-btn
                             >
                         </v-col>
+                    </v-row> -->
+                    <v-row align="center"
+                        justify="center">
+                        <v-col cols="12" class="m-auto">
+                            <v-img
+                                src="../img/building.png"
+                                alt="Logo"
+                                max-height="300px"
+                                max-width="600px"
+                            ></v-img>
+                        </v-col>
+
                     </v-row>
                 </v-form>
             </v-card-text>

@@ -37,6 +37,8 @@
                             no-action
                             :prepend-icon="item.icon"
                             color="orange darken-4"
+                            :disabled="($store.state.user.role==1 && item.isAdmin)"
+                            :title="($store.state.user.role==1 && item.isAdmin) ? 'Función no válida para su usuario':''"
                         >
                             <template v-slot:activator>
                                 <v-list-item-title>{{
@@ -84,8 +86,12 @@
                     </template>
 
                     <v-list dense>
-                        <v-subheader>{{ $store.state.user.name }}</v-subheader>
-                        <v-spacer></v-spacer>
+                        <v-list-item>
+                        <v-list-item-title>
+                            <v-icon small>mdi-account</v-icon>
+                            {{ $store.state.user.name }}</v-list-item-title>
+                        </v-list-item>
+                        <v-divider></v-divider>
                         <v-list-item-group>
                             <v-list-item
                                 @click="
@@ -147,14 +153,13 @@
                                 >
                             </v-card-title>
                             <v-card-text>
-                                <v-container>
                                     <v-alert
                                         v-if="has_error"
                                         color="red"
                                         type="error"
                                         >{{ error }}</v-alert
                                     >
-                                    <v-row>
+                                    <v-row dense>
                                         <v-col cols="12">
                                             <v-text-field
                                                 v-model="form.old_password"
@@ -164,8 +169,6 @@
                                                 :rules="[passwordRules2]"
                                             ></v-text-field>
                                         </v-col>
-                                    </v-row>
-                                    <v-row>
                                         <v-col cols="12">
                                             <v-text-field
                                                 v-model="form.new_password"
@@ -175,12 +178,10 @@
                                                 :rules="[passwordRules2]"
                                             ></v-text-field>
                                         </v-col>
-                                    </v-row>
-                                    <v-row>
                                         <v-col cols="12">
                                             <v-text-field
                                                 v-model="form.new_password2"
-                                                label="Repita la contraseña*"
+                                                label="Repita su nueva contraseña*"
                                                 required
                                                 type="password"
                                                 :rules="[
@@ -191,7 +192,6 @@
                                             ></v-text-field>
                                         </v-col>
                                     </v-row>
-                                </v-container>
                                 <small>*indicates required field</small>
                             </v-card-text>
                             <v-card-actions>
@@ -199,7 +199,7 @@
                                 <v-btn color="red" text @click="dialog = false">
                                     Cerrar
                                 </v-btn>
-                                <v-btn color="blue" text @click="updateClave">
+                                <v-btn color="blue"  @click="updateClave">
                                     Actualizar
                                 </v-btn>
                             </v-card-actions>
@@ -234,6 +234,7 @@ export default {
                     title: "Actividades",
                     link: "/actividad",
                     icon: "mdi-table-search"
+                    ,isAdmin:false
                 },
                 {
                     title: "Reportes",
@@ -245,10 +246,10 @@ export default {
                             link: "/reporte-resumen",
                             icon: "mdi-list"
                         },
-                    ]
+                    ],isAdmin:false
                 },
                 {
-                    title: "Configuracion",
+                    title: "Administrar",
                     icon: "mdi-cogs",
                     subLinks: [
                         {
@@ -263,7 +264,8 @@ export default {
                         { title: "Tipo Actividad", link: "/tipo-actividad", icon: "mdi-clock-check" },
 
 
-                    ]
+                    ],
+                    isAdmin:true
                 }
             ],
             right: null

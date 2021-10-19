@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-card elevation="2" :loading="loading">
-            <v-card-title>
+            <v-card-title class="m-a">
                 Registro de actividades
                 <v-spacer></v-spacer>
                 <v-col cols="3">
@@ -37,7 +37,7 @@
                     </template>
                 </v-col>
                 <v-col cols="3">
-                    <v-autocomplete
+                    <!-- <v-autocomplete
                         :items="horarios"
                         item-text="nombre"
                         item-value="id"
@@ -45,13 +45,25 @@
                         label="Horario"
                         dense
                         return-object
-                        :hint="
-                            horario.id
-                                ? horario.inicio + ' - ' + horario.fin
-                                : 'Seleccione un horario'
-                        "
+                        :hint="horario.id ? horario.inicio + ' - ' + horario.fin : 'Seleccione un horario'"
                         persistent-hint
-                    ></v-autocomplete>
+                    ></v-autocomplete> -->
+                    <v-select :items="horarios"
+                        v-model="horario"
+                            label="Horario"
+                        dense
+                        return-object
+                        :hint="horario.id ? horario.inicio + ' - ' + horario.fin : 'Seleccione un horario'"
+                        persistent-hint >
+                        <template slot="selection" slot-scope="data">
+                            <!-- HTML that describe how select should render selected items -->
+                            {{ data.item.nombre }}
+                        </template>
+                        <template slot="item" slot-scope="data">
+                            <!-- HTML that describe how select should render items when the select is open -->
+                            <strong>{{ data.item.nombre }}</strong> <v-spacer></v-spacer> <small>({{ data.item.inicio }} - {{ data.item.fin }})</small>
+                        </template>
+                    </v-select>
                 </v-col>
             </v-card-title>
 
@@ -147,6 +159,8 @@
                             persistent-hint
                             small-chips
                             deletable-chips
+                            :delimiters="[',']"
+                            @change="delimitActividades"
                             :disabled="!horario.id"
                         >
                         </v-combobox>
@@ -500,45 +514,16 @@ export default {
                 .then(response => {
                     this.Activity = {};
                     this.ActivityLine = [];
+                    this.$toasted.success(`Actividades registradas correctamente!`)
                     this.initialData();
                 })
                 .catch(err => console.log(err))
                 .finally(() => (this.loading = false));
         },
-        estudios(el) {
-            console.log(el);
-            this.loading = true;
-            this.titleFormEstudios = `${el.nombre} ${el.apellido}`;
-            this.foto = !(el.foto == null || el.foto == "")
-                ? "data:image/png;base64," + el.foto
-                : null;
-            //this.usuario.id = el.id;
-            this.axios.get(`/api/persona-estudios/${el.id}`).then(response => {
-                //this.personas = response.data;
-
-                this.persona_estudios = response.data;
-                console.log(this.persona_estudios);
-                this.dialogEstudios = true;
-                this.loading = false;
-            });
-        },
-        viewDocuments(el) {
-            //console.log(el.documentos);
-            var arrayDocumentos = el.documentos.split(",");
-            console.log(arrayDocumentos);
-            arrayDocumentos.forEach(element => {
-                window.open("data:image/png;base64," + element, "_blank");
-            });
-            //this.logo = (!(el.logo==null || el.logo=='')) ? "data:image/png;base64," + el.logo : null;
-        },
-        deletePerson(el) {
-            this.loading = true;
-            this.axios.delete(`/api/persona/${el.id}`).then(response => {
-                let i = this.personas.map(data => data.id).indexOf(el.id);
-                this.personas.splice(i, 1);
-                this.loading = false;
-            });
-        }
+        delimitActividades (v) {
+                const reducer = (a, e) => [...a, ...e.split(/[,]+/)]
+                this.modelDescripcion = [...new Set(v.reduce(reducer, []))]
+                },
     }
 };
 </script>

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\PaisController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\PersonaController;
@@ -58,6 +59,8 @@ Route::middleware('api')->group(function () {
     Route::get('usuarios-all', [UserController::class,'indexAll']);
     Route::post('usuario-updatePassword', [UserController::class,'usuarioUpdatePassword']);
     Route::resource('perfil-puesto', PerfilPuestoController::class);
+    Route::resource('roles', RoleController::class);
+
 
 
 // send mails

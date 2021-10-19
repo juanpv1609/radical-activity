@@ -17,14 +17,14 @@
                     ></v-text-field>
                 </v-col>
                 <v-btn
-                    fab
+
                     color="primary"
                     small
                     :to="{
                         name: 'actividad-new'
                     }"
                 >
-                    <v-icon>mdi-newspaper-plus</v-icon>
+                    <v-icon>mdi-plus</v-icon> NUEVA
                 </v-btn>
             </v-card-title>
 

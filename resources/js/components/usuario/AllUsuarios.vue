@@ -10,7 +10,21 @@
 
             >
             Usuarios
+
             </v-badge>
+            <v-spacer></v-spacer>
+          <v-col cols="auto">
+              <v-text-field
+              v-model="search"
+              append-icon="mdi-magnify"
+              label="Buscar"
+              single-line
+              hide-details
+              filled
+            rounded
+            dense
+          ></v-text-field>
+          </v-col>
                     <v-btn
                         class="mx-2"
                         fab
@@ -26,13 +40,6 @@
                 </v-card-title>
 
                 <v-card-text>
-                    <v-text-field
-                        v-model="search"
-                        append-icon="mdi-magnify"
-                        label="Search"
-                        single-line
-                        hide-details
-                    ></v-text-field>
                     <v-data-table
                         :headers="headers"
                         :items="usuarios"
@@ -40,10 +47,10 @@
                     >
                     <template v-slot:item="row">
                         <tr>
-                            <td>{{row.item.id}}</td>
                             <td>{{row.item.name}}</td>
                             <td>{{row.item.email}}</td>
-                            <td>{{(row.item.role==2) ? 'Administrador' : 'Consulta'}}</td>
+                            <td>{{row.item.rol.nombre}}</td>
+                            <td>{{row.item.puesto.descripcion}}</td>
                             <td>{{row.item.created_at}}</td>
                             <td>
                                 <v-btn  icon color="primary" @click="editUser(row.item)">
@@ -68,7 +75,6 @@
                                 <span class="headline">{{ titleForm }}</span>
                             </v-card-title>
                             <v-card-text>
-                                <v-container>
                                     <v-row>
                                         <v-col cols="12">
                                             <v-text-field
@@ -77,8 +83,6 @@
                                                 required
                                             ></v-text-field>
                                         </v-col>
-                                    </v-row>
-                                    <v-row>
                                         <v-col cols="12">
 
                                             <v-text-field
@@ -87,16 +91,41 @@
                                                 required
                                             ></v-text-field>
                                         </v-col>
-                                    </v-row>
-                                    <v-row>
                                         <v-col cols="12">
-                                            <v-select :items="roles" v-model="usuario.role"
-                                                label="Rol">
+
+                                            <v-select :items="roles"
+                                                v-model="role"
+                                                label="Rol"
+                                                dense
+                                                return-object >
+                                                <template slot="selection" slot-scope="data">
+                                                    <!-- HTML that describe how select should render selected items -->
+                                                    {{ data.item.nombre }}
+                                                </template>
+                                                <template slot="item" slot-scope="data">
+                                                    <!-- HTML that describe how select should render items when the select is open -->
+                                                    {{ data.item.nombre }}
+                                                     </template>
                                             </v-select>
                                         </v-col>
-                                    </v-row>
-                                    <v-row v-if="!update">
                                         <v-col cols="12">
+
+                                            <v-select :items="perfiles"
+                                                v-model="perfil"
+                                                label="Perfil Laboral"
+                                                dense
+                                                return-object >
+                                                <template slot="selection" slot-scope="data">
+                                                    <!-- HTML that describe how select should render selected items -->
+                                                    {{ data.item.descripcion }}
+                                                </template>
+                                                <template slot="item" slot-scope="data">
+                                                    <!-- HTML that describe how select should render items when the select is open -->
+                                                    {{ data.item.descripcion }}<v-spacer></v-spacer> <small>({{ data.item.area.nombre }})</small>
+                                                     </template>
+                                            </v-select>
+                                        </v-col>
+                                        <v-col cols="12" v-if="!update">
                                             <v-text-field
                                                 v-model="usuario.password"
                                                 label="Password*"
@@ -105,7 +134,6 @@
                                             ></v-text-field>
                                         </v-col>
                                     </v-row>
-                                </v-container>
                                 <small>*indicates required field</small>
                             </v-card-text>
                             <v-card-actions>
@@ -120,7 +148,7 @@
                                 <v-btn
                                     v-if="!update"
                                     color="primary"
-                                    text
+
                                     @click="createUser"
                                 >
                                     Guardar
@@ -128,7 +156,7 @@
                                 <v-btn
                                     v-else
                                     color="primary"
-                                    text
+
                                     @click="updateUser"
                                 >
                                     Actualizar
@@ -154,27 +182,18 @@ import moment from 'moment';
                 loading: true,
                 titleForm: null,
                 search: "",
-                
+
                 roles:[
-                    {
-                        value:1,
-                        text: 'Consulta'
-                    },
-                    {
-                        value:2,
-                        text: 'Adminstrador'
-                    }
                 ],
+                role:{},
+                perfiles:[
+                ],
+                perfil:{},
                 headers: [
-                {
-                    text: "Id",
-                    // align: 'start',
-                    // filterable: false,
-                    value: "id"
-                },
                 { text: "Nombre", value: "nombre" },
                 { text: "Email", value: "email" },
                 { text: "Rol", value: "role" },
+                { text: "Perfil Laboral", value: "role" },
                 { text: "Fecha creacion", value: "created_at" },
                 { text: "Acciones", value: "controls", sortable: false }
             ]
@@ -182,17 +201,34 @@ import moment from 'moment';
             }
         },
         created() {
-            this.axios
+            this.initialData();
+        },
+        methods: {
+            initialData(){
+                this.axios
                 .get('/api/usuarios-all')
                 .then(response => {
+                    console.log(response.data);
                     this.usuarios = response.data;
                     for (const item of this.usuarios) {
                         item.created_at=moment(item.created_at).format('DD/MM/YYYY hh:mm')
                     }
                     this.loading = false;
                 });
-        },
-        methods: {
+                this.axios
+                .get('/api/roles')
+                .then(response => {
+                    this.roles = response.data;
+
+                });
+                this.axios
+                .get('/api/perfil-puesto')
+                .then(response => {
+                    console.log(response.data);
+                    this.perfiles = response.data;
+
+                });
+            },
             addUser() {
 
                 this.titleForm = "Nuevo Usuario";
@@ -202,58 +238,50 @@ import moment from 'moment';
                 this.dialog = true;
             },
             editUser(el) {
-                console.log(el);
+
                 this.titleForm = "Editar Usuario";
                 this.update = true;
                 this.usuario.id = el.id;
                 this.usuario.name = el.name;
                 this.usuario.email = el.email;
-                this.usuario.role = el.role;
+                this.role = el.role;
+                this.perfil = el.cargo;
                 this.usuario.created_at = el.created_at;
                 this.dialog = true;
+
             },
             createUser() {
                 this.loading = true;
-                this.axios
+                this.usuario.role=this.role.id
+                this.usuario.cargo=this.perfil.id
+                console.log(this.usuario);
+                 this.axios
                     .post('/api/usuarios', this.usuario)
                     .then(response => {
                         this.dialog = false;
                         this.loading = false;
-                        this.axios
-                            .get('/api/usuarios-all')
-                            .then(response => {
-                                this.usuarios = response.data;
-                                for (const item of this.usuarios) {
-                                    item.created_at=moment(item.created_at).format('DD/MM/YYYY hh:mm')
-                                }
-
-                            });
+                        this.initialData();
                          })
                     .catch(err => console.log(err))
                     .finally(() => this.loading = false)
             },
             updateUser() {
                 this.loading = true;
+                this.usuario.role=this.role.id
+                this.usuario.cargo=this.perfil.id
                 this.axios
                     .patch(`/api/usuarios/${this.usuario.id}`, this.usuario)
                     .then((res) => {
                         this.dialog = false;
                         this.loading = false;
-                        this.axios
-                            .get('/api/usuarios-all')
-                            .then(response => {
-                                this.usuarios = response.data;
-                                for (const item of this.usuarios) {
-                                    item.created_at=moment(item.created_at).format('DD/MM/YYYY hh:mm')
-                                }
-                            });
+                        this.initialData();
                     });
             },
             deleteUser(el) {
                 this.loading = true;
                 this.axios
                     .delete(`/api/usuarios/${el.id}`)
-                    .then(response => {
+                    .then(() => {
                         let i = this.usuarios.map(data => data.id).indexOf(el.id);
                         this.usuarios.splice(i, 1);
                         this.loading = false;
