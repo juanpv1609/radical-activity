@@ -321,7 +321,7 @@
                         </v-snackbar>
                     </v-col>
                 </v-row>
-                <v-row v-if="ActivityLine.length > 0">
+                <!-- <v-row v-if="ActivityLine.length > 0">
                     <v-col cols="12" sm="3">
                         <v-switch
                             v-model="enviar"
@@ -351,7 +351,7 @@
                         >
                         </v-combobox>
                     </v-col>
-                </v-row>
+                </v-row> -->
             </v-card-text>
 
             <v-card-actions v-if="ActivityLine.length > 0">
