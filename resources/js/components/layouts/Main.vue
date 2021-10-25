@@ -84,34 +84,38 @@
                             <v-icon>mdi-dots-vertical</v-icon>
                         </v-btn>
                     </template>
-
                     <v-list dense>
                         <v-list-item>
-                        <v-list-item-title>
-                            <v-icon small>mdi-account</v-icon>
-                            {{ $store.state.user.name }}</v-list-item-title>
+                            <v-list-item-avatar>
+                                <v-icon x-large>mdi-account-circle</v-icon>
+                                </v-list-item-avatar>
+                            <v-list-item-content>
+                            <v-list-item-title>
+                            {{ $store.state.user.name }}
+                            </v-list-item-title>
+                            <v-list-item-subtitle>
+                                {{ $store.state.user.email }} <br>
+                                {{ $store.state.user.rol.nombre }} <br>
+                                {{ $store.state.user.puesto.descripcion }} ({{ $store.state.user.puesto.area.nombre }})
+
+                            </v-list-item-subtitle>
+                            </v-list-item-content>
+
                         </v-list-item>
-                        <v-divider></v-divider>
-                        <v-list-item-group>
-                            <v-list-item
-                                @click="
-                                    dialog = true;
-                                    form = {};
-                                "
-                            >
-                                <v-list-item-title>
-                                    <v-icon small>mdi-lock</v-icon>
-                                    Cambiar contraseña
-                                </v-list-item-title>
-                            </v-list-item>
-                            <v-list-item @click="logout">
-                                <v-list-item-title>
-                                    <v-icon small>mdi-logout</v-icon>
-                                    Salir
-                                </v-list-item-title>
-                            </v-list-item>
-                        </v-list-item-group>
+                        <v-list-item>
+                            <v-btn block small @click=" dialog = true;form = {};" text link color="primary">
+                                   <v-icon small>mdi-key</v-icon> Cambiar contraseña</v-btn>
+                        </v-list-item>
+                        <v-list-item>
+                                    <v-btn block small @click="logout" text color="red"><v-icon small>mdi-logout</v-icon>
+                                    Salir</v-btn>
+                        </v-list-item>
+
+
+
                     </v-list>
+
+
                 </v-menu>
             </v-app-bar>
 

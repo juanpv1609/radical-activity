@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\PerfilPuesto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -11,18 +12,51 @@ class UserController extends Controller
     public function index()
     {
         $cond=[ 'is_deleted' => 0];
-         $usuarios = User::with('rol','puesto')->where($cond)->orderBy('name')->get()->toArray();
+         $usuarios = User::with('rol','puesto.area')->where($cond)->orderBy('name')->get()->toArray();
 
         return ($usuarios);
 
     }
-    public function indexAll()
+    public function getUser()
     {
-        $cond=['is_deleted' => 0];
+        $cond=[ 'id' => auth()->user()->id];
+         $usuario = User::with('rol','puesto.area')->where($cond)->first();
 
-        $usuarios = User::with('rol','puesto')->where($cond)->orderBy('name')->get()->toArray();
+        return ($usuario);
+
+    }
+    public function indexAll() //reportes
+    {
+        $cond=[
+            ['is_deleted','==', 0],
+                ['id','!=',19]
+            ];
+
+        $usuarios = User::with('rol','puesto.area')->where($cond)->orderBy('name')->get()->toArray();
 
         return ($usuarios);
+
+    }
+    public function indexByArea($area) //reportes
+    {
+        $cond=[ 'area_id' => $area];
+
+        $perfiles = PerfilPuesto::where($cond)->get()->toArray();
+        $arrayPerfiles=[];
+
+        foreach ($perfiles as $item) {
+            array_push($arrayPerfiles, $item['id']);
+        }
+            //dd($perfil['id']);
+            $cond=[
+            ['is_deleted','==', 0],
+                ['id','!=',19],
+            ];
+
+            $usuarios = User::with('rol','puesto.area')->where($cond)->whereIn('cargo',$arrayPerfiles)->orderBy('name')->get()->toArray();
+
+
+        return($usuarios);
 
     }
     public function store(Request $request)

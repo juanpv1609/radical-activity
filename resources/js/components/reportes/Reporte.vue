@@ -2,15 +2,13 @@
     <div>
         <v-card elevation="2" :loading="loading">
             <v-card-title class="d-flex justify-space-between mb-6"
-                >Resumen General
+                >Resumen Contable
             </v-card-title>
 
             <v-card-text>
                 <v-form ref="form" v-model="valid">
                      <v-row>
-                        <v-col cols="12" sm="3">
-                            <v-row>
-                                <v-col cols="12">
+                        <v-col cols="12" sm="2">
                                      <v-menu
                                         v-model="menu"
                                         :close-on-content-click="false"
@@ -29,7 +27,7 @@
                                                 v-on="on"
                                                 filled
                                                 rounded
-
+                                                dense
                                                 single-line
                                                 hide-details
                                             ></v-text-field>
@@ -37,22 +35,21 @@
                                         <v-date-picker v-model="dates" range>
                                         </v-date-picker>
                                     </v-menu>
-                                </v-col>
-                                 <v-col cols="12" >
-                            <v-btn
-                                block
-                                color="primary"
-                                :loading="loadingUpload"
-                                dark
-                                :disabled="selectedUsuarios.length==0"
-                                @click="generarReporte"
-                                >Generar Reporte</v-btn
-                            >
-                        </v-col>
-                            </v-row>
+
 
                         </v-col>
-                        <v-col cols="12" sm="9">
+                        <v-col cols="12" sm="2">
+                            <v-autocomplete
+                                :items="areas"
+                                item-text="nombre"
+                                item-value="id"
+                                v-model="area"
+                                label="Seleccione un area"
+                                return-object
+                                @change="getUsers"
+                            ></v-autocomplete>
+                        </v-col>
+                        <v-col cols="12" sm="6">
                             <v-autocomplete
                                 deletable-chips
                                 multiple
@@ -63,7 +60,7 @@
                                 item-value="id"
                                 v-model="selectedUsuarios"
                                 label="Seleccione uno o varios usuarios"
-
+                                dense
                                 :disabled="dates.length<=1"
                                 return-object
 
@@ -85,6 +82,17 @@
                                     <v-divider class="mt-2"></v-divider>
                                 </template>
                             </v-autocomplete>
+                        </v-col>
+                         <v-col cols="12" sm="2">
+                            <v-btn
+                                block
+                                color="primary"
+                                :loading="loadingUpload"
+                                dark
+                                :disabled="selectedUsuarios.length==0"
+                                @click="generarReporte"
+                                >Generar Reporte</v-btn
+                            >
                         </v-col>
 
                     </v-row>
@@ -119,7 +127,12 @@ export default {
             idUsuarios: [],
             selectedUsuarios: [],
             dateRules: [v => !!v || "Date range is required"],
-            dataReport:{}
+            dataReport:{},
+            areas : [],
+            area:{},
+            selectedAreas:[],
+            idAreas: [],
+
         };
     },
     computed: {
@@ -152,12 +165,17 @@ export default {
             });
         },
         initialData() {
-            const query =
-            ((this.$store.state.user.role == 2)//ADMIN
-            || (this.$store.state.user.role == 3)) //SUPERVISOR
-                ? `usuarios-all`
-                : `user`;
-            this.axios.get(`/api/${query}`).then(response => {
+            this.axios.get("/api/areas/").then(response => {
+                this.areas = response.data;
+
+            });
+
+        },
+        getUsers(){
+
+
+
+            this.axios.get(`/api/usuarios-area/${this.area.id}`).then(response => {
                 this.usuarios = response.data;
                 console.log(this.usuarios);
 

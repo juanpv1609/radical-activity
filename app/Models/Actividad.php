@@ -12,6 +12,8 @@ class Actividad extends Model
     protected $fillable = ['usuario_id',
                             'horario_id',
                             'fecha',
+                            'horas_p',
+                            'horas_np',
                             'destinatarios',
                             ];
     public $timestamps = false;

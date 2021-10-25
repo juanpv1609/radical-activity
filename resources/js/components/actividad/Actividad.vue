@@ -109,14 +109,10 @@ export default {
         return {
             firstLoad: true,
             actividades: [],
-            persona_estudios: [],
-            dialogEstudios: false,
             update: false,
             persona: {},
             loading: true,
-            titleFormEstudios: null,
             search: "",
-            searchEstudios: "",
             valid: true,
             headers: [
                 {
@@ -181,23 +177,7 @@ export default {
     },
     methods: {
 
-        estudios(el) {
-            console.log(el);
-            this.loading = true;
-            this.titleFormEstudios = `${el.nombre} ${el.apellido}`;
-            this.foto = !(el.foto == null || el.foto == "")
-                ? "data:image/png;base64," + el.foto
-                : null;
-            //this.usuario.id = el.id;
-            this.axios.get(`/api/persona-estudios/${el.id}`).then(response => {
-                //this.personas = response.data;
 
-                this.persona_estudios = response.data;
-                console.log(this.persona_estudios);
-                this.dialogEstudios = true;
-                this.loading = false;
-            });
-        },
         viewDocuments(el) {
             //console.log(el.documentos);
             var arrayDocumentos = el.documentos.split(",");

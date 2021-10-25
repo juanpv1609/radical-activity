@@ -14,10 +14,21 @@ class HorariosController extends Controller
      */
     public function index()
     {
+        if (auth()->user()->role==1) { //estandar
+            $cond=['estado' => 1,
+                        'perfil_puesto' => auth()->user()->cargo];
 
-        $cond=['estado' => 1];
+        }else if (auth()->user()->role==2){ //admin
+            $cond=['estado' => 1];
 
-        $horarios = Horario::where($cond)->orderBy('nombre')->get()->toArray();
+        }else if (auth()->user()->role==3){ //supervisor
+            $cond=['estado' => 1,
+                'perfil_puesto' => 3];
+
+        }
+
+
+        $horarios = Horario::with('cargo')->where($cond)->orderBy('nombre')->get()->toArray();
 
         return $horarios;
 
@@ -30,6 +41,7 @@ class HorariosController extends Controller
             'descripcion' => $request->input('descripcion'),
             'inicio' => $request->input('inicio'),
             'fin' => $request->input('fin'),
+            'perfil_puesto' => $request->input('perfil_puesto'),
             'estado' => 1,
         ]);
         $horario->save();

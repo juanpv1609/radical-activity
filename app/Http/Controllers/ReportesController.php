@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use PDF;
+use App\Models\User;
 use App\Models\Persona;
+use App\Models\Actividad;
+use App\Models\Actividades;
 use Illuminate\Http\Request;
 use App\Models\PersonaEstudio;
 use App\Models\Certificaciones;
@@ -48,15 +51,7 @@ class ReportesController extends Controller
                 'personas' => $personas
             );
             array_push($dataCertificaciones,$auxCertificaciones);
-            //array_push($dataCertificaciones['certificacion'], $personas);
-
-            //$dataCertificaciones['certificacion']= $personas;
         }
-        //$dataCertificaciones['total_personas'] = $total_personas;
-        //$dataCertificaciones = $aux;
-        //dd($dataCertificaciones);
-
-
 
         $pdf = App::make('dompdf.wrapper');
 
@@ -65,6 +60,44 @@ class ReportesController extends Controller
         $pdf->getDomPDF()->set_option('isRemoteEnabled', true);
         $pdf->loadView('pdf.certificaciones', compact('dataCertificaciones'));
         return $pdf->download('reporteCertificaciones.pdf');
+    }
+    public function reporteActividades($inicio,$fin,$users)
+    {
+        //dd($usuarios);
+        $inicio = $inicio;
+        $fin = $fin;
+        $usuarios = explode(",", $users);
+        //dd($request);
+        $personas=[];
+        $aux=[];
+
+        $persona=[];
+        $personas['inicio'] = $inicio;
+        $personas['fin'] = $fin;
+
+        foreach ($usuarios as $user) {
+            $usuario = User::find($user);
+            $actividad = Actividad::where('usuario_id', $usuario->id)->whereBetween('fecha',[$inicio,$fin])->get()->toArray();
+            $arrayActividades = [];
+            $persona['usuario'] = $usuario->name;
+            foreach ($actividad as $item) {
+                //$actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->where('dia', $item['id'])->get()->toArray();
+                array_push($arrayActividades, $item['id']);
+            }
+                $actividades = Actividades::with( 'tipo', 'status','actividad')->whereIn('dia', $arrayActividades)->get()->toArray();
+                $persona['actividades'] = $actividades;
+                array_push($aux,$persona);
+        }
+        $personas['usuarios'] = $aux;
+
+        //dd($personas);
+        $pdf = App::make('dompdf.wrapper');
+
+        $pdf->getDomPDF()->set_option("enable_php", true);
+        $pdf->getDomPDF()->set_option('isHtml5ParserEnabled', true);
+        $pdf->getDomPDF()->set_option('isRemoteEnabled', true);
+        $pdf->loadView('pdf.actividades', compact('personas'));
+        return $pdf->download('reporteActividades_'.$inicio.'_'.$fin.'.pdf');
     }
     public function reportePersona($id)
     {

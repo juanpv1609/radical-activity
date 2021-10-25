@@ -47,13 +47,17 @@ class ActividadesController extends Controller
     public function store(Request $request)
     {
         $arrayActivities = $request->input("activities");
+        //dd($arrayActivities);
         $actividad = new Actividad([
             'usuario_id'        => $request->input('usuario'),
             'horario_id'        => $request->input('horario'),
             'fecha'          => $request->input('fecha'),
-            'destinatarios'  => implode(",", $request->input('destinatarios')),
+            'destinatarios'  => (count($request->input('destinatarios'))>0) ? implode(",", $request->input('destinatarios')) : null,
         ]);
         $actividad->save();
+        $horas_p=0.0;
+        $horas_np=0.0;
+
         $listaActividades = [];
         foreach ($arrayActivities as $item) {
             $aux = [
@@ -64,7 +68,7 @@ class ActividadesController extends Controller
                 'h_inicio' => $item['h_inicio'],
                 'h_fin' => $item['h_fin'],
                 'observacion' => $item['observacion'],
-                'estado' => $item['estado'] ? 1 : 0,
+                'estado' => ($item['estado']==true) ? 1 : 2,
                 'verificada' => 0,
                 //'is_verified_by' => $item['is_verified_by'],
 

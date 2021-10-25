@@ -50,7 +50,7 @@
                             <td>{{row.item.name}}</td>
                             <td>{{row.item.email}}</td>
                             <td>{{row.item.rol.nombre}}</td>
-                            <td>{{row.item.puesto.descripcion}}</td>
+                            <td>{{row.item.puesto.descripcion}} ({{row.item.puesto.area.nombre}})</td>
                             <td>{{row.item.created_at}}</td>
                             <td>
                                 <v-btn  icon color="primary" @click="editUser(row.item)">
@@ -206,7 +206,7 @@ import moment from 'moment';
         methods: {
             initialData(){
                 this.axios
-                .get('/api/usuarios-all')
+                .get('/api/usuarios')
                 .then(response => {
                     console.log(response.data);
                     this.usuarios = response.data;

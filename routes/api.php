@@ -41,9 +41,10 @@ use App\Http\Controllers\CertificacionesController;
 // });
 
 Route::middleware('api')->group(function () {
-    Route::get('user', function (Request $request) {
+    /* Route::get('user', function (Request $request) {
         return $request->user();
-    });
+    }); */
+    Route::get('user', [UserController::class,'getUser']);
 
     Route::post('login', [LoginController::class,'login']);
     Route::post('logout', [LoginController::class,'logout']);
@@ -57,6 +58,8 @@ Route::middleware('api')->group(function () {
     Route::resource('tipo-actividad', TipoActividadController::class);
     Route::resource('usuarios', UserController::class);
     Route::get('usuarios-all', [UserController::class,'indexAll']);
+    Route::get('usuarios-area/{area}', [UserController::class,'indexByArea']);
+
     Route::post('usuario-updatePassword', [UserController::class,'usuarioUpdatePassword']);
     Route::resource('perfil-puesto', PerfilPuestoController::class);
     Route::resource('roles', RoleController::class);
@@ -69,6 +72,8 @@ Route::middleware('api')->group(function () {
 
     Route::get('reporte-certificaciones/{certificaciones}', [ReportesController::class, 'reporteCertificaciones']);
     Route::get('reporte-persona/{persona}', [ReportesController::class, 'reportePersona']);
+    Route::get('reporte-actividades/{inicio}/{fin}/{usuarios}', [ReportesController::class, 'reporteActividades']);
+
 
 
 });

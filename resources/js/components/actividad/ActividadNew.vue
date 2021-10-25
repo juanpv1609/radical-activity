@@ -2,7 +2,7 @@
     <div>
         <v-card elevation="2" :loading="loading">
             <v-card-title class="m-a">
-                Registro de actividades
+                Registro de actividades - {{ $store.state.user.name }}
                 <v-spacer></v-spacer>
                 <v-col cols="3">
                     <template>
@@ -54,6 +54,7 @@
                         dense
                         return-object
                         :hint="horario.id ? horario.inicio + ' - ' + horario.fin : 'Seleccione un horario'"
+                        @change="setHorario()"
                         persistent-hint >
                         <template slot="selection" slot-scope="data">
                             <!-- HTML that describe how select should render selected items -->
@@ -70,6 +71,7 @@
             <v-card-text>
                 <v-row>
                     <v-col cols="12" sm="1">
+                        <!-- <vue-timepicker format="HH:mm" :hour-range="hourRange"></vue-timepicker> -->
                         <v-menu
                             ref="inicio"
                             v-model="menu1"
@@ -95,8 +97,10 @@
                                 v-if="menu1"
                                 v-model="start"
                                 full-width
-                                :min="horario.inicio"
-                                :max="horario.fin"
+                                color="green lighten-1"
+                                :min="minimo"
+                                :max="maximo"
+                                :allowed-hours="(horario.id==3)? allowedHours:null"
                                 format="24hr"
                                 :allowed-minutes="allowedStep"
                                 @click:minute="$refs.inicio.save(start)"
@@ -130,7 +134,7 @@
                                 v-model="end"
                                 full-width
                                 :min="start"
-                                :max="horario.fin"
+                                :max="maximo"
                                 format="24hr"
                                 :allowed-minutes="allowedStep"
                                 @click:minute="$refs.fin.save(end)"
@@ -145,7 +149,7 @@
                             v-model="tipoActividad"
                             label="Tipo de Actividad"
                             return-object
-                            :disabled="!horario.id"
+                            :disabled="(!start || !end)"
                         ></v-autocomplete>
                     </v-col>
                     <v-col cols="12" sm="6">
@@ -161,7 +165,7 @@
                             deletable-chips
                             :delimiters="[',']"
                             @change="delimitActividades"
-                            :disabled="!horario.id"
+                            :disabled="!tipoActividad"
                         >
                         </v-combobox>
                     </v-col>
@@ -172,7 +176,7 @@
                             block
                             large
                             @click="addActivityLine"
-                            :disabled="modelDescripcion.length == 0"
+                            :disabled="(modelDescripcion.length == 0)"
                         >
                             agregar
                         </v-btn>
@@ -181,7 +185,7 @@
                 <v-divider></v-divider>
                 <v-row v-if="ActivityLine.length > 0">
                     <v-col cols="12">
-                        <v-data-table :headers="headers" :items="ActivityLine">
+                        <v-data-table :headers="headers" :items="ActivityLine" dense>
                             <template v-slot:item="row">
                                 <tr>
                                     <!-- <td>{{ row.item.fecha }}</td> -->
@@ -357,7 +361,7 @@
             <v-card-actions v-if="ActivityLine.length > 0">
                 <v-spacer></v-spacer>
                 <v-btn block color="primary" @click="enviarActividades"
-                    >enviar</v-btn
+                    >enviar {{ActivityLine.length}} actividades</v-btn
                 >
             </v-card-actions>
         </v-card>
@@ -374,6 +378,8 @@ export default {
             menu1: false,
             menu2: false,
             fechaHoy: null,
+            minimo:null,
+            maximo:null,
 
             enviar: false,
             //////
@@ -412,7 +418,8 @@ export default {
             ],
             foto: null,
             ActivityLine: [],
-            Activity: {}
+            Activity: {},
+            hourRange:[]
         };
     },
     watch: {
@@ -468,11 +475,25 @@ export default {
             });
             this.axios.get(`/api/tipo-actividad`).then(response => {
                 this.tipoActividades = response.data;
-                console.log(this.horarios);
             });
         },
         setFecha(fechaHoy) {
             this.$refs.dialog.save(fechaHoy);
+        },
+        allowedHours: v => !(v >= (7) && v <= (22)),
+        setHorario(){
+            console.log(this.horario)
+            if (this.horario.id==3) {
+            this.minimo=null;
+            this.maximo=null;
+            this.start='22:00';
+
+            }else{
+            this.minimo=this.horario.inicio;
+            this.start=this.minimo;
+            this.maximo=this.horario.fin;
+            }
+
         },
         addActivityLine() {
             var activityLine = {};
@@ -488,6 +509,7 @@ export default {
             activityLine.estado = true;
             this.ActivityLine.push(activityLine);
             this.start = this.end;
+            //this.tipoActividad.id=null;
             this.end = null;
             this.descripcion = null;
             this.modelDescripcion = [];
@@ -504,12 +526,13 @@ export default {
             this.Activity.horario = this.horario.id;
             this.Activity.fecha = this.fechaHoy;
             this.Activity.enviaMail = this.enviar;
+            //this.Activity.enviaMail = this.enviar;
             this.Activity.destinatarios = this.modelDestinatarios;
             //this.Activity.colaboradores = this.modelColaboradores;
             this.Activity.activities = this.ActivityLine;
 
             console.log(this.Activity);
-            this.axios
+             this.axios
                 .post("/api/actividades", this.Activity)
                 .then(response => {
                     this.Activity = {};

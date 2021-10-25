@@ -15,6 +15,7 @@ import TipoActividad from "../components/tipoActividad/AllTipoActividad.vue";
 //REPORTES
 
 import ReporteResumen from "../components/reportes/ReporteResumen.vue";
+import Reporte from "../components/reportes/Reporte.vue";
 
 const router = new VueRouter({
     mode: "history",
@@ -57,7 +58,7 @@ const router = new VueRouter({
             path: "/actividad",
             component: Actividad,
             meta: {
-                requiresAuth: false
+                requiresAuth: true
             }
         },
         {
@@ -65,7 +66,7 @@ const router = new VueRouter({
             path: "/actividad-new",
             component: ActividadNew,
             meta: {
-                requiresAuth: false
+                requiresAuth: true
             }
         },
         {
@@ -115,7 +116,15 @@ const router = new VueRouter({
             path: "/reporte-resumen",
             component: ReporteResumen,
             meta: {
-                requiresAuth: false
+                requiresAuth: true
+            }
+        },
+        {
+            name: "reporte",
+            path: "/reporte",
+            component: Reporte,
+            meta: {
+                requiresAuth: true
             }
         }
     ]
