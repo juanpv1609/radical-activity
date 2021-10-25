@@ -136,6 +136,7 @@
                                 :min="start"
                                 :max="maximo"
                                 format="24hr"
+                                :allowed-hours="(horario.id==3)? allowedHours:null"
                                 :allowed-minutes="allowedStep"
                                 @click:minute="$refs.fin.save(end)"
                             ></v-time-picker>
