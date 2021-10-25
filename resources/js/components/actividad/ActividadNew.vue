@@ -4,7 +4,7 @@
             <v-card-title class="m-a">
                 Registro de actividades - {{ $store.state.user.name }}
                 <v-spacer></v-spacer>
-                <v-col cols="3">
+                <v-col cols="2">
                     <template>
                         <v-dialog
                             ref="dialog"
@@ -133,7 +133,7 @@
                                 v-if="menu2"
                                 v-model="end"
                                 full-width
-                                :min="start"
+                                :min="minimo"
                                 :max="maximo"
                                 format="24hr"
                                 :allowed-hours="(horario.id==3)? allowedHours:null"
@@ -481,10 +481,10 @@ export default {
         setFecha(fechaHoy) {
             this.$refs.dialog.save(fechaHoy);
         },
-        allowedHours: v => !(v >= (7) && v <= (22)),
+        allowedHours: v => !(v >= 7 && v <= 21),
         setHorario(){
             console.log(this.horario)
-            if (this.horario.id==3) {
+             if (this.horario.id==3) {
             this.minimo=null;
             this.maximo=null;
             this.start='22:00';
