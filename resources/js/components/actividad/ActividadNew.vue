@@ -23,6 +23,7 @@
                                     v-on="on"
                                     dense
                                     filed
+                                    
                                 ></v-text-field>
                             </template>
                             <v-date-picker

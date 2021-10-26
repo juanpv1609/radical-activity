@@ -61,6 +61,38 @@ class ReportesController extends Controller
         $pdf->loadView('pdf.certificaciones', compact('dataCertificaciones'));
         return $pdf->download('reporteCertificaciones.pdf');
     }
+    public function reporteActividadesContable($inicio,$fin,$users)
+    {
+        //dd($usuarios);
+        $inicio = $inicio;
+        $fin = $fin;
+        $usuarios = explode(",", $users);
+        //dd($request);
+        $personas=[];
+        $aux=[];
+
+        $persona=[];
+        $personas['inicio'] = $inicio;
+        $personas['fin'] = $fin;
+
+        foreach ($usuarios as $user) {
+            $usuario = User::find($user);
+            $actividad = Actividad::with('usuario','horario')->where('usuario_id', $usuario->id)->whereBetween('fecha',[$inicio,$fin])->get()->toArray();
+        //     $arrayActividades = [];
+        //     $persona['usuario'] = $usuario->name;
+        //     foreach ($actividad as $item) {
+        //         //$actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->where('dia', $item['id'])->get()->toArray();
+        //         array_push($arrayActividades, $item['id']);
+        //     }
+        //         $actividades = Actividades::with( 'tipo', 'status','actividad')->whereIn('dia', $arrayActividades)->get()->toArray();
+        //         $persona['actividades'] = $actividades;
+        //         array_push($aux,$persona);
+        }
+        // $personas['usuarios'] = $aux;
+
+
+        return $actividad;
+    }
     public function reporteActividades($inicio,$fin,$users)
     {
         //dd($usuarios);

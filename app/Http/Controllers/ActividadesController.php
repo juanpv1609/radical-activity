@@ -57,6 +57,9 @@ class ActividadesController extends Controller
         $actividad->save();
         $horas_p=0.0;
         $horas_np=0.0;
+        $array_horas_inicio=[];
+        $array_horas_fin=[];
+
 
         $listaActividades = [];
         foreach ($arrayActivities as $item) {
@@ -74,6 +77,9 @@ class ActividadesController extends Controller
 
 
             ];
+            array_push($array_horas_inicio,$item['h_inicio']);
+            array_push($array_horas_fin, $item['h_fin']);
+
             $actividades = new Actividades($aux);
             $actividades->save();
             array_push($listaActividades, $aux);

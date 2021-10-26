@@ -8,7 +8,7 @@
             <v-card-text>
                 <v-form ref="form" v-model="valid">
                      <v-row>
-                        <v-col cols="12" sm="2">
+                        <v-col cols="12" sm="3">
                                      <v-menu
                                         v-model="menu"
                                         :close-on-content-click="false"
@@ -46,10 +46,14 @@
                                 v-model="area"
                                 label="Seleccione un area"
                                 return-object
+                                rounded
+                                filled
+                                dense
+                                single-line
                                 @change="getUsers"
                             ></v-autocomplete>
                         </v-col>
-                        <v-col cols="12" sm="6">
+                        <v-col cols="12" sm="5">
                             <v-autocomplete
                                 deletable-chips
                                 multiple
@@ -61,6 +65,9 @@
                                 v-model="selectedUsuarios"
                                 label="Seleccione uno o varios usuarios"
                                 dense
+                                single-line
+                                rounded
+                                filled
                                 :disabled="dates.length<=1"
                                 return-object
 
@@ -90,7 +97,7 @@
                                 :loading="loadingUpload"
                                 dark
                                 :disabled="selectedUsuarios.length==0"
-                                @click="generarReporte"
+                                @click="getActividades"
                                 >Generar Reporte</v-btn
                             >
                         </v-col>
@@ -108,6 +115,22 @@
                         </v-col>
 
                     </v-row> -->
+                    <v-row>
+                        <v-col cols="12">
+                            <v-data-table
+                            :headers="headers"
+                            :items="actividades"
+                            :search="search"
+                        >
+                             <template v-slot:item="row">
+                                <tr>
+                                    <td>{{ row.item.usuario.name }}</td>
+                                    <td>{{ row.item.horas_p }}</td>
+                                </tr>
+                            </template>
+                        </v-data-table>
+                        </v-col>
+                    </v-row>
                 </v-form>
             </v-card-text>
         </v-card>
@@ -115,6 +138,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
     data() {
         return {
@@ -123,6 +147,9 @@ export default {
             dates: [],
             valid: true,
             menu: false,
+            firstLoad: true,
+             actividades: [],
+             search: "",
             usuarios: [],
             idUsuarios: [],
             selectedUsuarios: [],
@@ -132,6 +159,8 @@ export default {
             area:{},
             selectedAreas:[],
             idAreas: [],
+            headers:[],
+            personas:[]
 
         };
     },
@@ -181,6 +210,56 @@ export default {
 
                 this.loading = false;
             });
+        },
+        async getActividades() {
+            this.loading = true;
+            this.loadingUpload = true;
+            let url;
+            this.idUsuarios = [];
+            this.headers=[];
+            this.selectedUsuarios.forEach(element => {
+                this.idUsuarios.push(element.id)
+                    });
+            var fechaInicio=this.dates[0];
+            var fechaFin=this.dates[1];
+            this.headers.push({text:'Usuario',value:'usuario'})
+            //this.headers.push({text:moment(fechaInicio).format("ddd, D MMM"),value:moment(fechaInicio).format("ddd, D MMM")})
+
+            while (moment(fechaInicio).isSameOrBefore(moment(fechaFin))) {
+                var auxFecha=moment(fechaInicio).format("ddd, D MMM");
+                this.headers.push({text:auxFecha,value:auxFecha})
+                fechaInicio=moment(fechaInicio).add(1,'days');
+
+            }
+              await this.axios
+                .get(`/api/reporte-actividades-contable/${this.dates[0]}/${this.dates[1]}/${this.idUsuarios}`)
+                .then(response => {
+                    //this.headers.push({text:'Usuario',value:'usuario'})
+
+                    //console.log(response.data);
+                        this.actividades=response.data;
+                        var horas=[];
+                    this.actividades.forEach(element => {
+                        horas.push(element.horas_p)
+
+                        element.usuario.horas=element.horas_p;
+                        //this.headers.push({text:moment(element.fecha).format("ddd, D MMM"),value:element.fecha})
+                        const hora = parseInt((element.horas_p).substr(0, 2))
+                        console.log(hora);
+                    });
+                    //this.personas.usuario=
+                    console.log(this.actividades);
+                    this.headers.push({text:'TOTAL',value:'total'})
+
+
+                })
+                .catch(error => console.log(error));
+
+            this.loading = false;
+            this.loadingUpload = false;
+            //this.dates = [];
+            //this.selectedUsuarios=[];
+            this.valid = true;
         },
         async generarReporte() {
             this.loading = true;
