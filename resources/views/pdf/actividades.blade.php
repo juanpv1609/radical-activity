@@ -18,7 +18,7 @@ table.paleBlueRows td, table.paleBlueRows th {
   padding: 3px 2px;
 }
 table.paleBlueRows tbody td {
-  font-size: 11px;
+  font-size: 10px;
 }
 table.paleBlueRows tr:nth-child(even) {
   background: #FFE0B2;
@@ -27,7 +27,7 @@ table.paleBlueRows thead {
   background: #E65100;
 }
 table.paleBlueRows thead th {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: bold;
   color: #FFFFFF;
   text-align: center;

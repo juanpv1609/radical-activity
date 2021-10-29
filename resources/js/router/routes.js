@@ -14,8 +14,8 @@ import Horarios from "../components/horario/AllHorarios.vue";
 import TipoActividad from "../components/tipoActividad/AllTipoActividad.vue";
 //REPORTES
 
-import ReporteResumen from "../components/reportes/ReporteResumen.vue";
-import Reporte from "../components/reportes/Reporte.vue";
+import ReporteDetalle from "../components/reportes/ReporteResumen.vue";
+import ReporteContable from "../components/reportes/Reporte.vue";
 
 const router = new VueRouter({
     mode: "history",
@@ -112,17 +112,17 @@ const router = new VueRouter({
         //REPORTES
 
         {
-            name: "reporte-resumen",
-            path: "/reporte-resumen",
-            component: ReporteResumen,
+            name: "reporte-detalle",
+            path: "/reporte-detalle",
+            component: ReporteDetalle,
             meta: {
                 requiresAuth: true
             }
         },
         {
-            name: "reporte",
-            path: "/reporte",
-            component: Reporte,
+            name: "reporte-contable",
+            path: "/reporte-contable",
+            component: ReporteContable,
             meta: {
                 requiresAuth: true
             }

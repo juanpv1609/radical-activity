@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use PDF;
+use DateTime;
+use DateInterval;
 use App\Models\User;
 use App\Models\Persona;
 use App\Models\Actividad;
@@ -50,7 +52,7 @@ class ReportesController extends Controller
                 'total_personas' => $total_personas,
                 'personas' => $personas
             );
-            array_push($dataCertificaciones,$auxCertificaciones);
+            array_push($dataCertificaciones, $auxCertificaciones);
         }
 
         $pdf = App::make('dompdf.wrapper');
@@ -61,37 +63,169 @@ class ReportesController extends Controller
         $pdf->loadView('pdf.certificaciones', compact('dataCertificaciones'));
         return $pdf->download('reporteCertificaciones.pdf');
     }
-    public function reporteActividadesContable($inicio,$fin,$users)
+    public function reporteActividadesContable($dates, $users)
     {
-        //dd($usuarios);
-        $inicio = $inicio;
-        $fin = $fin;
+
         $usuarios = explode(",", $users);
-        //dd($request);
+        $fechas = explode(",", $dates);
+        $dataUsers = User::whereIn('id', $usuarios)
+                            ->orderBy('name')->get();
+        $arrayUsers=[];
+        $usuario;
         $personas=[];
-        $aux=[];
+        $array_h_inicio=[];
+        $array_h_fin=[];
+        $h_inicioNP;
+        $h_finNP;
+ /**
+  * !CONTROLAR HORARIO DE 22:00 A 06:00 se suma 16 horas en lugar de 8
+  */
 
-        $persona=[];
-        $personas['inicio'] = $inicio;
-        $personas['fin'] = $fin;
+        foreach ($dataUsers as $user) {
+            $total_horas=0.0;
+            $usuario['nombre']=$user->name;
+            $usuario['horas_p']=[];
+            $horas_p=[];
+            $horas_np=[];
+            foreach ($fechas as $fecha) {
+                $hora_p='';
+                $hora_t=0.0;
+                $actividad = Actividad::with('usuario', 'horario')
+                    ->where('usuario_id', $user->id)
+                    ->where('fecha', $fecha)
+                    ->first();
+                    //dd($actividad);
 
-        foreach ($usuarios as $user) {
-            $usuario = User::find($user);
-            $actividad = Actividad::with('usuario','horario')->where('usuario_id', $usuario->id)->whereBetween('fecha',[$inicio,$fin])->get()->toArray();
-        //     $arrayActividades = [];
-        //     $persona['usuario'] = $usuario->name;
-        //     foreach ($actividad as $item) {
-        //         //$actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->where('dia', $item['id'])->get()->toArray();
-        //         array_push($arrayActividades, $item['id']);
-        //     }
-        //         $actividades = Actividades::with( 'tipo', 'status','actividad')->whereIn('dia', $arrayActividades)->get()->toArray();
-        //         $persona['actividades'] = $actividades;
-        //         array_push($aux,$persona);
+                    if (($actividad)) { //si tiene la actividad en dicha fecha
+                        $tipo_horario = $actividad['horario_id'];
+                    $cond=[
+                        ['dia','=', $actividad->id],
+                        ['tipo_actividad','<>', 6],
+                        ];
+
+                    $actividades = Actividades::where($cond)->get();
+                    $actividades_np = Actividades::where([['dia', $actividad->id],['tipo_actividad',6]])->first();
+                    //dd($actividades_np);
+                    if (count($actividades)>0) {
+                        # code...
+                        foreach ($actividades as $item) {
+                            array_push($array_h_inicio, $item->h_inicio);
+                            array_push($array_h_fin, $item->h_fin);
+
+                        }
+                        $horaInicio = ($tipo_horario!=3) ? new DateTime(min($array_h_inicio)) : new DateTime('00:00:00'); //obtengo el menor valor
+                        $horaTermino =  new DateTime(max($array_h_fin)); //obtengo el mayor valor
+                        $array_h_inicio=[];
+                        $array_h_fin=[];
+
+
+                    }else if (count($actividades)==1){
+                        $horaInicio = ($tipo_horario!=3) ? new DateTime(($actividades->h_inicio)->format('%H:%i')) : new DateTime('00:00:00'); //obtengo el menor valor
+                        $horaTermino = new DateTime(($actividades->h_fin)->format('%H:%i')); //obtengo el mayor valor
+
+                    }else{
+                        $horaInicio = new DateTime('00:00:00'); //obtengo el menor valor
+                        $horaTermino = new DateTime('00:00:00'); //obtengo el mayor valor
+
+                    }
+                    if ($actividades_np) {
+                        $h_inicioNP = $actividades_np->h_inicio;
+                        $h_finNP = $actividades_np->h_fin;
+
+                    }else{
+                        $h_inicioNP = '00:00:00';
+                        $h_finNP = '00:00:00';
+
+                    }
+
+                    //dd($array_h_inicioNP);
+
+
+                    $interval = ($tipo_horario!=3) ? $horaInicio->diff($horaTermino) : $horaInicio->diff($horaTermino->add(new DateInterval('PT2H'))); //resta
+
+                    $horaInicioNP = new DateTime($h_inicioNP); //obtengo el menor valor
+                    $horaTerminoNP = new DateTime($h_finNP); //obtengo el mayor valor
+                    $intervalNP = $horaInicioNP->diff($horaTerminoNP); //resta
+
+
+                    $nuevaFecha = new DateTime($interval->format('%H:%i'));
+                    $total_horas = new DateTime($interval->format('%H:%i'));
+
+                    $nuevaFecha->sub($intervalNP);
+                    //$total_horas+=$nuevaFecha;
+                    $hora_p=$nuevaFecha->format('H:i');
+
+                }else{
+                    $hora_t=0.0;
+                    $hora_p=gmdate('H:i', floor(($hora_t) * 3600));
+                    $hora_p='--:--';
+
+                    $total_horas='00:00';
+
+                }
+                 array_push($horas_p, $hora_p);
+                /*
+                    $total_horas+=$hora_t;
+                foreach ($horas_p as $item) {
+                    $hms = explode(":", $item);
+                    //dd($hms);
+
+                    $total_horas+= $hms[0]+($hms[1]/60);
+
+                } */
+
+            }
+           // $usuario['total']=gmdate('H:i', floor(($total_horas) * 3600));
+            $usuario['horas_p']=$horas_p;
+
+            array_push($arrayUsers, $usuario);
+
+
         }
-        // $personas['usuarios'] = $aux;
+        return($arrayUsers);
+    }
+    public function reporteActividadesContable2($dates, $users)
+    {
+
+        $usuarios = explode(",", $users);
+        $fechas = explode(",", $dates);
+        $dataUsers = User::whereIn('id', $usuarios)
+                            ->get();
+        $arrayUsers=[];
+        $usuario;
+        $personas=[];
 
 
-        return $actividad;
+        foreach ($dataUsers as $user) {
+            $total_horas=0.0;
+            $usuario['nombre']=$user->name;
+            $usuario['horas_p']=[];
+            $horas_p=[];
+            $horas_np=[];
+            foreach ($fechas as $fecha) {
+                $hora_p='';
+                $hora_t=0.0;
+                $actividad = Actividad::with('usuario', 'horario')
+                    ->where('usuario_id', $user->id)
+                    ->where('fecha', $fecha)
+                    ->first();
+                if (($actividad)) { //si tiene la actividad en dicha fecha
+                    $hora_t=$actividad->horas_p-$actividad->horas_np;
+                    $hora_p=gmdate('H:i', floor(($hora_t) * 3600));
+                }else{
+                    $hora_t=0.0;
+                    $hora_p=gmdate('H:i', floor(($hora_t) * 3600));
+                }
+                $total_horas+=$hora_t;
+                array_push($horas_p, $hora_p);
+
+            }
+            $usuario['total']=gmdate('H:i', floor(($total_horas) * 3600));
+            $usuario['horas_p']=$horas_p;
+
+            array_push($arrayUsers, $usuario);
+        }
+        return($arrayUsers);
     }
     public function reporteActividades($inicio,$fin,$users)
     {

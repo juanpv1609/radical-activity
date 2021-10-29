@@ -9,7 +9,7 @@
             v-model="valid"
             lazy-validation
         >
-    <v-card elevation="8" :loading="loading" class="m-auto "
+    <v-card elevation="12" :loading="loading" class="m-auto "
     max-width="800">
     <v-row>
         <v-col cols="6" class="m-auto" >
@@ -70,7 +70,7 @@
                             Enviar
                         </v-btn>
                     </v-col>
-            <br>
+            
          </v-card-text>
          </v-col>
     </v-row>

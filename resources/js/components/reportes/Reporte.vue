@@ -1,14 +1,17 @@
 <template>
     <div>
         <v-card elevation="2" :loading="loading">
-            <v-card-title class="d-flex justify-space-between mb-6"
+            <v-card-title
                 >Resumen Contable
+
             </v-card-title>
 
             <v-card-text>
                 <v-form ref="form" v-model="valid">
                      <v-row>
-                        <v-col cols="12" sm="3">
+                         <v-col cols="12" sm="5">
+                             <v-row dense>
+                                 <v-col cols="12" sm="6">
                                      <v-menu
                                         v-model="menu"
                                         :close-on-content-click="false"
@@ -25,35 +28,54 @@
                                                 readonly
                                                 v-bind="attrs"
                                                 v-on="on"
-                                                filled
-                                                rounded
+
+
                                                 dense
-                                                single-line
+                                                outlined
+
                                                 hide-details
                                             ></v-text-field>
                                         </template>
-                                        <v-date-picker v-model="dates" range>
+                                        <v-date-picker v-model="dates" range
+                                        :max="new Date().toISOString().substr(0, 10)"
+                                        min="2021-10-18">
                                         </v-date-picker>
                                     </v-menu>
 
 
-                        </v-col>
-                        <v-col cols="12" sm="2">
-                            <v-autocomplete
-                                :items="areas"
-                                item-text="nombre"
-                                item-value="id"
-                                v-model="area"
-                                label="Seleccione un area"
-                                return-object
-                                rounded
-                                filled
-                                dense
-                                single-line
-                                @change="getUsers"
-                            ></v-autocomplete>
-                        </v-col>
-                        <v-col cols="12" sm="5">
+                                </v-col>
+                                <v-col cols="12" sm="6">
+                                    <v-autocomplete
+                                        :items="areas"
+                                        item-text="nombre"
+                                        item-value="id"
+                                        v-model="area"
+                                        label="Seleccione un area"
+                                        return-object
+
+
+                                        dense
+                                        outlined
+
+                                        @change="getUsers"
+                                    ></v-autocomplete>
+                                </v-col>
+                             </v-row >
+                             <v-row dense>
+                                 <v-col cols="12" >
+                                    <v-btn
+                                        block
+                                        color="primary"
+                                        :loading="loadingUpload"
+                                        dark
+                                        :disabled="selectedUsuarios.length==0"
+                                        @click="getActividades"
+                                        >FILTRAR</v-btn
+                                    >
+                                </v-col>
+                             </v-row>
+                         </v-col>
+                         <v-col cols="12" sm="7">
                             <v-autocomplete
                                 deletable-chips
                                 multiple
@@ -65,9 +87,10 @@
                                 v-model="selectedUsuarios"
                                 label="Seleccione uno o varios usuarios"
                                 dense
-                                single-line
-                                rounded
-                                filled
+                                outlined
+
+
+
                                 :disabled="dates.length<=1"
                                 return-object
 
@@ -90,17 +113,7 @@
                                 </template>
                             </v-autocomplete>
                         </v-col>
-                         <v-col cols="12" sm="2">
-                            <v-btn
-                                block
-                                color="primary"
-                                :loading="loadingUpload"
-                                dark
-                                :disabled="selectedUsuarios.length==0"
-                                @click="getActividades"
-                                >Generar Reporte</v-btn
-                            >
-                        </v-col>
+
 
                     </v-row>
                    <!--  <v-row align="center"
@@ -115,17 +128,27 @@
                         </v-col>
 
                     </v-row> -->
-                    <v-row>
+                    <v-row v-if="actividades.length>0">
                         <v-col cols="12">
                             <v-data-table
                             :headers="headers"
                             :items="actividades"
                             :search="search"
+
                         >
                              <template v-slot:item="row">
                                 <tr>
-                                    <td>{{ row.item.usuario.name }}</td>
-                                    <td>{{ row.item.horas_p }}</td>
+                                    <td>
+                                        {{ row.item.nombre }}
+                                    </td>
+                                    <td v-for="(item, i) in row.item.horas_p" v-bind:key="i">
+                                        {{ item }}
+                                    </td>
+                                    <td>
+                                        <v-chip small color="green" dark label class="mx-1">
+                                            <strong>{{ row.item.total }}</strong></v-chip>
+
+                                    </td>
                                 </tr>
                             </template>
                         </v-data-table>
@@ -206,7 +229,7 @@ export default {
 
             this.axios.get(`/api/usuarios-area/${this.area.id}`).then(response => {
                 this.usuarios = response.data;
-                console.log(this.usuarios);
+                //console.log(this.usuarios);
 
                 this.loading = false;
             });
@@ -224,32 +247,55 @@ export default {
             var fechaFin=this.dates[1];
             this.headers.push({text:'Usuario',value:'usuario'})
             //this.headers.push({text:moment(fechaInicio).format("ddd, D MMM"),value:moment(fechaInicio).format("ddd, D MMM")})
-
+            var arrayFechas=[];
             while (moment(fechaInicio).isSameOrBefore(moment(fechaFin))) {
-                var auxFecha=moment(fechaInicio).format("ddd, D MMM");
+                var auxFecha=moment(fechaInicio).format("D MMM");
+                arrayFechas.push(moment(fechaInicio).format("YYYY-MM-DD"));
                 this.headers.push({text:auxFecha,value:auxFecha})
                 fechaInicio=moment(fechaInicio).add(1,'days');
 
             }
+            this.headers.push({text:'TOTAL',value:'total'})
+            //console.log(arrayFechas);
               await this.axios
-                .get(`/api/reporte-actividades-contable/${this.dates[0]}/${this.dates[1]}/${this.idUsuarios}`)
+                .get(`/api/reporte-actividades-contable/${arrayFechas}/${this.idUsuarios}`)
                 .then(response => {
                     //this.headers.push({text:'Usuario',value:'usuario'})
 
                     //console.log(response.data);
                         this.actividades=response.data;
                         var horas=[];
-                    this.actividades.forEach(element => {
-                        horas.push(element.horas_p)
+                        //console.log(this.actividades);
+                 this.actividades.forEach(element => {
+                     var total=0.0;
+                       // console.log(element.horas_p)
+                        element.horas_p.forEach(hora => {
 
-                        element.usuario.horas=element.horas_p;
+                            var parsed = hora.split(':')
+                            var horas = (parsed[0]!="--") ? parseFloat(parsed[0]) : 0;
+                            var minutos;
+                            if (parsed[1]=="--") {
+
+                                minutos = 0;
+                            } else if(parsed[1]=="00"){
+                                minutos = 0;
+                            }else{
+                                minutos = parseFloat(parsed[1])
+                            }
+                            //total = total + parseFloat(parseFloat(horas*60) + minutos);
+                            total = total + parseFloat(horas*60)+parseFloat(minutos);
+                            element.total=parseInt(total/60)+'.'+parseInt(total%60);
+                        })
+                        //var inicial = moment.duration(moment(element.horas_p,'HH:mm'));
+
+                        //total=moment.duration(inicial).add(moment.duration(moment(element.horas_p,'HH:mm')))
                         //this.headers.push({text:moment(element.fecha).format("ddd, D MMM"),value:element.fecha})
-                        const hora = parseInt((element.horas_p).substr(0, 2))
-                        console.log(hora);
+                        //const hora = parseInt((element.horas_p).substr(0, 2))
+                        //console.log(_total);
                     });
+                    //console.log(this.actividades);
                     //this.personas.usuario=
-                    console.log(this.actividades);
-                    this.headers.push({text:'TOTAL',value:'total'})
+                    //console.log(total);
 
 
                 })
@@ -269,7 +315,7 @@ export default {
             this.selectedUsuarios.forEach(element => {
                 this.idUsuarios.push(element.id)
                     });
-            console.log(this.dataReport);
+            //console.log(this.dataReport);
               await this.axios
                 .get(`/api/reporte-actividades/${this.dates[0]}/${this.dates[1]}/${this.idUsuarios}`)
                 .then(response => {

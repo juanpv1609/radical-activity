@@ -84,7 +84,7 @@
                             <v-icon>mdi-dots-vertical</v-icon>
                         </v-btn>
                     </template>
-                    <v-list dense>
+                    <v-list dense max-width="300px">
                         <v-list-item>
                             <v-list-item-avatar>
                                 <v-icon x-large>mdi-account-circle</v-icon>
@@ -246,9 +246,14 @@ export default {
                     subLinks: [
                         // { title: "General", link: "/reporte-general", icon: "mdi-certificate"},
                         {
+                            title: "Detalle",
+                            link: "/reporte-detalle",
+                            icon: "mdi-list-status"
+                        },
+                        {
                             title: "Resumen",
-                            link: "/reporte-resumen",
-                            icon: "mdi-list"
+                            link: "/reporte-contable",
+                            icon: "mdi-scale-balance"
                         },
                     ],isAdmin:false
                 },

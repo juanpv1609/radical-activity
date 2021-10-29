@@ -29,10 +29,9 @@ class UserController extends Controller
     {
         $cond=[
             ['is_deleted','==', 0],
-                ['id','!=',19]
             ];
 
-        $usuarios = User::with('rol','puesto.area')->where($cond)->orderBy('name')->get()->toArray();
+        $usuarios = User::with('rol','puesto.area')->where($cond)->whereNotIn('id',[19,50])->orderBy('name')->get()->toArray();
 
         return ($usuarios);
 
@@ -50,10 +49,9 @@ class UserController extends Controller
             //dd($perfil['id']);
             $cond=[
             ['is_deleted','==', 0],
-                ['id','!=',19],
             ];
 
-            $usuarios = User::with('rol','puesto.area')->where($cond)->whereIn('cargo',$arrayPerfiles)->orderBy('name')->get()->toArray();
+            $usuarios = User::with('rol','puesto.area')->where($cond)->whereIn('cargo',$arrayPerfiles)->whereNotIn('id',[19,50])->orderBy('name')->get()->toArray();
 
 
         return($usuarios);
