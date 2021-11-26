@@ -7,6 +7,7 @@ import Home from "../components/Home.vue";
 import AllUsuarios from "../components/usuario/AllUsuarios.vue";
 import Actividad from "../components/actividad/Actividad.vue";
 import ActividadNew from "../components/actividad/ActividadNew.vue";
+import ActividadEdit from "../components/actividad/ActividadEdit.vue";
 import AllAreas from "../components/area/AllAreas.vue";
 import Pais from "../components/pais/Pais.vue";
 import PerfilPuesto from "../components/perfilPuesto/PerfilPuesto.vue";
@@ -65,6 +66,14 @@ const router = new VueRouter({
             name: "actividad-new",
             path: "/actividad-new",
             component: ActividadNew,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            name: "actividad-edit",
+            path: "/actividad-edit/:id",
+            component: ActividadEdit,
             meta: {
                 requiresAuth: true
             }

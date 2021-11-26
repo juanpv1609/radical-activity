@@ -15,8 +15,10 @@ class Actividad extends Model
                             'horas_p',
                             'horas_np',
                             'destinatarios',
+                            'created_at',
+                            'updated_at',
                             ];
-    public $timestamps = false;
+    //public $timestamps = false;
     protected $guarded = [];
     use HasFactory;
     public function usuario()

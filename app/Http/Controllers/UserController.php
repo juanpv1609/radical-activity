@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Actividad;
 use App\Models\PerfilPuesto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -20,6 +21,15 @@ class UserController extends Controller
     public function getUser()
     {
         $cond=[ 'id' => auth()->user()->id];
+         $usuario = User::with('rol','puesto.area')->where($cond)->first();
+
+        return ($usuario);
+
+    }
+    public function getUserActivity($id)
+    {
+        $actividad = Actividad::find($id);
+        $cond=[ 'id' => $actividad->usuario_id];
          $usuario = User::with('rol','puesto.area')->where($cond)->first();
 
         return ($usuario);

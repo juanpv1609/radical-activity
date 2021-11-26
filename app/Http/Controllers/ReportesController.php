@@ -78,7 +78,8 @@ class ReportesController extends Controller
         $h_inicioNP;
         $h_finNP;
  /**
-  * !CONTROLAR HORARIO DE 22:00 A 06:00 se suma 16 horas en lugar de 8
+  * !CONTROLAR HORARIO DE 22:00 A 06:00 se suma 16 horas en lugar de 8 <- REALIZADO
+  * ? Estatus OK
   */
 
         foreach ($dataUsers as $user) {

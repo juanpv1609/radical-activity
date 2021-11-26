@@ -90,28 +90,46 @@
                             <span class="headline">{{ titleForm }}</span>
                         </v-card-title>
                         <v-card-text>
-                            <v-container>
 
-                                <v-row>
-                                    <v-col cols="12" sm="6">
+                                <v-row dense>
+                                    <v-col cols="12" sm="4">
                                         <v-text-field
                                             v-model="horario.nombre"
                                             label="Nombre del horario*"
                                             required
                                         ></v-text-field>
                                     </v-col>
-                                    <v-col cols="12" sm="6">
+                                    <v-col cols="12" sm="4">
                                         <v-text-field
                                             v-model="horario.descripcion"
                                             label="Descripción"
                                             required
                                         ></v-text-field>
                                     </v-col>
+                                    <v-col cols="12" sm="4">
+                                        <v-select :items="perfiles"
+                                                v-model="perfil"
+                                                label="Perfil Laboral"
+
+                                                return-object >
+                                                <template slot="selection" slot-scope="data">
+                                                    <!-- HTML that describe how select should render selected items -->
+                                                    {{ data.item.descripcion }}
+                                                </template>
+                                                <template slot="item" slot-scope="data">
+                                                    <!-- HTML that describe how select should render items when the select is open -->
+                                                    {{ data.item.descripcion }}<v-spacer></v-spacer> <small>({{ data.item.area.nombre }})</small>
+                                                     </template>
+                                            </v-select>
+                                    </v-col>
+
+
                                     <v-col cols="12" sm="6">
                                         <h2>Inicio:</h2>
                                         <v-time-picker
                                         format="24hr"
                                         v-model="horario.inicio"
+
                                         :max="end"
                                         ></v-time-picker>
                                     </v-col>
@@ -120,11 +138,11 @@
                                         <v-time-picker
                                         format="24hr"
                                         v-model="horario.fin"
+
                                         :min="horario.inicio"
                                         ></v-time-picker>
                                     </v-col>
                                 </v-row>
-                            </v-container>
                         </v-card-text>
                         <v-card-actions>
                             <v-spacer></v-spacer>
@@ -175,6 +193,9 @@ export default {
             horarios: [],
             loading: true,
             titleForm: null,
+            perfiles:[
+                ],
+                perfil:{},
             search: "",
             estado: [
                 { text: "HABILITADA", value: 1 },
@@ -197,12 +218,20 @@ export default {
             this.loading = false;
 
         });
+        this.axios
+                .get('/api/perfil-puesto')
+                .then(response => {
+                    console.log(response.data);
+                    this.perfiles = response.data;
+
+                });
     },
     methods: {
         createHorario() {
             this.loading = true;
+            this.horario.perfil_puesto=this.perfil.id;
             console.log(this.horario);
-             this.axios
+              this.axios
                 .post("/api/horarios", this.horario)
                 .then(() => {
                     this.dialog = false;
@@ -222,6 +251,7 @@ export default {
             this.dialog = true;
         },
         editHorario(el) {
+            console.log(el);
             this.titleForm = "Editar Horario";
             this.update = true;
             this.horario.id = el.id;
@@ -229,6 +259,8 @@ export default {
             this.horario.descripcion = el.descripcion;
             this.horario.inicio = el.inicio;
             this.horario.fin = el.fin;
+            this.horario.perfil_puesto = el.perfil_puesto;
+            this.perfil=el.perfil_puesto
             this.dialog = true;
         },
         updateHorario() {
@@ -246,7 +278,7 @@ export default {
         deleteHorario(el) {
             this.loading = true;
             this.axios.delete(`/api/horarios/${el.id}`).then(() => {
-                let i = this.areas.map(data => data.id).indexOf(el.id);
+                let i = this.horarios.map(data => data.id).indexOf(el.id);
                 this.horarios.splice(i, 1);
                 this.loading = false;
             });

@@ -45,6 +45,8 @@ Route::middleware('api')->group(function () {
         return $request->user();
     }); */
     Route::get('user', [UserController::class,'getUser']);
+    Route::get('user-activity/{id}', [UserController::class,'getUserActivity']);
+
 
     Route::post('login', [LoginController::class,'login']);
     Route::post('logout', [LoginController::class,'logout']);
@@ -55,6 +57,8 @@ Route::middleware('api')->group(function () {
     Route::resource('paises', PaisController::class);
     Route::resource('horarios', HorariosController::class);
     Route::resource('actividades', ActividadesController::class);
+    Route::get('detalle-actividades/{id}', [ActividadesController::class,'detalleActividades']);
+
     Route::resource('tipo-actividad', TipoActividadController::class);
     Route::resource('usuarios', UserController::class);
     Route::get('usuarios-all', [UserController::class,'indexAll']);

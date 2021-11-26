@@ -19,7 +19,7 @@ class HorariosController extends Controller
                 $cond=['estado' => 1,
                         'perfil_puesto' => 3];
 
-            }else{
+            }else {
                 $cond=['estado' => 1,
                         'perfil_puesto' => auth()->user()->cargo];
 

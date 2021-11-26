@@ -2,7 +2,7 @@
     <div>
         <v-card elevation="2" :loading="loading">
             <v-card-title class="m-a">
-                Registro de actividades - {{ $store.state.user.name }}
+                Actualizacón de actividades - {{ usuario.name }}
                 <v-spacer></v-spacer>
                 <v-col cols="2">
                     <template>
@@ -226,7 +226,7 @@
                                             @open="openColaborador"
                                             @close="closeColaborador"
                                         >
-                                            <div>
+                                            <div >
                                                 <v-chip
                                                     v-for="colaborador in row
                                                         .item.colaboradores"
@@ -367,8 +367,8 @@
 
             <v-card-actions v-if="ActivityLine.length > 0">
                 <v-spacer></v-spacer>
-                <v-btn block color="primary" @click="enviarActividades"
-                    >enviar {{ActivityLine.length}} actividades</v-btn
+                <v-btn block color="teal" dark large @click="enviarActividades"
+                    >actualizar {{ActivityLine.length}} actividades</v-btn
                 >
             </v-card-actions>
         </v-card>
@@ -376,6 +376,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
     data() {
         return {
@@ -428,7 +429,8 @@ export default {
             foto: null,
             ActivityLine: [],
             Activity: {},
-            hourRange:[]
+            hourRange:[],
+            usuario:"",
         };
     },
     watch: {
@@ -440,8 +442,8 @@ export default {
     },
     created() {
         this.initialData();
-        var f = new Date();
-        this.fechaHoy = f.toISOString().substr(0, 10);
+        //var f = new Date();
+        //this.fechaHoy = f.toISOString().substr(0, 10);
     },
     methods: {
         save(el) {
@@ -478,9 +480,54 @@ export default {
         },
         allowedStep: m => m % 5 === 0,
         initialData() {
+            console.log(this.$route.params);
+            this.axios
+                .get(`/api/user-activity/${this.$route.params.id}`)
+                .then(response => {
+                    console.log(response.data);
+                    this.usuario = response.data;
+
+                });
+            this.axios.get(`/api/detalle-actividades/${this.$route.params.id}`).then(res => {
+                console.log(res.data);
+                var data = res.data;
+                //this.Activity.usuario = this.$store.state.user.id;
+                data.forEach(element => {
+
+                    this.Activity.horario = element.actividad.horario.id;
+                    this.horario = element.actividad.horario;
+                    this.Activity.fecha = element.actividad.fecha;
+                    this.fechaHoy=element.actividad.fecha;
+                    var activityLine = {};
+                    this.ActivityLine = this.ActivityLine || [];
+                    //console.log(this.modelDescripcion);
+                    activityLine.tipo_actividad = element.tipo_actividad;
+                    activityLine.tipo_actividad_nombre = element.tipo.descripcion;
+                    //this.modelDescripcion=(element.descripcion).split(',')
+                    activityLine.descripcion = (element.descripcion).split(',')
+                    activityLine.observacion = element.observacion;
+                   activityLine.colaboradores = ((!!element.colaboradores) || (element.colaboradores!='')) ? element.colaboradores.split(',') : null;
+                    //activityLine.h_inicio = moment((element.h_inicio)).format('hh:mm');
+                    //activityLine.h_fin = moment((element.h_fin)).format('hh:mm');
+                    activityLine.h_inicio = (element.h_inicio).substring(0, 5);
+                    activityLine.h_fin = (element.h_fin).substring(0, 5);
+                    activityLine.estado = (element.estado==1) ? true:false;
+                    this.ActivityLine.push(activityLine);
+                    //this.start = this.end;
+                    //this.tipoActividad.id=null;
+                    //this.end = null;
+                    //this.descripcion = null;
+                    //this.modelDescripcion = [];
+                });
+                // this.Activity.enviaMail = this.enviar;
+                // //this.Activity.enviaMail = this.enviar;
+                // this.Activity.destinatarios = data.actividad.destinatarios;
+                // this.Activity.colaboradores = this.modelColaboradores;
+                // this.Activity.activities = this.ActivityLine;
+            });
             this.axios.get(`/api/horarios`).then(response => {
                 this.horarios = response.data;
-                console.log(this.horarios);
+                //console.log(this.horarios);
             });
             this.axios.get(`/api/tipo-actividad`).then(response => {
                 this.tipoActividades = response.data;
@@ -494,7 +541,7 @@ export default {
         allowedHours: v => !(v >= 7 && v <= 21),
         setHorario(){
             console.log(this.horario)
-             if (this.horario.id==3) {
+             if (this.horario.id==3) { //nocturno
             this.minimo=null;
             this.maximo=null;
             this.start='22:00';
@@ -542,10 +589,9 @@ export default {
         },
         enviarActividades() {
             //this.loading = true;
-            this.Activity.usuario = this.$store.state.user.id;
+            this.Activity.usuario = this.usuario.id;
             this.Activity.horario = this.horario.id;
             this.Activity.fecha = this.fechaHoy;
-            this.Activity.enviaMail = this.enviar;
             //this.Activity.enviaMail = this.enviar;
             this.Activity.destinatarios = this.modelDestinatarios;
             //this.Activity.colaboradores = this.modelColaboradores;
@@ -553,7 +599,7 @@ export default {
 
             console.log(this.Activity);
             var tiempo_libre=0;
-            if (this.$store.state.user.cargo==1) { //si es N1
+            if (this.usuario.cargo==1) { //si es N1
                 tiempo_libre=1;
                 } else {
                     this.Activity.activities.forEach(element => {
@@ -565,7 +611,7 @@ export default {
                 }
 
             console.log(tiempo_libre);
-            if (tiempo_libre==0 ) {
+             if (tiempo_libre==0 ) {
                 this.$swal.fire({
                                 title: 'Atención!',
                                 text: `No olvide registrar al menos una actividad de tipo "Break" o tiempo libre`,
@@ -580,12 +626,12 @@ export default {
                     });
                 this.$swal.showLoading();
                 this.axios
-                    .post("/api/actividades", this.Activity)
+                    .patch(`/api/actividades/${this.$route.params.id}`, this.Activity)
                     .then(() => {
 
                         this.$swal.fire({
                                     title: 'Correcto',
-                                    text: 'Actividades registradas correctamente!',
+                                    text: 'Actividades actualizadas correctamente!',
                                     icon: 'success',
                                     timer: 1500,
                                     timerProgressBar: true,
@@ -598,6 +644,7 @@ export default {
                                     text: `Ocurrió un error!\n${err}`,
                                     icon: 'error',
                                     });
+                                    console.log(err);
                     })
                     .finally(() => {
                         this.Activity = {};

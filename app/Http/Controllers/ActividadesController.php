@@ -28,6 +28,32 @@ class ActividadesController extends Controller
              //$actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->where('dia', $item['id'])->get()->toArray();
              array_push($arrayUsuarios, $usuario['id']);
          }
+         array_push($arrayUsuarios, auth()->user()->id);
+
+         $actividad = Actividad::with('usuario','horario')->whereIn('usuario_id', $arrayUsuarios)->get();
+         foreach ($actividad as $item) {
+             # code...
+             $actividades = Actividades::where('dia',$item->id)->get();
+             $item->actividades=count($actividades);
+
+         }
+
+
+
+        return ($actividad);
+
+    }
+    public function indexcopy()
+    {
+        //$actividades = Actividades::with('actividad.usuario_id', 'actividad.horario', 'tipo', 'status')->get()->toArray();
+
+        //return ($actividades);
+        $usuario_estandar= User::where('role',1)->get()->toArray();
+        $arrayUsuarios = [];
+         foreach ($usuario_estandar as $usuario) {
+             //$actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->where('dia', $item['id'])->get()->toArray();
+             array_push($arrayUsuarios, $usuario['id']);
+         }
 
          $actividad = Actividad::whereIn('usuario_id', $arrayUsuarios)->get()->toArray();
 
@@ -117,16 +143,70 @@ class ActividadesController extends Controller
 
         return ($actividades);
     }
+    public function detalleActividades($id)
+    {
+
+            $actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->where('dia', $id)->get()->toArray();
+
+
+        return ($actividades);
+    }
 
 
     public function update(Request $request, $id)
     {
-        //
+        $arrayActivities = $request->input("activities");
+
+        $actividad = Actividad::find($id);
+        $actividad->usuario_id = $request->input('usuario');
+        $actividad->horario_id = $request->input('horario');
+        $actividad->fecha = $request->input('fecha');
+        $actividad->destinatarios = (count($request->input('destinatarios'))>0) ? implode(",", $request->input('destinatarios')) : null;
+        $actividad->save();
+
+
+        $actividades = Actividades::where('dia', $actividad->id)->get();
+        //dd($arrayActivities);
+        foreach ($actividades as $item) {
+            $item->delete();
+        }
+
+
+         foreach ($arrayActivities as $item) {
+
+            $actividades = new Actividades([
+                'tipo_actividad' => $item['tipo_actividad'],
+                'descripcion' => implode(",", $item['descripcion']),
+                'colaboradores' => isset($item['colaboradores']) ? implode(",", $item['colaboradores']) : null,
+                'dia' => $actividad->id,
+                'h_inicio' => $item['h_inicio'],
+                'h_fin' => $item['h_fin'],
+                'observacion' => $item['observacion'],
+                'estado' => ($item['estado']==true) ? 1 : 2,
+                'verificada' => 0,
+                //'is_verified_by' => $item['is_verified_by'],
+
+
+            ]);
+
+            $actividades->save();
+        }
+
+
+        return response()->json('activities updated!');
+
     }
 
 
     public function destroy($id)
     {
-        //
+        $actividad = Actividad::find($id);
+
+        $actividades = Actividades::where('dia', $actividad->id)->get();
+        foreach ($actividades as $act) {
+            $act->delete();
+        }
+        $actividad->delete();
+
     }
 }

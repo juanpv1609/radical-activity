@@ -29,36 +29,28 @@
             </v-card-title>
 
             <v-card-text>
-                <v-skeleton-loader
-                    v-if="firstLoad"
-                    :loading="loading"
-                    type="table"
-                ></v-skeleton-loader>
+
                 <v-data-table
                     :headers="headers"
                     :items="actividades"
                     :search="search"
-                    v-show="!firstLoad"
-                    sort-by="actividad.fecha"
-                    group-by="actividad.fecha"
-                    show-group-by
                 >
                     <template v-slot:item="row">
                         <tr>
-                            <td v-if="headers.text == 'Fecha'">
-                                {{ row.item.actividad.fecha }}
+                            <td >
+                                {{ row.item.fecha }}
                             </td>
-                            <td>{{ row.item.h_inicio }}</td>
+                            <!-- <td>{{ row.item.h_inicio }}</td>
                             <td>{{ row.item.h_fin }}</td>
 
-                            <td>{{ row.item.descripcion }}</td>
+                            <td>{{ row.item.descripcion }}</td> -->
 
                             <td>
-                                {{ row.item.actividad.usuario.name }}
+                                {{ row.item.usuario.name }}
                             </td>
 
-                            <td>{{ row.item.actividad.horario.nombre }}</td>
-                            <td>{{ row.item.tipo.descripcion }}</td>
+                            <td>{{ row.item.horario.nombre }} ({{ row.item.horario.inicio }} - {{ row.item.horario.fin }})</td>
+                            <!-- <td>{{ row.item.tipo.descripcion }}</td>
                             <td>
                                 <v-chip
                                     x-small
@@ -67,13 +59,38 @@
                                 >
                                     {{ row.item.status.descripcion }}
                                 </v-chip>
+                            </td> -->
+                            <td>
+                                {{ (row.item.created_at).substring(0,16) }}
                             </td>
+                            <td>
+                                     <v-chip
+                                    small
+                                    color="green"
 
-                           <!--  <td>
-                                <v-btn
+                                >
+                                    {{ row.item.actividades }}
+                                     </v-chip>
+                                 </td>
+                             <td>
+
+                                 <v-btn
                                     icon
                                     color="primary"
                                     small
+                                    title="Ver actividades"
+                                    @click="findActividades(row.item)"
+
+                                >
+                                    <v-icon>mdi-magnify</v-icon>
+                                </v-btn>
+                                <v-btn
+                                :disabled="$store.state.user.id!=row.item.usuario.id"
+                                    icon
+                                    color="orange"
+                                    small
+                                    link
+                                    title="Editar actividades"
                                     :to="{
                                         name: 'actividad-edit',
                                         params: { id: row.item.id }
@@ -82,15 +99,16 @@
                                     <v-icon>mdi-pencil</v-icon>
                                 </v-btn>
                                 <v-btn
-                                    :disabled="row.item.role == 2"
+                                    :disabled="$store.state.user.id!=row.item.usuario.id"
                                     icon
                                     small
+                                    title="Eliminar actividad"
                                     color="error"
-                                    @click="deletePerson(row.item)"
+                                    @click="deleteActivity(row.item)"
                                 >
-                                    <v-icon dark>mdi-delete</v-icon>
+                                    <v-icon >mdi-delete</v-icon>
                                 </v-btn>
-                            </td> -->
+                            </td>
                         </tr>
                     </template>
                 </v-data-table>
@@ -98,6 +116,90 @@
 
             <v-card-actions> </v-card-actions>
         </v-card>
+        <template>
+        <div
+            class="modal fade"
+            id="exampleModal2"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+        >
+            <div
+                class="modal-dialog modal-xl modal-dialog-scrollable"
+                role="document"
+            >
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">
+                            {{title}}
+                        </h5>
+                        <button
+                            type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <v-data-table :headers="headersDetalle"
+                                        :items="detalleActividades"
+                                        >
+
+
+                            <template v-slot:item="{item}" >
+                                <tr  >
+                                    <td>
+                                        {{ item.h_inicio }}
+                                    </td>
+                                    <td>
+                                        {{ item.h_fin }}
+                                    </td>
+                                    <td>
+                                        {{ item.tipo.descripcion }}
+                                    </td>
+                                    <td>
+                                        {{ item.descripcion }}
+                                    </td>
+                                    <td>
+                                        <v-chip
+                                            x-small
+                                            :color="item.status.color"
+                                            label
+                                        >
+                                            {{ item.status.descripcion }}
+                                        </v-chip>
+                                    </td>
+                                </tr>
+                            </template>
+                       </v-data-table>
+                         </div>
+                    <div class="modal-footer">
+                        <div class="d-flex justify-content-between">
+                            <v-btn
+                            color="error"
+                            text
+                            data-dismiss="modal"
+                        >
+                            Cerrar
+                        </v-btn>
+                        <!-- <v-btn
+                            color="primary"
+
+                           @click="updateTareas"
+                                v-if="tareas.length>0"
+                        >
+                            Actualizar
+                        </v-btn> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
     </div>
 </template>
 
@@ -109,32 +211,39 @@ export default {
         return {
             firstLoad: true,
             actividades: [],
+            detalleActividades: [],
             update: false,
             persona: {},
             loading: true,
             search: "",
             valid: true,
+            title:"",
             headers: [
                 {
                     text: "Fecha",
-                    value: "actividad.fecha",
-                    align: "start",
-                    groupable: true
+                    value: "actividad.fecha"
                 },
-                { text: "Inicio", value: "h_inicio", groupable: false },
+               /*  { text: "Inicio", value: "h_inicio", groupable: false },
                 { text: "Fin", value: "h_fin", groupable: false },
-                { text: "Descripción", value: "descripcion", groupable: false },
+                { text: "Descripción", value: "descripcion", groupable: false }, */
                 {
                     text: "Usuario",
                     value: "actividad.usuario.name",
-                    groupable: false
+                    sortable: true
                 },
                 {
                     text: "Horario",
-                    value: "actividad.horario.nombre",
-                    groupable: false
+                    value: "actividad.horario.nombre"
                 },
                 {
+                    text: "Creado el",
+                    value: "actividad.created_at"
+                },
+                {
+                    text: "Actividades",
+                    value: "actividad.actividades"
+                },
+                /* {
                     text: "Tipo",
                     value: "tipo_actividad.descripcion",
                     groupable: false
@@ -144,14 +253,29 @@ export default {
                     value: "status.descripcion",
                     groupable: false,
                     align: "start"
-                },
-                /* {
+                }, */
+                 {
                     text: "Acciones",
                     value: "controls",
                     sortable: false,
-                    groupable: false,
                     align: "start"
-                } */
+                }
+            ],
+            headersDetalle:[
+                { text: "Inicio", value: "h_inicio", },
+                { text: "Fin", value: "h_fin", },
+                 {
+                    text: "Tipo",
+                    value: "tipo_actividad.descripcion",
+                                    },
+                { text: "Descripción", value: "descripcion", },
+                {
+                    text: "Estado",
+                    value: "status.descripcion",
+
+                    align: "start"
+                },
+
             ]
         };
     },
@@ -176,6 +300,17 @@ export default {
         },
     },
     methods: {
+        findActividades(el) {
+            console.log(el);
+             this.axios.get(`/api/detalle-actividades/${el.id}`).then(res => {
+                //this.contratos = res.data;
+                //console.log(res.data);
+                this.detalleActividades = res.data;
+                this.title = el.usuario.name+': '+el.fecha;
+                $("#exampleModal2").modal("show");
+                //this.dialogTareas=true;
+            });
+        },
 
 
         viewDocuments(el) {
@@ -187,13 +322,39 @@ export default {
             });
             //this.logo = (!(el.logo==null || el.logo=='')) ? "data:image/png;base64," + el.logo : null;
         },
-        deletePerson(el) {
-            this.loading = true;
-            this.axios.delete(`/api/persona/${el.id}`).then(response => {
-                let i = this.personas.map(data => data.id).indexOf(el.id);
-                this.personas.splice(i, 1);
-                this.loading = false;
-            });
+        deleteActivity(el) {
+            console.log(el);
+             this.loading = true;
+            this.$swal.fire({
+                title: 'Esta seguro?',
+                html: `Se eliminará definitivamente las actividades del usuario <strong>${el.usuario.name}</strong> pertenecientes al ${el.fecha}`,
+                icon: 'question',
+                showConfirmButton: true,
+                showCancelButton: true
+
+                }).then(res => {
+                if (res.value) {
+                    this.axios.delete(`/api/actividades/${el.id}`).then(() => {
+
+                        this.$swal.fire({
+                            title: 'Correcto',
+                                text: 'Se eliminó la actividad correctamente!',
+                                icon: 'success'
+                                })
+                        let i = this.actividades.map(data => data.id).indexOf(el.id);
+                        this.actividades.splice(i, 1);
+                }).catch((err)=> {
+                    this.$swal.fire({
+                                title: 'Error',
+                                text: `NO se pudo eliminar la actividad correctamente!\n${err}`,
+                                icon: 'error'
+                                })
+                }).finally(()=>this.loading = false);
+
+                }
+                this.loading = false
+                })
+
         }
     }
 };
