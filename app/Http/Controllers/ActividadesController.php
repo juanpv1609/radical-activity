@@ -132,16 +132,16 @@ class ActividadesController extends Controller
 
     public function show($id)
     {
-        $actividad = Actividad::where('usuario_id',$id)->get()->toArray();
-        $arrayActividades = [];
+        $actividad = Actividad::where('usuario_id',$id)->get();
          foreach ($actividad as $item) {
-                //$actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->where('dia', $item['id'])->get()->toArray();
-                array_push($arrayActividades, $item['id']);
-            }
-            $actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->whereIn('dia', $arrayActividades)->get()->toArray();
+            # code...
+            $actividades = Actividades::where('dia', $item->id)->get();
+            $item->actividades=count($actividades);
+        }
 
 
-        return ($actividades);
+
+        return ($actividad);
     }
     public function detalleActividades($id)
     {
