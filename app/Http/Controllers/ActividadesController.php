@@ -132,7 +132,7 @@ class ActividadesController extends Controller
 
     public function show($id)
     {
-        $actividad = Actividad::where('usuario_id',$id)->get();
+        $actividad = Actividad::with('usuario','horario')->where('usuario_id',$id)->get();
          foreach ($actividad as $item) {
             # code...
             $actividades = Actividades::where('dia', $item->id)->get();
