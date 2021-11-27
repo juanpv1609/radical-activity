@@ -44,7 +44,7 @@
 
 
                                 </v-col>
-                                <v-col cols="12" sm="6">
+                                <v-col cols="12" sm="6" v-if="this.$store.state.user.role>1">
                                     <v-autocomplete
                                         :items="areas"
                                         item-text="nombre"
@@ -217,19 +217,27 @@ export default {
             });
         },
         initialData() {
-            this.axios.get("/api/areas/").then(response => {
+            if ((this.$store.state.user.role == 2)|| (this.$store.state.user.role == 3)) {
+                this.axios.get("/api/areas/").then(response => {
                 this.areas = response.data;
 
             });
+            } else {
+                this.getUsers()
+            }
+
 
         },
         getUsers(){
 
-
-
-            this.axios.get(`/api/usuarios-area/${this.area.id}`).then(response => {
+            const query =
+            ((this.$store.state.user.role == 2)//ADMIN
+            || (this.$store.state.user.role == 3)) //SUPERVISOR
+                ? `usuarios-area/${this.area.id}`
+                : `user`;
+            this.axios.get(`/api/${query}`).then(response => {
                 this.usuarios = response.data;
-                //console.log(this.usuarios);
+                console.log(this.usuarios);
 
                 this.loading = false;
             });

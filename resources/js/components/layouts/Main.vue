@@ -77,7 +77,8 @@
                 ></v-app-bar-nav-icon>
 
                 <v-spacer></v-spacer>
-
+                <v-spacer ></v-spacer>
+                <v-icon small>mdi-account-circle</v-icon><span> {{$store.state.user.name}}</span>
                 <v-menu left bottom>
                     <template v-slot:activator="{ on, attrs }">
                         <v-btn icon v-bind="attrs" v-on="on">
@@ -230,6 +231,7 @@ export default {
             has_error: false,
             loading: false,
             valid: true,
+            fechaHoy: null,
             passwordRules1: [v => !!v || "Password old is required"],
             passwordRules2: [v => !!v || "Password new is required"],
             passwordRules3: [v => !!v || "Password repeat is required"],
@@ -279,6 +281,10 @@ export default {
             ],
             right: null
         };
+    },
+    created(){
+        var f = new Date();
+        this.fechaHoy = f.toISOString().substr(0, 10);
     },
     methods: {
         logout() {

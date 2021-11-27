@@ -177,7 +177,7 @@
                             color="primary"
                             block
                             large
-                            @click="addActivityLine"
+                            @click="controlFechas"
                             :disabled="(modelDescripcion.length == 0)"
                         >
                             agregar
@@ -506,32 +506,42 @@ export default {
             }
 
         },
-        addActivityLine() {
-            if (this.start>=this.end) {
+        controlFechas(){
+            if (this.horario.id==3) {
+                this.addActivityLine();
+            }else{
+                if (this.start>=this.end) {
                 this.$swal.fire({
                                 title: 'Incorrecto!',
                                 text: `La hora final debe ser mayor a la inicial`,
                                 icon: 'error',
                                 });
-            }else{
-                 var activityLine = {};
-                this.ActivityLine = this.ActivityLine || [];
-                console.log(this.modelDescripcion);
-                activityLine.tipo_actividad = this.tipoActividad.id;
-                activityLine.tipo_actividad_nombre = this.tipoActividad.descripcion;
-                activityLine.descripcion = this.modelDescripcion;
-                activityLine.observacion = null;
-                activityLine.colaboradores = this.modelColaboradores;
-                activityLine.h_inicio = this.start;
-                activityLine.h_fin = this.end;
-                activityLine.estado = true;
-                this.ActivityLine.push(activityLine);
-                this.start = this.end;
-                //this.tipoActividad.id=null;
-                this.end = null;
-                this.descripcion = null;
-                this.modelDescripcion = [];
+                }else{
+                    this.addActivityLine();
+                }
             }
+        },
+        addActivityLine() {
+
+                    var activityLine = {};
+                    this.ActivityLine = this.ActivityLine || [];
+                    console.log(this.modelDescripcion);
+                    activityLine.tipo_actividad = this.tipoActividad.id;
+                    activityLine.tipo_actividad_nombre = this.tipoActividad.descripcion;
+                    activityLine.descripcion = this.modelDescripcion;
+                    activityLine.observacion = null;
+                    activityLine.colaboradores = this.modelColaboradores;
+                    activityLine.h_inicio = this.start;
+                    activityLine.h_fin = this.end;
+                    activityLine.estado = true;
+                    this.ActivityLine.push(activityLine);
+                    this.start = this.end;
+                    //this.tipoActividad.id=null;
+                    this.end = null;
+                    this.descripcion = null;
+                    this.modelDescripcion = [];
+
+
 
         },
         deleteActivityLine(el) {
