@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-card elevation="2" :loading="loading">
+        <v-card elevation="2" >
             <v-card-title >
                 Mi Actividad
                 <v-spacer></v-spacer>
@@ -34,6 +34,16 @@
                     :headers="headers"
                     :items="actividades"
                     :search="search"
+                    class="elevation-2"
+                    :loading="loading"
+                    loading-text="Loading... Please wait"
+                    :footer-props="{
+                        showFirstLastPage: true,
+                        firstIcon: 'mdi-arrow-collapse-left',
+                        lastIcon: 'mdi-arrow-collapse-right',
+                        prevIcon: 'mdi-minus',
+                        nextIcon: 'mdi-plus'
+                        }"
                 >
                     <template v-slot:item="row">
                         <tr>
@@ -61,13 +71,13 @@
                                 </v-chip>
                             </td> -->
                             <td>
-                                {{ (row.item.created_at).substring(0,16) }}
+                                {{ ((row.item.created_at).substring(0,16)).replace('T',' ') }}
                             </td>
                             <td>
                                      <v-chip
                                     small
                                     color="green"
-
+                                    dark label
                                 >
                                     {{ row.item.actividades }}
                                      </v-chip>
@@ -186,14 +196,6 @@
                         >
                             Cerrar
                         </v-btn>
-                        <!-- <v-btn
-                            color="primary"
-
-                           @click="updateTareas"
-                                v-if="tareas.length>0"
-                        >
-                            Actualizar
-                        </v-btn> -->
                         </div>
                     </div>
                 </div>
@@ -221,27 +223,32 @@ export default {
             headers: [
                 {
                     text: "Fecha",
-                    value: "actividad.fecha"
+                    value: "fecha"
                 },
                /*  { text: "Inicio", value: "h_inicio", groupable: false },
                 { text: "Fin", value: "h_fin", groupable: false },
                 { text: "Descripción", value: "descripcion", groupable: false }, */
                 {
                     text: "Usuario",
-                    value: "actividad.usuario.name",
-                    sortable: true
+                    value: "usuario.name"
                 },
                 {
                     text: "Horario",
-                    value: "actividad.horario.nombre"
+                    value: "horario.nombre",
+                    sortable: false,
+                    filterable: false,
                 },
                 {
                     text: "Creado el",
-                    value: "actividad.created_at"
+                    value: "created_at",
+                    sortable: false,
+                    filterable: false,
                 },
                 {
                     text: "Actividades",
-                    value: "actividad.actividades"
+                    value: "actividades",
+                    filterable: false,
+                    align: "start"
                 },
                 /* {
                     text: "Tipo",
@@ -258,6 +265,7 @@ export default {
                     text: "Acciones",
                     value: "controls",
                     sortable: false,
+                    filterable: false,
                     align: "start"
                 }
             ],
@@ -288,8 +296,8 @@ export default {
         this.axios.get(`/api/${query}`).then(response => {
             this.actividades = response.data;
             console.log(this.actividades);
-        });
         this.loading = false;
+        });
         this.firstLoad = false;
     },
     computed:{

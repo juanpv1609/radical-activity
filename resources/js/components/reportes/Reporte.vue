@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-card elevation="2" :loading="loading">
+        <v-card elevation="2" >
             <v-card-title
                 >Resumen Contable
 
@@ -134,6 +134,15 @@
                             :headers="headers"
                             :items="actividades"
                             :search="search"
+                            :loading="loading"
+                    loading-text="Loading... Please wait"
+                    :footer-props="{
+                        showFirstLastPage: true,
+                        firstIcon: 'mdi-arrow-collapse-left',
+                        lastIcon: 'mdi-arrow-collapse-right',
+                        prevIcon: 'mdi-minus',
+                        nextIcon: 'mdi-plus'
+                        }"
 
                         >
                              <template v-slot:item="row">
@@ -239,11 +248,11 @@ export default {
                 this.usuarios = response.data;
                 console.log(this.usuarios);
 
-                this.loading = false;
+                //this.loading = false;
             });
         },
         async getActividades() {
-            this.loading = true;
+            //this.loading = true;
             this.loadingUpload = true;
             let url;
             this.idUsuarios = [];
@@ -253,17 +262,17 @@ export default {
                     });
             var fechaInicio=this.dates[0];
             var fechaFin=this.dates[1];
-            this.headers.push({text:'Usuario',value:'usuario'})
+            this.headers.push({text:'Usuario',value:'usuario.nombre',sortable: true})
             //this.headers.push({text:moment(fechaInicio).format("ddd, D MMM"),value:moment(fechaInicio).format("ddd, D MMM")})
             var arrayFechas=[];
             while (moment(fechaInicio).isSameOrBefore(moment(fechaFin))) {
                 var auxFecha=moment(fechaInicio).format("D MMM");
                 arrayFechas.push(moment(fechaInicio).format("YYYY-MM-DD"));
-                this.headers.push({text:auxFecha,value:auxFecha})
+                this.headers.push({text:auxFecha,value:auxFecha,sortable: false})
                 fechaInicio=moment(fechaInicio).add(1,'days');
 
             }
-            this.headers.push({text:'TOTAL',value:'total'})
+            this.headers.push({text:'TOTAL',value:'total',sortable: true})
             //console.log(arrayFechas);
               await this.axios
                 .get(`/api/reporte-actividades-contable/${arrayFechas}/${this.idUsuarios}`)
@@ -306,10 +315,10 @@ export default {
                     //console.log(total);
 
 
+            this.loading = false;
                 })
                 .catch(error => console.log(error));
 
-            this.loading = false;
             this.loadingUpload = false;
             //this.dates = [];
             //this.selectedUsuarios=[];
