@@ -51,7 +51,7 @@ class DatabaseBackUp extends Command
 
             $details=[
             'title' => 'Ejecución automática de backup diario',
-            'body' => 'Estimad@ el software Registro de actividades ha generado el backup diario automático correspondiente al '.Carbon::now()->format('Y-m-d'),
+            'body' => 'Estimad@ el software <strong>Registro de actividades</strong> ha generado el backup diario automático correspondiente al '.Carbon::now()->format('Y-m-d'),
             'file' =>  $filename
         ];
         Mail::to('juan.perugachi@gruporadical.com')

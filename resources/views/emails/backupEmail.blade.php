@@ -14,13 +14,13 @@
     <h1 class="h1">{{ $details['title'] }}</h1>
 
     <p>{{ $details['body'] }}</p>
-    
+
     <br>
     <br>
     <img src="https://www.gruporadical.com/build/radical/nuevologo-radical.png" alt="logo">
     <br>
     <p><small style="font-size: 10px">Este correo fue generado automaticamente, por lo cual no debe responderlo.
-        Si existe algún error, eliminarlo o comunicarse con <a href="#">soporte@gruporadical.com</a></small></p>
+        Si existe algún error, eliminarlo o comunicarse con <a href="#">juan.perugachi@gruporadical.com</a></small></p>
 
 </body>
 
