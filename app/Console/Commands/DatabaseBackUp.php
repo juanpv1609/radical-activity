@@ -40,7 +40,7 @@ class DatabaseBackUp extends Command
      */
     public function handle()
     {
-
+        if (Carbon::now()->dayOfWeek == Carbon::MONDAY) {
         $filename = "backup-" . Carbon::now()->format('Y-m-d') . ".sql";
         $command = "".env('DUMP_PATH')." --user=" . env('DB_USERNAME') . " --password=" . env('DB_PASSWORD') . " --host=" . env('DB_HOST') . " " . env('DB_DATABASE') . "  > " . storage_path() . "/app/backup/" . $filename;
         $returnVar = null;
@@ -58,7 +58,13 @@ class DatabaseBackUp extends Command
                     //->cc(['paul.canchignia@gruporadical.com','xavier.montoya@gruporadical.com'])
                     ->send(new BackupEmail($details));
 
+            $this->info('Emails enviados.');
 
+        }else{
+            $this->info('Emails NO enviados.');
+
+
+        }
 
 
 
