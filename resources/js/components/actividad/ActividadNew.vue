@@ -137,6 +137,7 @@
                                 :min="minimo"
                                 :max="maximo"
                                 format="24hr"
+                                color="red"
                                 :allowed-hours="(horario.id==3)? allowedHours:null"
                                 :allowed-minutes="allowedStep"
                                 @click:minute="$refs.fin.save(end)"
@@ -159,13 +160,13 @@
                             v-model="modelDescripcion"
                             :items="itemsDescripcion"
                             hide-selected
-                            hint="Ingrese la descripción de la actividad y presione Enter o TAB "
+                            hint="Ingrese la descripción de la actividad y presione Enter, TAB o 'Punto y coma'"
                             label="Actividades"
                             multiple
                             persistent-hint
                             small-chips
                             deletable-chips
-                            :delimiters="[',']"
+                            :delimiters="[';']"
                             @change="delimitActividades"
                             :disabled="!tipoActividad"
                         >
@@ -174,7 +175,7 @@
                     <v-col cols="12" sm="2">
                         <v-btn
                             small
-                            color="primary"
+                            color="orange accent-4"
                             block
                             large
                             @click="controlFechas"
@@ -184,10 +185,9 @@
                         </v-btn>
                     </v-col>
                 </v-row>
-                <v-divider></v-divider>
                 <v-row v-if="ActivityLine.length > 0">
                     <v-col cols="12">
-                        <v-data-table :headers="headers" :items="ActivityLine" dense>
+                        <v-data-table :headers="headers" :items="ActivityLine"  class="elevation-2">
                             <template v-slot:item="row">
                                 <tr>
                                     <!-- <td>{{ row.item.fecha }}</td> -->
@@ -293,7 +293,7 @@
                                         </v-edit-dialog>
                                     </td>
 
-                                    <td>
+                                    <td >
                                         <v-checkbox
                                             v-model="row.item.estado"
                                             color="success"
@@ -367,7 +367,7 @@
 
             <v-card-actions v-if="ActivityLine.length > 0">
                 <v-spacer></v-spacer>
-                <v-btn block color="primary" @click="enviarActividades"
+                <v-btn block color="primary" large @click="enviarActividades"
                     >enviar {{ActivityLine.length}} actividades</v-btn
                 >
             </v-card-actions>
@@ -376,6 +376,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
     data() {
         return {
@@ -417,12 +418,12 @@ export default {
             headers: [
                 //{ text: "Fecha", value: "fecha" },
                 { text: "Inicio", value: "inicio" },
-                { text: "Fin", value: "fin" },
-                { text: "Tipo", value: "tipo" },
-                { text: "Actividades", value: "descripcion" },
-                { text: "Colaboradores", value: "colaborador" },
-                { text: "Observación / Resultados", value: "observacion" },
-                { text: "Completada", value: "estado" },
+                { text: "Fin", value: "fin", sortable: false },
+                { text: "Tipo", value: "tipo", sortable: false },
+                { text: "Actividades", value: "descripcion", sortable: false },
+                { text: "Colaboradores", value: "colaborador", sortable: false },
+                { text: "Observación / Resultados", value: "observacion", sortable: false },
+                { text: "Completada", value: "estado", sortable: false },
                 { text: "Eliminar", value: "controls", sortable: false }
             ],
             foto: null,
@@ -433,7 +434,7 @@ export default {
     },
     watch: {
         modelDescripcion(val) {
-            if (val.length > 5) {
+            if (val.length > 10) {
                 this.$nextTick(() => this.modelDescripcion.pop());
             }
         }
@@ -507,7 +508,7 @@ export default {
 
         },
         controlFechas(){
-            if (this.horario.id==3) {
+            if (this.horario.id==3) { //horario nosturno 22:00 - 06:00
                 this.addActivityLine();
             }else{
                 if (this.start>=this.end) {
@@ -582,44 +583,57 @@ export default {
                                 icon: 'warning',
                                 });
             } else {
-                 this.$swal.fire({
+                this.$swal
+                .fire({
+                    title: "Esta seguro?",
+                    html: `Estimado ${this.$store.state.user.name} a continuación registrará <strong>${this.Activity.activities.length}</strong> actividades correspondientes al <strong>${this.Activity.fecha}</strong>`,
+                    icon: "question",
+                    showConfirmButton: true,
+                    showCancelButton: true
+                })
+                .then(res => {
+                    if (res.value) {
+                        this.$swal.fire({
                         title: 'Espere',
                         text: 'Registrando actividades...',
                         icon: 'warning',
                         allowOutsideClick: false
                     });
-                this.$swal.showLoading();
-                this.axios
-                    .post("/api/actividades", this.Activity)
-                    .then(() => {
+                    this.$swal.showLoading();
+                    this.axios
+                        .post("/api/actividades", this.Activity)
+                        .then(() => {
 
-                        this.$swal.fire({
-                                    title: 'Correcto',
-                                    text: 'Actividades registradas correctamente!',
-                                    icon: 'success',
-                                    timer: 1500,
-                                    timerProgressBar: true,
-                                    });
+                            this.$swal.fire({
+                                        title: 'Correcto',
+                                        text: 'Actividades registradas correctamente!',
+                                        icon: 'success',
+                                        timer: 1500,
+                                        timerProgressBar: true,
+                                        });
 
-                    })
-                    .catch(err => {
-                        this.$swal.fire({
-                                    title: 'Incorrecto',
-                                    text: `Ocurrió un error!\n${err}`,
-                                    icon: 'error',
-                                    });
-                    })
-                    .finally(() => {
-                        this.Activity = {};
-                        this.ActivityLine = [];
-                        this.loading=false;
-                        this.initialData();
-                    });
+                        })
+                        .catch(err => {
+                            this.$swal.fire({
+                                        title: 'Incorrecto',
+                                        text: `Ocurrió un error!\n${err}`,
+                                        icon: 'error',
+                                        });
+                        })
+                        .finally(() => {
+                            this.Activity = {};
+                            this.ActivityLine = [];
+                            this.loading=false;
+                            this.initialData();
+                        });
+                    }
+                });
+
             }
 
         },
         delimitActividades (v) {
-                const reducer = (a, e) => [...a, ...e.split(/[,]+/)]
+                const reducer = (a, e) => [...a, ...e.split(/[;]+/)]
                 this.modelDescripcion = [...new Set(v.reduce(reducer, []))]
                 },
     }

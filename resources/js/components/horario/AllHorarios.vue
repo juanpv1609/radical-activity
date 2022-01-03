@@ -48,7 +48,6 @@
                 >
                 <template v-slot:item="row">
                     <tr>
-                        <td>{{row.item.id}}</td>
                         <td>{{row.item.nombre}}</td>
                         <td>{{row.item.descripcion}}</td>
                         <td>{{row.item.inicio}}</td>
