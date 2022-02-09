@@ -17,6 +17,7 @@ import TipoActividad from "../components/tipoActividad/AllTipoActividad.vue";
 
 import ReporteDetalle from "../components/reportes/ReporteResumen.vue";
 import ReporteContable from "../components/reportes/Reporte.vue";
+import Dashboard from "../components/dashboard/Dashboard.vue";
 
 const router = new VueRouter({
     mode: "history",
@@ -132,6 +133,16 @@ const router = new VueRouter({
             name: "reporte-contable",
             path: "/reporte-contable",
             component: ReporteContable,
+            meta: {
+                requiresAuth: true
+            }
+        }
+        //DASHBOARD
+        ,
+        {
+            name: "dashboard",
+            path: "/dashboard",
+            component: Dashboard,
             meta: {
                 requiresAuth: true
             }

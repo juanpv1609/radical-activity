@@ -54,7 +54,7 @@
                             label="Horario"
                         dense
                         return-object
-                        :hint="horario.id ? horario.inicio + ' - ' + horario.fin : 'Seleccione un horario'"
+                        :hint="horario.id ? horario.nombre + ' ('+horario.inicio + ' - ' + horario.fin+')' : 'Seleccione un horario'"
                         @change="setHorario()"
                         persistent-hint >
                         <template slot="selection" slot-scope="data">
@@ -177,17 +177,16 @@
                             color="primary"
                             block
                             large
-                            @click="addActivityLine"
+                            @click="controlFechas"
                             :disabled="(modelDescripcion.length == 0)"
                         >
                             agregar
                         </v-btn>
                     </v-col>
                 </v-row>
-                <v-divider></v-divider>
                 <v-row v-if="ActivityLine.length > 0">
                     <v-col cols="12">
-                        <v-data-table :headers="headers" :items="ActivityLine" dense>
+                        <v-data-table :headers="headers" :items="ActivityLine"  class="elevation-2">
                             <template v-slot:item="row">
                                 <tr>
                                     <!-- <td>{{ row.item.fecha }}</td> -->
@@ -492,12 +491,13 @@ export default {
                 console.log(res.data);
                 var data = res.data;
                 //this.Activity.usuario = this.$store.state.user.id;
+                    this.Activity.horario = data[0].actividad.horario;
+                    this.horario = data[0].actividad.horario;
+                    this.setHorario();
+                    this.Activity.fecha = data[0].actividad.fecha;
+                    this.fechaHoy=data[0].actividad.fecha;
                 data.forEach(element => {
 
-                    this.Activity.horario = element.actividad.horario.id;
-                    this.horario = element.actividad.horario;
-                    this.Activity.fecha = element.actividad.fecha;
-                    this.fechaHoy=element.actividad.fecha;
                     var activityLine = {};
                     this.ActivityLine = this.ActivityLine || [];
                     //console.log(this.modelDescripcion);
@@ -506,7 +506,7 @@ export default {
                     //this.modelDescripcion=(element.descripcion).split(',')
                     activityLine.descripcion = (element.descripcion).split(',')
                     activityLine.observacion = element.observacion;
-                   activityLine.colaboradores = ((!!element.colaboradores) || (element.colaboradores!='')) ? element.colaboradores.split(',') : null;
+                   activityLine.colaboradores = (element.colaboradores) ? element.colaboradores.split(',') : null ;
                     //activityLine.h_inicio = moment((element.h_inicio)).format('hh:mm');
                     //activityLine.h_fin = moment((element.h_fin)).format('hh:mm');
                     activityLine.h_inicio = (element.h_inicio).substring(0, 5);
@@ -553,14 +553,23 @@ export default {
             }
 
         },
-        addActivityLine() {
-            if (this.start>=this.end) {
+        controlFechas(){
+            if (this.horario.id==3) { //horario nocturno 22:00 - 06:00
+                this.addActivityLine();
+            }else{
+                if (this.start>=this.end) {
                 this.$swal.fire({
                                 title: 'Incorrecto!',
                                 text: `La hora final debe ser mayor a la inicial`,
                                 icon: 'error',
                                 });
-            }else{
+                }else{
+                    this.addActivityLine();
+                }
+            }
+        },
+        addActivityLine() {
+
                  var activityLine = {};
                 this.ActivityLine = this.ActivityLine || [];
                 console.log(this.modelDescripcion);
@@ -578,7 +587,7 @@ export default {
                 this.end = null;
                 this.descripcion = null;
                 this.modelDescripcion = [];
-            }
+
 
         },
         deleteActivityLine(el) {
@@ -618,9 +627,19 @@ export default {
                                 icon: 'warning',
                                 });
             } else {
+                this.$swal
+                .fire({
+                    title: "Esta seguro?",
+                    html: `Estimado ${this.$store.state.user.name} a continuación actualizará <strong>${this.Activity.activities.length}</strong> actividades correspondientes al <strong>${this.Activity.fecha}</strong>`,
+                    icon: "question",
+                    showConfirmButton: true,
+                    showCancelButton: true
+                })
+                .then(res => {
+                if (res.value) {
                  this.$swal.fire({
                         title: 'Espere',
-                        text: 'Registrando actividades...',
+                        text: 'Actualizando actividades...',
                         icon: 'warning',
                         allowOutsideClick: false
                     });
@@ -652,6 +671,8 @@ export default {
                         this.loading=false;
                         this.initialData();
                     });
+                }
+                });
             }
 
         },

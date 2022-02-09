@@ -237,6 +237,12 @@ export default {
             passwordRules3: [v => !!v || "Password repeat is required"],
             items: [
                 {
+                    title: "Dashboard",
+                    link: "/dashboard",
+                    icon: "mdi-view-dashboard"
+                    ,isAdmin:false
+                },
+                {
                     title: "Actividades",
                     link: "/actividad",
                     icon: "mdi-table-search"

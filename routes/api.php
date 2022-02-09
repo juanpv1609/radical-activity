@@ -13,6 +13,7 @@ use App\Http\Controllers\PersonaController;
 use App\Http\Controllers\HorariosController;
 use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\SendMailController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ActividadesController;
 use App\Http\Controllers\NivelEstudioController;
@@ -67,6 +68,12 @@ Route::middleware('api')->group(function () {
     Route::post('usuario-updatePassword', [UserController::class,'usuarioUpdatePassword']);
     Route::resource('perfil-puesto', PerfilPuestoController::class);
     Route::resource('roles', RoleController::class);
+    Route::resource('dashboard', DashboardController::class);
+    Route::get('dashboardPorTipo', [DashboardController::class,'porTipo']);
+    Route::get('dashboardCalendario/{usuario}', [DashboardController::class,'calendario']);
+
+
+
 
 
 
