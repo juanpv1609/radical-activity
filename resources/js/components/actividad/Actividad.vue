@@ -73,7 +73,7 @@
                             <td>
                                 {{ ((row.item.created_at).substring(0,16)).replace('T',' ') }}
                             </td>
-                            <td>
+                            <th>
                                      <v-chip
                                     small
                                     color="green"
@@ -81,15 +81,10 @@
                                 >
                                     {{ row.item.actividades }}
                                      </v-chip>
-                                 </td>
+                                 </th>
                                   <td>
-                                     <v-chip
-                                    small
-                                    color="blue"
-                                    dark
-                                >
-                                    {{ row.item.horas_total }}
-                                     </v-chip>
+                                      <strong class="primary--text">{{ row.item.horas_total }}</strong>
+
                                  </td>
                              <td>
 

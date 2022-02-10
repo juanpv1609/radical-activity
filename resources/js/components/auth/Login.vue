@@ -70,7 +70,7 @@
                             Enviar
                         </v-btn>
                     </v-col>
-            
+
          </v-card-text>
          </v-col>
     </v-row>
@@ -109,6 +109,7 @@
     },
     created(){
         this.$store.commit('SET_LAYOUT', 'auth-layout')
+        //window.location.href = window.location.href
     },
     methods: {
         login() {

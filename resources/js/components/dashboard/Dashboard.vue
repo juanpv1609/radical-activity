@@ -20,24 +20,82 @@
 
            <v-icon>mdi-view-dashboard</v-icon> Dashboard
           <v-spacer></v-spacer>
-          <v-col cols="auto">
-              <v-text-field
-              v-model="search"
-              append-icon="mdi-magnify"
-              label="Buscar"
-              single-line
-              hide-details
-              filled
-            rounded
-            dense
-          ></v-text-field>
-          </v-col>
+              <v-col cols="auto" v-if="$store.state.user.role>=2">
+                        <v-menu
+                        v-model="menu"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="auto"
+                    >
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-text-field
+                                v-model="dateRangeText"
+                                label="Rango de fechas"
+                                prepend-icon="mdi-calendar"
+                                readonly
+                                v-bind="attrs"
+                                v-on="on"
+
+                                dense
+
+                                single-line
+                                hide-details
+                            ></v-text-field>
+                        </template>
+                        <v-date-picker v-model="dates" range>
+                        </v-date-picker>
+                    </v-menu>
+                </v-col>
+                <v-col cols="auto" v-if="$store.state.user.role>=2" >
+                    <v-autocomplete
+                        deletable-chips
+                        multiple
+                        small-chips
+                        clearable
+                        :items="usuarios"
+                        item-text="name"
+                        item-value="id"
+                        v-model="selectedUsuarios"
+                        label="Seleccione uno o varios usuarios"
+
+                        :disabled="dates.length<=1"
+                        return-object
+
+                    >
+                        <template v-slot:prepend-item>
+                            <v-list-item ripple @click="toggle">
+                                <v-list-item-action>
+                                    <v-icon
+                                        :color="selectedUsuarios.length > 0 ? 'indigo darken-4' : ''">
+                                        {{ icon }}
+                                    </v-icon>
+                                </v-list-item-action>
+                                <v-list-item-content>
+                                    <v-list-item-title>
+                                        Seleccionar Todo
+                                    </v-list-item-title>
+                                </v-list-item-content>
+                            </v-list-item>
+                            <v-divider class="mt-2"></v-divider>
+                        </template>
+                    </v-autocomplete>
+                </v-col>
+                <v-col cols="auto">
+                    <v-btn v-if="selectedUsuarios.length > 0"
+
+                        color="primary"
+                        dark
+                        >aplicar</v-btn>
+                </v-col>
+
 
         </v-card-title>
 
             <v-card-text>
                 <v-row>
-                    <v-col cols="4">
+                    <v-col cols="3">
                         <v-card>
                             <v-card-title>
                                 Tipo Actividad vs Tiempo
@@ -52,7 +110,7 @@
                         </v-card>
 
                     </v-col>
-                    <v-col cols="8">
+                    <v-col cols="9">
                         <v-card>
                             <v-card-title>
                                 Distribución diaria
@@ -79,7 +137,7 @@
                         </v-card> -->
 
                     </v-col>
-                    <v-col cols="12">
+                    <!-- <v-col cols="12">
                         <v-card>
                             <v-card-title>
                                 Modo Calendario
@@ -104,7 +162,7 @@
                             </v-card-text>
                         </v-card>
 
-                    </v-col>
+                    </v-col> -->
 
                 </v-row>
 
@@ -127,7 +185,14 @@ export default {
     data() {
         return {
 
-            loading: true,
+            loading: false,
+            loadingUpload: false,
+            dates: [],
+            valid: true,
+            menu: false,
+            idUsuarios: [],
+            selectedUsuarios: [],
+            dateRules: [v => !!v || "Date range is required"],
             usuarios:[],
             usuario:{},
             search:"",
@@ -159,16 +224,16 @@ export default {
 
             },
             chartDataFecha:[
-                ['Fecha', 'Horas']
+                ['Fecha', 'Horas Productivas']
             ],
             chartOptionsFecha:{
-                height: 300,
                 fontSize:12,
                 legend:{
                     position:'top',
                     maxLines:3,
                     alignment:'center'
                 },
+                chartArea: {width: '100%'}
 
 
             },
@@ -178,19 +243,31 @@ export default {
             chartOptionsTipo:{
                 legend:{
                     position:'left',
-                    maxLines:3,
                     alignment:'center'
                 },
                 fontSize:12,
-                height: 300,
-                pieHole: 0.4,
-                chartArea:{
-                    left:10,
-                }
+                chartArea: {width: '100%',height: '100%'}
+
             },
             actividades:[]
 
         };
+    },
+    computed: {
+        dateRangeText() {
+            return this.dates.join(" ~ ");
+        },
+        likesAllUsers () {
+        return this.selectedUsuarios.length === this.usuarios.length
+      },
+      likesSomeUsers () {
+        return this.selectedUsuarios.length > 0 && !this.likesAllUsers
+      },
+      icon () {
+        if (this.likesAllUsers) return 'mdi-close-box'
+        if (this.likesSomeUsers) return 'mdi-minus-box'
+        return 'mdi-checkbox-blank-outline'
+      },
     },
     created() {
 
@@ -199,14 +276,20 @@ export default {
     },
     methods: {
         getData(){
-            this.axios.get(`/api/usuarios`).then(response => {
+            const query =
+            ((this.$store.state.user.role == 2)//ADMIN
+            || (this.$store.state.user.role == 3)) //SUPERVISOR
+                ? `usuarios-all`
+                : `user`;
+            this.axios.get(`/api/${query}`).then(response => {
                 this.usuarios = response.data;
-                console.log(this.usuarios);
-                //this.loading = false;
+               // console.log(this.usuarios);
+
+                this.loading = false;
             });
             this.axios.get("/api/dashboard/").then(response => {
             this.actividades=response.data;
-                console.log(this.actividades);
+                //console.log(this.actividades);
             response.data.forEach(element => {
                 this.chartDataPersona.push([element.name,parseFloat(element.total)])
             });
@@ -217,7 +300,7 @@ export default {
         });
         this.axios.get("/api/dashboardPorTipo/").then(response => {
             //this.actividades=response.data;
-            console.log(response.data);
+            console.log('tipo  '+response.data);
             response.data.forEach(element => {
                 this.chartDataTipo.push([element.descripcion,parseFloat(element.total)])
             });
@@ -227,7 +310,7 @@ export default {
             //this.actividades=response.data;
             console.log(response.data);
             response.data.forEach(element => {
-                this.chartDataFecha.push([element.fecha,parseFloat(element.total)])
+                this.chartDataFecha.push([(element.fecha),parseFloat(element.total)])
             });
 
         });

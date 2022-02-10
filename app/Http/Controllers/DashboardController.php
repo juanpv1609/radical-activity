@@ -93,6 +93,7 @@ class DashboardController extends Controller
             ->select('fecha', DB::raw('SUM(horas_total) as total'))
             ->where('usuario_id',auth()->user()->id)
             ->groupBy('fecha')
+            ->havingRaw('SUM(horas_total) > ?', [0])
             ->orderBy('fecha','ASC')
             ->get();
         return $result;
