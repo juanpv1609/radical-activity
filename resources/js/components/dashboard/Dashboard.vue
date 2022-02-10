@@ -95,7 +95,7 @@
 
             <v-card-text>
                 <v-row>
-                    <v-col cols="3">
+                    <v-col cols="4">
                         <v-card>
                             <v-card-title>
                                 Tipo Actividad vs Tiempo
@@ -110,7 +110,7 @@
                         </v-card>
 
                     </v-col>
-                    <v-col cols="9">
+                    <v-col cols="8">
                         <v-card>
                             <v-card-title>
                                 Distribución diaria
