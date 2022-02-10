@@ -287,17 +287,17 @@ export default {
 
                 this.loading = false;
             });
-            this.axios.get("/api/dashboard/").then(response => {
-            this.actividades=response.data;
-                //console.log(this.actividades);
-            response.data.forEach(element => {
-                this.chartDataPersona.push([element.name,parseFloat(element.total)])
-            });
-            //this.chartDataPersona=this.chartDataPersona.sort(this.SortArray)
+            /* this.axios.get("/api/dashboard/").then(response => {
+                this.actividades=response.data;
+                    //console.log(this.actividades);
+                response.data.forEach(element => {
+                    this.chartDataPersona.push([element.name,parseFloat(element.total)])
+                });
+                //this.chartDataPersona=this.chartDataPersona.sort(this.SortArray)
 
-                    this.loading=false;
+                        this.loading=false;
 
-        });
+            }); */
         this.axios.get("/api/dashboardPorTipo/").then(response => {
             //this.actividades=response.data;
             console.log('tipo  '+response.data);
