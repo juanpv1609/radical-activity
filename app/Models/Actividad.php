@@ -14,6 +14,7 @@ class Actividad extends Model
                             'fecha',
                             'horas_p',
                             'horas_np',
+                            'horas_total',
                             'destinatarios',
                             'created_at',
                             'updated_at',

@@ -77,14 +77,14 @@ class ActividadesController extends Controller
         $actividad = new Actividad([
             'usuario_id'        => $request->input('usuario'),
             'horario_id'        => $request->input('horario'),
+            'horas_p'           => $request->input('horas_p'),
+            'horas_np'          => $request->input('horas_np'),
+            'horas_total'       => $request->input('horas_total'),
+
             'fecha'          => $request->input('fecha'),
             'destinatarios'  => (count($request->input('destinatarios'))>0) ? implode(",", $request->input('destinatarios')) : null,
         ]);
         $actividad->save();
-        $horas_p=0.0;
-        $horas_np=0.0;
-        $array_horas_inicio=[];
-        $array_horas_fin=[];
 
 
         $listaActividades = [];
@@ -103,8 +103,6 @@ class ActividadesController extends Controller
 
 
             ];
-            array_push($array_horas_inicio,$item['h_inicio']);
-            array_push($array_horas_fin, $item['h_fin']);
 
             $actividades = new Actividades($aux);
             $actividades->save();
@@ -156,10 +154,14 @@ class ActividadesController extends Controller
     public function update(Request $request, $id)
     {
         $arrayActivities = $request->input("activities");
-
+        //dd($request);
         $actividad = Actividad::find($id);
         $actividad->usuario_id = $request->input('usuario');
         $actividad->horario_id = $request->input('horario');
+        $actividad->horas_p = $request->input('horas_p');
+        $actividad->horas_np = $request->input('horas_np');
+        $actividad->horas_total = $request->input('horas_total');
+
         $actividad->fecha = $request->input('fecha');
         $actividad->destinatarios = (count($request->input('destinatarios'))>0) ? implode(",", $request->input('destinatarios')) : null;
         $actividad->save();

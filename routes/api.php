@@ -70,6 +70,8 @@ Route::middleware('api')->group(function () {
     Route::resource('roles', RoleController::class);
     Route::resource('dashboard', DashboardController::class);
     Route::get('dashboardPorTipo', [DashboardController::class,'porTipo']);
+    Route::get('dashboardPorFecha', [DashboardController::class,'porFecha']);
+
     Route::get('dashboardCalendario/{usuario}', [DashboardController::class,'calendario']);
 
 

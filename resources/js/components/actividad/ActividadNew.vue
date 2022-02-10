@@ -54,7 +54,7 @@
                             label="Horario"
                         dense
                         return-object
-                        :hint="horario.id ? horario.inicio + ' - ' + horario.fin : 'Seleccione un horario'"
+                        :hint="horario.id ? horario.nombre + ' ('+horario.inicio + ' - ' + horario.fin+')' : 'Seleccione un horario'"
                         @change="setHorario()"
                         persistent-hint >
                         <template slot="selection" slot-scope="data">
@@ -556,15 +556,55 @@ export default {
             this.Activity.usuario = this.$store.state.user.id;
             this.Activity.horario = this.horario.id;
             this.Activity.fecha = this.fechaHoy;
-            this.Activity.enviaMail = this.enviar;
             //this.Activity.enviaMail = this.enviar;
             this.Activity.destinatarios = this.modelDestinatarios;
             //this.Activity.colaboradores = this.modelColaboradores;
             this.Activity.activities = this.ActivityLine;
 
-            console.log(this.Activity);
+            console.log(this.ActivityLine);
+            var min = this.ActivityLine[0].h_inicio;
+            var max = this.ActivityLine[0].h_fin;
+            var diff = 0.0;
+            var diff_tiempo_libre = 0.0;
+            if (this.ActivityLine.length>1) {
+                for (var i = 1; i < this.ActivityLine.length; i++) {
+                        if (this.ActivityLine[i].h_fin > max) {
+                            max = this.ActivityLine[i].h_fin;
+                        }
+                        if (this.ActivityLine[i].h_inicio < min) {
+                            min = this.ActivityLine[i].h_inicio;
+                        }
+                        diff = moment.duration(moment(max,'HH:mm').diff(moment(min,'HH:mm'))).asHours();
+
+                    if (this.ActivityLine[i].tipo_actividad == 6 ) {
+                        diff_tiempo_libre = moment.duration(moment(this.ActivityLine[i].h_fin,'HH:mm').diff(moment(this.ActivityLine[i].h_inicio,'HH:mm'))).asHours();
+                    }
+
+
+                }
+            } else {
+                 min = this.ActivityLine[0].h_inicio;
+                 max = this.ActivityLine[0].h_fin;
+                diff = moment.duration(moment(max,'HH:mm').diff(moment(min,'HH:mm'))).asHours();
+
+            }
+            if (this.horario.id==3) { //si es horario N1 NOCTURNO 22:00 - 06:00
+
+                    if (this.ActivityLine[0].h_inicio=='22:00' && this.ActivityLine[0].h_fin=='06:00') {
+                        min = '00:00';
+                        max = '08:00';
+                    }
+                    diff = moment.duration(moment(max,'HH:mm').diff(moment(min,'HH:mm'))).asHours();
+                }
+            this.Activity.horas_p = diff.toFixed(2);
+            this.Activity.horas_np = diff_tiempo_libre.toFixed(2);
+            this.Activity.horas_total = (diff-diff_tiempo_libre).toFixed(2)
+            console.log('mayor: '+max);
+            console.log('menor: '+min);
+            console.log('diff: '+diff.toFixed(2));
+            console.log('diff tiempo libre: '+diff_tiempo_libre.toFixed(2));
             var tiempo_libre=0;
-            if (this.$store.state.user.cargo==1) { //si es N1
+            if (this.horario.id<=3) { //si es N1
                 tiempo_libre=1;
                 } else {
                     this.Activity.activities.forEach(element => {
@@ -586,7 +626,9 @@ export default {
                 this.$swal
                 .fire({
                     title: "Esta seguro?",
-                    html: `Estimado ${this.$store.state.user.name} a continuación registrará <strong>${this.Activity.activities.length}</strong> actividades correspondientes al <strong>${this.Activity.fecha}</strong>`,
+                    html: `Estimado ${this.$store.state.user.name} a continuación registrará <strong>${this.Activity.activities.length}</strong>
+                    actividades correspondientes al <strong>${this.Activity.fecha}</strong> <br>
+                    Con un total de <strong>${(diff-diff_tiempo_libre).toFixed(2)}</strong> horas registradas.`,
                     icon: "question",
                     showConfirmButton: true,
                     showCancelButton: true

@@ -82,6 +82,15 @@
                                     {{ row.item.actividades }}
                                      </v-chip>
                                  </td>
+                                  <td>
+                                     <v-chip
+                                    small
+                                    color="blue"
+                                    dark
+                                >
+                                    {{ row.item.horas_total }}
+                                     </v-chip>
+                                 </td>
                              <td>
 
                                  <v-btn
@@ -95,6 +104,20 @@
                                     <v-icon>mdi-magnify</v-icon>
                                 </v-btn>
                                 <v-btn
+                                v-if="$store.state.user.role==2"
+                                    icon
+                                    color="orange"
+                                    small
+                                    link
+                                    title="Editar actividades"
+                                    :to="{
+                                        name: 'actividad-edit',
+                                        params: { id: row.item.id }
+                                    }"
+                                >
+                                    <v-icon>mdi-pencil</v-icon>
+                                </v-btn>
+                                <v-btn v-else
                                 :disabled="$store.state.user.id!=row.item.usuario.id"
                                     icon
                                     color="orange"
@@ -108,6 +131,8 @@
                                 >
                                     <v-icon>mdi-pencil</v-icon>
                                 </v-btn>
+
+
                                 <v-btn
                                     :disabled="$store.state.user.id!=row.item.usuario.id"
                                     icon
@@ -247,6 +272,12 @@ export default {
                 {
                     text: "Actividades",
                     value: "actividades",
+                    filterable: false,
+                    align: "start"
+                },
+                {
+                    text: "Horas",
+                    value: "horas_total",
                     filterable: false,
                     align: "start"
                 },

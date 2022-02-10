@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Actividad;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\User;
 
 class DashboardController extends Controller
 {
@@ -14,94 +15,86 @@ class DashboardController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        $actividades = DB::table('actividades')
-            ->join('actividad', 'actividad.id', '=', 'actividades.dia')
-            ->join('users', 'users.id', '=', 'actividad.usuario_id')
-            ->join('tipo_actividad', 'tipo_actividad.id', '=', 'actividades.tipo_actividad')
-            ->select('actividad.fecha', 'tipo_actividad.descripcion', 'users.name','actividades.h_inicio','actividades.h_fin')
-            ->where('users.id','<>',19)
-            //->where('actividades.h_inicio','=','22:00:00')
-            ->orderBy('users.name','asc')->get();
 
-        $result = array();
-        foreach ($actividades as $actividad ) {
-            $inicio= new Carbon($actividad->h_inicio);
-            $fin= new Carbon($actividad->h_fin);
-            $repeat=false;
+    public function index(){
+        $arrayUsuarios=[];
 
-            if ($actividad->h_inicio=='22:00:00') { //verificar si funciona
-                $actividad->total=8.0;
-                //$actividad->tipo=3;
-            }
-            else{
-
-                $actividad->total= ($inicio->diffInMinutes($fin))/60; //restar tiempos
+        if (auth()->user()->role>=2) {
+            $usuario_estandar= User::get()->toArray();
+            foreach ($usuario_estandar as $usuario) {
+                array_push($arrayUsuarios, $usuario['id']);
             }
 
-             for ($i=0;$i<count($result);$i++) {
-                if ($result[$i]['name']==$actividad->name) {
-                    $result[$i]['total']+=$actividad->total;
-
-                    $result[$i]['total']=round($result[$i]['total'], 2);
-                    $repeat=true;
-                    break;
-                }
-            }
-
-            if ($repeat==false) {
-                $result[] = array('name' => $actividad->name, 'total' => $actividad->total);
-            }
+        }else{
+            array_push($arrayUsuarios, auth()->user()->id);
 
         }
+
+
+         //$actividad = Actividad::with('usuario', 'horario')->whereIn('usuario_id', $arrayUsuarios)->orderBy('fecha', 'desc')->get();
+
+         $result = DB::table('actividad')
+                ->join('users', 'users.id', '=', 'actividad.usuario_id')
+                ->select('actividad.usuario_id','users.name', DB::raw('SUM(horas_total) as total'))
+                ->whereIn('actividad.usuario_id',$arrayUsuarios)
+                ->groupBy('actividad.usuario_id','users.name')
+                ->orderBy('total','DESC')
+                ->get();
+
+
+        return ($result);
+
+    }
+
+    public function calendario($usuario){
+        $result = DB::table('actividad')
+            ->select('fecha', DB::raw('SUM(horas_total) as total'))
+            ->where('usuario_id', auth()->user()->id)
+            ->groupBy('fecha')
+            ->get();
+        return $result;
+
+    }
+    public function porTipo(){
+        $arrayUsuarios=[];
+
+        if (auth()->user()->role>=2) {
+            $usuario_estandar= User::get()->toArray();
+            foreach ($usuario_estandar as $usuario) {
+                array_push($arrayUsuarios, $usuario['id']);
+            }
+        } else {
+            array_push($arrayUsuarios, auth()->user()->id);
+        }
+
+        $result = DB::table('actividades')
+            ->join('actividad', 'actividad.id', '=', 'actividades.dia')
+            ->join('tipo_actividad', 'tipo_actividad.id', '=', 'actividades.tipo_actividad')
+            ->select('tipo_actividad.descripcion', DB::raw('SUM(actividad.horas_total) as total'))
+            //->where('actividades.h_inicio','=','22:00:00')
+            ->whereIn('actividad.usuario_id',$arrayUsuarios)
+            ->groupBy('tipo_actividad.descripcion')
+            ->get();
         return $result;
     }
-    public function calendario($usuario){
-        $actividades = Actividad::where('usuario_id',$usuario)->get();
-        return $actividades;
-    }
-    public function porTipo()
-    {
-        $actividades = DB::table('actividades')
-            ->join('actividad', 'actividad.id', '=', 'actividades.dia')
-            ->join('users', 'users.id', '=', 'actividad.usuario_id')
-            ->join('tipo_actividad', 'tipo_actividad.id', '=', 'actividades.tipo_actividad')
-            ->select('actividad.fecha', 'tipo_actividad.descripcion', 'users.name','actividades.h_inicio','actividades.h_fin')
-            ->where('users.id','<>',19)
-            //->where('actividades.h_inicio','=','22:00:00')
-            ->orderBy('users.name','asc')->get();
+    public function porFecha(){
+        $arrayUsuarios=[];
 
-        $result = array();
-        foreach ($actividades as $actividad ) {
-            $inicio= new Carbon($actividad->h_inicio);
-            $fin= new Carbon($actividad->h_fin);
-            $repeat=false;
-
-            if ($actividad->h_inicio=='22:00:00') { //verificar si funciona
-                $actividad->total=8.0;
-                //$actividad->tipo=3;
+        if (auth()->user()->role>=2) {
+            $usuario_estandar= User::get()->toArray();
+            foreach ($usuario_estandar as $usuario) {
+                array_push($arrayUsuarios, $usuario['id']);
             }
-            else{
-
-                $actividad->total= ($inicio->diffInMinutes($fin))/60; //restar tiempos
-            }
-
-             for ($i=0;$i<count($result);$i++) {
-                if ($result[$i]['descripcion']==$actividad->descripcion) {
-                    $result[$i]['total']+=$actividad->total;
-
-                    $result[$i]['total']=round($result[$i]['total'], 2);
-                    $repeat=true;
-                    break;
-                }
-            }
-
-            if ($repeat==false) {
-                $result[] = array('descripcion' => $actividad->descripcion, 'total' => $actividad->total);
-            }
-
+        } else {
+            array_push($arrayUsuarios, auth()->user()->id);
         }
+
+        $result = DB::table('actividad')
+            ->select('fecha', DB::raw('SUM(horas_total) as total'))
+            ->where('usuario_id',auth()->user()->id)
+            ->groupBy('fecha')
+            ->orderBy('fecha','ASC')
+            ->get();
         return $result;
     }
 

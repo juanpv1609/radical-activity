@@ -1,7 +1,7 @@
 <template>
 
     <div>
-        <v-card elevation="2">
+        <!-- <v-card elevation="2">
             <v-card-title
           >
 
@@ -12,8 +12,9 @@
 
             <v-img src="../img/building.png" alt="Logo"  ></v-img>
         </v-card-text>
-        </v-card>
-        <!-- <v-card elevation="2" :loading="loading">
+        </v-card> -->
+
+        <v-card elevation="2" :loading="loading">
             <v-card-title
           >
 
@@ -54,6 +55,18 @@
                     <v-col cols="8">
                         <v-card>
                             <v-card-title>
+                                Distribución diaria
+                            </v-card-title>
+                            <v-card-text>
+                                <GChart
+                                    type="ColumnChart"
+                                    :data="chartDataFecha"
+                                    :options="chartOptionsFecha"
+                                />
+                            </v-card-text>
+                        </v-card>
+                       <!--  <v-card>
+                            <v-card-title>
                                 Persona vs Tiempo
                             </v-card-title>
                             <v-card-text>
@@ -63,7 +76,7 @@
                                     :options="chartOptionsPersona"
                                 />
                             </v-card-text>
-                        </v-card>
+                        </v-card> -->
 
                     </v-col>
                     <v-col cols="12">
@@ -98,7 +111,7 @@
 
             </v-card-text>
 
-        </v-card> -->
+        </v-card>
 
 
     </div>
@@ -145,6 +158,20 @@ export default {
 
 
             },
+            chartDataFecha:[
+                ['Fecha', 'Horas']
+            ],
+            chartOptionsFecha:{
+                height: 300,
+                fontSize:12,
+                legend:{
+                    position:'top',
+                    maxLines:3,
+                    alignment:'center'
+                },
+
+
+            },
             chartDataTipo:[
                 ['Tipo Actividad', 'Tiempo']
             ],
@@ -179,19 +206,28 @@ export default {
             });
             this.axios.get("/api/dashboard/").then(response => {
             this.actividades=response.data;
+                console.log(this.actividades);
             response.data.forEach(element => {
-                this.chartDataPersona.push([element.name,element.total])
+                this.chartDataPersona.push([element.name,parseFloat(element.total)])
             });
             //this.chartDataPersona=this.chartDataPersona.sort(this.SortArray)
 
-                    console.log(this.actividades);
                     this.loading=false;
 
         });
         this.axios.get("/api/dashboardPorTipo/").then(response => {
             //this.actividades=response.data;
+            console.log(response.data);
             response.data.forEach(element => {
-                this.chartDataTipo.push([element.descripcion,element.total])
+                this.chartDataTipo.push([element.descripcion,parseFloat(element.total)])
+            });
+
+        });
+        this.axios.get("/api/dashboardPorFecha/").then(response => {
+            //this.actividades=response.data;
+            console.log(response.data);
+            response.data.forEach(element => {
+                this.chartDataFecha.push([element.fecha,parseFloat(element.total)])
             });
 
         });
@@ -208,7 +244,7 @@ export default {
             response.data.forEach(element => {
 
 
-                    this.chartDataCalendar.push([new Date(element.fecha),parseFloat(element.horas_p)])
+                    this.chartDataCalendar.push([new Date(element.fecha),parseFloat(element.total)])
 
             });
 
