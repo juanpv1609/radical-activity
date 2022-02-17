@@ -94,11 +94,11 @@
         </v-card-title>
 
             <v-card-text>
-                <v-row>
+                <v-row dense>
                     <v-col cols="4">
                         <v-card>
                             <v-card-title>
-                                Tipo Actividad vs Tiempo
+                                Tiempo por tipo de actividad
                             </v-card-title>
                             <v-card-text>
                                 <GChart
@@ -137,7 +137,7 @@
 
                     </v-col>
                     <v-col cols="12">
-                        <v-card>
+                       <!--  <v-card>
                             <v-card-title>
                                 Distribución diaria
                             </v-card-title>
@@ -148,8 +148,8 @@
                                     :options="chartOptionsFecha"
                                 />
                             </v-card-text>
-                        </v-card>
-                       <!--  <v-card>
+                        </v-card> -->
+                         <!-- <v-card>
                             <v-card-title>
                                 Persona vs Tiempo
                             </v-card-title>

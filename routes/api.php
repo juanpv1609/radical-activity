@@ -59,6 +59,8 @@ Route::middleware('api')->group(function () {
     Route::resource('horarios', HorariosController::class);
     Route::resource('actividades', ActividadesController::class);
     Route::get('detalle-actividades/{id}', [ActividadesController::class,'detalleActividades']);
+    Route::get('actividades-calendar', [ActividadesController::class,'actividadesCalendar']);
+
 
     Route::resource('tipo-actividad', TipoActividadController::class);
     Route::resource('usuarios', UserController::class);

@@ -33,6 +33,37 @@ class ActividadesController extends Controller
          $actividad = Actividad::with('usuario','horario')->whereIn('usuario_id', $arrayUsuarios)->orderBy('fecha','desc')->get();
          foreach ($actividad as $item) {
              # code...
+             $actividades = Actividades::where('dia', $item->id)->get();
+            $item->actividades_count=$actividades->count();
+            //$item->actividades=$actividades;
+
+             $item->hora_inicio = $actividades->min('h_inicio');
+             $item->hora_fin= $actividades->max('h_fin');
+
+
+         }
+
+
+
+        return ($actividad);
+
+    }
+    public function actividadesCalendar()
+    {
+        //$actividades = Actividades::with('actividad.usuario_id', 'actividad.horario', 'tipo', 'status')->get()->toArray();
+
+        //return ($actividades);
+        $usuario_estandar= User::where('role',1)->get()->toArray();
+        $arrayUsuarios = [];
+         foreach ($usuario_estandar as $usuario) {
+             //$actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->where('dia', $item['id'])->get()->toArray();
+             array_push($arrayUsuarios, $usuario['id']);
+         }
+         array_push($arrayUsuarios, auth()->user()->id);
+
+         $actividad = Actividad::with('usuario','horario')->whereIn('usuario_id', $arrayUsuarios)->orderBy('fecha','desc')->get();
+         foreach ($actividad as $item) {
+             # code...
              $actividades = Actividades::with('tipo')->where('dia', $item->id)->get();
             $item->actividades_count=$actividades->count();
             $item->actividades=$actividades;

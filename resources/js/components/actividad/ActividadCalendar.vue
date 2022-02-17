@@ -224,7 +224,7 @@ export default {
         const query =
             ((this.$store.state.user.role == 2)//ADMIN
             || this.$store.state.user.role == 3) //SUPERVISOR
-                ? `actividades`
+                ? `actividades-calendar`
                 : `actividades/${this.$store.state.user.id}`;
 
                 const temp=`actividades`
