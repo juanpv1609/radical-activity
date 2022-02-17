@@ -6,6 +6,7 @@ import Home from "../components/Home.vue";
 
 import AllUsuarios from "../components/usuario/AllUsuarios.vue";
 import Actividad from "../components/actividad/Actividad.vue";
+import ActividadCalendar from "../components/actividad/ActividadCalendar.vue";
 import ActividadNew from "../components/actividad/ActividadNew.vue";
 import ActividadEdit from "../components/actividad/ActividadEdit.vue";
 import AllAreas from "../components/area/AllAreas.vue";
@@ -59,6 +60,14 @@ const router = new VueRouter({
             name: "actividad",
             path: "/actividad",
             component: Actividad,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            name: "actividad-calendar",
+            path: "/actividad-calendar",
+            component: ActividadCalendar,
             meta: {
                 requiresAuth: true
             }

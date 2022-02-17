@@ -2,7 +2,7 @@
     <div>
         <v-card elevation="2" :loading="loading">
             <v-card-title class="m-a">
-                Actualizacón de actividades - {{ usuario.name }}
+                {{ tipoRegistro }} de actividades - {{ usuario.name }}
                 <v-spacer></v-spacer>
                 <v-col cols="2">
                     <template>
@@ -29,7 +29,6 @@
                             <v-date-picker
                                 scrollable
                                 v-model="fechaHoy"
-                                :max="new Date().toISOString().substr(0, 10)"
                                 min="1950-01-01"
                                 @change="setFecha"
                             >
@@ -432,6 +431,12 @@ export default {
             usuario:"",
         };
     },
+    computed:{
+        tipoRegistro(){
+            var f = new Date();
+            return (this.fechaHoy<=f.toISOString().substr(0, 10)) ? 'Registro' : 'Planificación'
+        }
+    },
     watch: {
         modelDescripcion(val) {
             if (val.length > 5) {
@@ -599,9 +604,11 @@ export default {
         enviarActividades() {
 
             //this.loading = true;
+            var f = new Date();
             this.Activity.usuario = this.usuario.id;
             this.Activity.horario = this.horario.id;
             this.Activity.fecha = this.fechaHoy;
+            this.Activity.planificada = (this.fechaHoy<=f.toISOString().substr(0, 10)) ? 0 : 1
             //this.Activity.enviaMail = this.enviar;
             this.Activity.destinatarios = this.modelDestinatarios;
             //this.Activity.colaboradores = this.modelColaboradores;
@@ -639,7 +646,7 @@ export default {
             }
             if (this.horario.id==3) { //si es horario N1 NOCTURNO 22:00 - 06:00
 
-                    if (this.ActivityLine[0].h_inicio=='22:00' && this.ActivityLine[0].h_fin=='06:00') {
+                    if (this.ActivityLine[0].h_inicio=='22:00') {
                         min = '00:00';
                         max = '08:00';
                     }

@@ -16,6 +16,7 @@ class Actividad extends Model
                             'horas_np',
                             'horas_total',
                             'destinatarios',
+                            'es_planificada',
                             'created_at',
                             'updated_at',
                             ];

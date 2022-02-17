@@ -22,6 +22,7 @@ class Actividades extends Model
         'colaboradores',
         'estado',
         'verificada',
+        
         'is_verified_by'
     ];
     public $timestamps = false;

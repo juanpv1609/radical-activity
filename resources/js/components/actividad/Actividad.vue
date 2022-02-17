@@ -3,7 +3,31 @@
         <v-card elevation="2" >
             <v-card-title >
                 Mi Actividad
+
                 <v-spacer></v-spacer>
+                <v-btn-toggle
+                    v-model="icon"
+                    borderless
+                    dense
+
+                >
+                    <v-btn value="left" :to="{ name: 'actividad'}">
+                    <span class="hidden-sm-and-down">Lista</span>
+
+                    <v-icon right>
+                        mdi-format-align-left
+                    </v-icon>
+                    </v-btn>
+
+                    <v-btn value="center" :to="{ name: 'actividad-calendar'}">
+                    <span class="hidden-sm-and-down">Calendario</span>
+
+                    <v-icon right>
+                        mdi-calendar
+                    </v-icon>
+                    </v-btn>
+
+                </v-btn-toggle>
                 <v-col cols="auto">
                     <v-text-field
                         v-model="search"
@@ -24,7 +48,7 @@
                         name: 'actividad-new'
                     }"
                 >
-                    <v-icon>mdi-plus</v-icon> NUEVA
+                    <v-icon>mdi-plus-thick</v-icon> NUEVO REGISTRO
                 </v-btn>
             </v-card-title>
 
@@ -59,7 +83,6 @@
                                 {{ row.item.usuario.name }}
                             </td>
 
-                            <td>{{ row.item.horario.nombre }} ({{ row.item.horario.inicio }} - {{ row.item.horario.fin }})</td>
                             <!-- <td>{{ row.item.tipo.descripcion }}</td>
                             <td>
                                 <v-chip
@@ -70,18 +93,17 @@
                                     {{ row.item.status.descripcion }}
                                 </v-chip>
                             </td> -->
-                            <td>
-                                {{ ((row.item.created_at).substring(0,16)).replace('T',' ') }}
-                            </td>
                             <th>
                                      <v-chip
                                     small
                                     color="green"
                                     dark label
                                 >
-                                    {{ row.item.actividades }}
+                                    {{ row.item.actividades_count }}
                                      </v-chip>
                                  </th>
+                                  <td>{{ row.item.hora_inicio }} </td>
+                            <td>{{ row.item.hora_fin }} </td>
                                   <td>
                                       <strong class="primary--text">{{ row.item.horas_total }}</strong>
 
@@ -96,7 +118,7 @@
                                     @click="findActividades(row.item)"
 
                                 >
-                                    <v-icon>mdi-magnify</v-icon>
+                                    <v-icon>mdi-eye-outline</v-icon>
                                 </v-btn>
                                 <v-btn
                                 v-if="$store.state.user.role==2"
@@ -232,6 +254,7 @@ export default {
     data() {
         return {
             firstLoad: true,
+            icon: 'justify',
             actividades: [],
             detalleActividades: [],
             update: false,
@@ -252,23 +275,24 @@ export default {
                     text: "Usuario",
                     value: "usuario.name"
                 },
-                {
-                    text: "Horario",
-                    value: "horario.nombre",
-                    sortable: false,
-                    filterable: false,
-                },
-                {
-                    text: "Creado el",
-                    value: "created_at",
-                    sortable: false,
-                    filterable: false,
-                },
+
                 {
                     text: "Actividades",
                     value: "actividades",
                     filterable: false,
                     align: "start"
+                },
+                {
+                    text: "Inicio",
+                    value: "hora_inicio",
+                    sortable: false,
+                    filterable: false,
+                },
+                {
+                    text: "Fin",
+                    value: "hora_fin",
+                    sortable: false,
+                    filterable: false,
                 },
                 {
                     text: "Horas",

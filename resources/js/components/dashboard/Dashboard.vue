@@ -14,7 +14,7 @@
         </v-card-text>
         </v-card> -->
 
-        <v-card elevation="2" :loading="loading">
+        <v-card  :loading="loading" style="background:#F5F5F5;">
             <v-card-title
           >
 

@@ -33,8 +33,13 @@ class ActividadesController extends Controller
          $actividad = Actividad::with('usuario','horario')->whereIn('usuario_id', $arrayUsuarios)->orderBy('fecha','desc')->get();
          foreach ($actividad as $item) {
              # code...
-             $actividades = Actividades::where('dia',$item->id)->get();
-             $item->actividades=count($actividades);
+             $actividades = Actividades::with('tipo')->where('dia', $item->id)->get();
+            $item->actividades_count=$actividades->count();
+            $item->actividades=$actividades;
+
+             $item->hora_inicio = $actividades->min('h_inicio');
+             $item->hora_fin= $actividades->max('h_fin');
+
 
          }
 
@@ -83,6 +88,8 @@ class ActividadesController extends Controller
 
             'fecha'          => $request->input('fecha'),
             'destinatarios'  => (count($request->input('destinatarios'))>0) ? implode(",", $request->input('destinatarios')) : null,
+            'es_planificada' => $request->input('planificada'),
+
         ]);
         $actividad->save();
 
@@ -131,14 +138,15 @@ class ActividadesController extends Controller
     public function show($id)
     {
         $actividad = Actividad::with('usuario','horario')->where('usuario_id',$id)->orderBy('fecha','desc')->get();
-         foreach ($actividad as $item) {
+        foreach ($actividad as $item) {
             # code...
-            $actividades = Actividades::where('dia', $item->id)->get();
-            $item->actividades=count($actividades);
+            $actividades = Actividades::with('tipo')->where('dia', $item->id)->get();
+            $item->actividades_count=$actividades->count();
+            $item->actividades=$actividades;
+
+            $item->hora_inicio = $actividades->min('h_inicio');
+            $item->hora_fin= $actividades->max('h_fin');
         }
-
-
-
         return ($actividad);
     }
     public function detalleActividades($id)
@@ -163,6 +171,8 @@ class ActividadesController extends Controller
         $actividad->horas_total = $request->input('horas_total');
 
         $actividad->fecha = $request->input('fecha');
+        $actividad->es_planificada = $request->input('planificada');
+
         $actividad->destinatarios = (count($request->input('destinatarios'))>0) ? implode(",", $request->input('destinatarios')) : null;
         $actividad->save();
 
