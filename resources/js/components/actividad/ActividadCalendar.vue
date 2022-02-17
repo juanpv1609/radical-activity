@@ -293,15 +293,21 @@ export default {
         nativeEvent.stopPropagation()
       },
       updateRange () {
+
           const events = []
             for (const item of this.actividades) {
-                console.log(item);
+                //console.log(item);
                 for (const i of item.actividades) {
+                    const name =
+                                ((this.$store.state.user.role == 2)//ADMIN
+                                || this.$store.state.user.role == 3) //SUPERVISOR
+                                    ? `${item.usuario.name} - ${i.descripcion}`
+                                    : `${i.descripcion}`;
 
                     //this.categories=item.usuario.name;
                     const allDay = this.rnd(0, 3) === 0
                     events.push({
-                        name: i.descripcion,
+                        name: name,
                         start: (item.fecha+' '+i.h_inicio.substr(0, 5)),
                         end: (item.fecha+' '+i.h_fin.substr(0, 5)),
                         color: this.colors[this.rnd(0, this.colors.length - 1)],

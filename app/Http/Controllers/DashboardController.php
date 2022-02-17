@@ -47,12 +47,16 @@ class DashboardController extends Controller
     }
 
     public function calendario($usuario){
+        $now = Carbon::now();
+
         $result = DB::table('actividad')
             ->select('fecha', DB::raw('SUM(horas_total) as total'))
             ->where('usuario_id', auth()->user()->id)
+            ->whereYear('fecha',$now->year)
             ->groupBy('fecha')
+            ->havingRaw('SUM(horas_total) > ?', [0])
             ->get();
-        return $result;
+        return ($result);
 
     }
     public function porTipo(){

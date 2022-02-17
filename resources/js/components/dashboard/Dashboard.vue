@@ -14,7 +14,7 @@
         </v-card-text>
         </v-card> -->
 
-        <v-card  :loading="loading" style="background:#F5F5F5;">
+        <v-card  :loading="loading" style="background:#F5F5F5;" outlined color="transparent" >
             <v-card-title
           >
 
@@ -110,7 +110,33 @@
                         </v-card>
 
                     </v-col>
-                    <v-col cols="8">
+                     <v-col cols="8">
+                        <v-card>
+                            <v-card-title>
+                                Distribución diaria de actividades
+                                <v-spacer></v-spacer>
+                               <!--  <v-autocomplete
+                                    :items="usuarios"
+                                    item-text="name"
+                                    item-value="id"
+                                    v-model="usuario"
+                                    label="Persona"
+                                    return-object
+                                    @change="getDataCalendar"
+                                ></v-autocomplete> -->
+                            </v-card-title>
+                            <v-card-text>
+                                <GChart
+                                :settings="{packages: ['calendar']}"
+                                    type="Calendar"
+                                    :data="chartDataCalendar"
+                                    :options="chartOptionsCalendar"
+                                />
+                            </v-card-text>
+                        </v-card>
+
+                    </v-col>
+                    <v-col cols="12">
                         <v-card>
                             <v-card-title>
                                 Distribución diaria
@@ -137,32 +163,7 @@
                         </v-card> -->
 
                     </v-col>
-                    <!-- <v-col cols="12">
-                        <v-card>
-                            <v-card-title>
-                                Modo Calendario
-                                <v-spacer></v-spacer>
-                                <v-autocomplete
-                                    :items="usuarios"
-                                    item-text="name"
-                                    item-value="id"
-                                    v-model="usuario"
-                                    label="Persona"
-                                    return-object
-                                    @change="getDataCalendar"
-                                ></v-autocomplete>
-                            </v-card-title>
-                            <v-card-text>
-                                <GChart
-                                :settings="{packages: ['calendar']}"
-                                    type="Calendar"
-                                    :data="chartDataCalendar"
-                                    :options="chartOptionsCalendar"
-                                />
-                            </v-card-text>
-                        </v-card>
 
-                    </v-col> -->
 
                 </v-row>
 
@@ -198,7 +199,6 @@ export default {
             search:"",
             chartDataCalendar: [],
             chartOptionsCalendar: {
-                height: 350,
                 calendar: {
                 dayOfWeekLabel: {
                     fontSize: 12,
@@ -206,7 +206,9 @@ export default {
                 },
                 dayOfWeekRightSpace: 10,
                 daysOfWeek: 'DLMMJVS',
-                }
+                },
+                fontSize:12,
+                chartArea: {width: '100%',height: '100%'}
 
             },
             chartDataPersona:[
@@ -275,6 +277,15 @@ export default {
         this.getData();
     },
     methods: {
+        toggle() {
+            this.$nextTick(() => {
+                if (this.likesAllUsers) {
+                    this.selectedUsuarios = [];
+                } else {
+                    this.selectedUsuarios = this.usuarios.slice();
+                }
+            });
+        },
         getData(){
             const query =
             ((this.$store.state.user.role == 2)//ADMIN
@@ -300,7 +311,7 @@ export default {
             }); */
         this.axios.get("/api/dashboardPorTipo/").then(response => {
             //this.actividades=response.data;
-            console.log('tipo  '+response.data);
+            //console.log('tipo  '+response.data);
             response.data.forEach(element => {
                 this.chartDataTipo.push([element.descripcion,parseFloat(element.total)])
             });
@@ -308,26 +319,29 @@ export default {
         });
         this.axios.get("/api/dashboardPorFecha/").then(response => {
             //this.actividades=response.data;
-            console.log(response.data);
+            //console.log(response.data);
             response.data.forEach(element => {
-                this.chartDataFecha.push([(element.fecha),parseFloat(element.total)])
+                const arrayFecha = element.fecha.split('-');
+                this.chartDataFecha.push([new Date(arrayFecha[0],arrayFecha[1]-1,arrayFecha[2]),parseFloat(element.total)])
             });
 
         });
+        this.getDataCalendar();
 
 
         },
         getDataCalendar(){
-            console.log(this.usuario);
+            //console.log(this.usuario);
             this.chartDataCalendar=[];
             this.chartDataCalendar.push(['Fecha','Total']);
 
-            this.axios.get(`/api/dashboardCalendario/${this.usuario.id}`).then(response => {
+            this.axios.get(`/api/dashboardCalendario/${this.$store.state.user.id}`).then(response => {
             console.log(response.data);
             response.data.forEach(element => {
+                console.log(element.fecha+': '+element.total);
+                const arrayFecha = element.fecha.split('-');
 
-
-                    this.chartDataCalendar.push([new Date(element.fecha),parseFloat(element.total)])
+                    this.chartDataCalendar.push([new Date(arrayFecha[0],arrayFecha[1]-1,arrayFecha[2]),parseFloat(element.total)])
 
             });
 
