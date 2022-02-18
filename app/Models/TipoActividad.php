@@ -10,7 +10,7 @@ class TipoActividad extends Model
     protected $table = 'tipo_actividad';
     protected $fillable = [
                             'descripcion',
-                            'estado',
+                            'estado','color',
                             'is_deleted',];
     public $timestamps = false;
     protected $guarded = [];

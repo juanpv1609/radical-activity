@@ -2,13 +2,11 @@
     <div>
         <v-card elevation="2" >
             <v-card-title >
-                Mi Actividad
-
-                <v-spacer></v-spacer>
                 <v-btn-toggle
                     v-model="icon"
                     borderless
                     dense
+                    active-class="primary--text"
 
                 >
                     <v-btn value="left" :to="{ name: 'actividad'}">
@@ -28,6 +26,9 @@
                     </v-btn>
 
                 </v-btn-toggle>
+
+                <v-spacer></v-spacer>
+
                 <v-col cols="auto">
                     <v-text-field
                         v-model="search"

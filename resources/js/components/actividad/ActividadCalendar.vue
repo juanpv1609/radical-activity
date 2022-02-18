@@ -2,13 +2,11 @@
     <div>
         <v-card elevation="2" >
             <v-card-title >
-                Mi Actividad
-
-                <v-spacer></v-spacer>
-                <v-btn-toggle
+    <v-btn-toggle
                     v-model="icon"
                     borderless
                     dense
+                    active-class="primary--text"
 
                 >
                     <v-btn value="left" :to="{ name: 'actividad'}">
@@ -28,28 +26,23 @@
                     </v-btn>
 
                 </v-btn-toggle>
-                <v-col cols="auto">
-                    <v-text-field
-                        v-model="search"
-                        append-icon="mdi-magnify"
-                        label="Buscar"
-                        single-line
-                        hide-details
-                        filled
-                        rounded
-                        dense
-                    ></v-text-field>
-                </v-col>
-                <v-btn
+                <v-spacer></v-spacer>
 
-                    color="primary"
-                    small
-                    :to="{
-                        name: 'actividad-new'
-                    }"
-                >
-                    <v-icon>mdi-plus</v-icon> NUEVO REGISTRO
-                </v-btn>
+                <v-divider vertical ></v-divider>
+                <div v-for="tipo in tipos" :key="tipo.id">
+
+                    <v-tooltip bottom :color="tipo.color">
+                        <template v-slot:activator="{ on, attrs }">
+
+                            <v-icon :color="tipo.color" v-bind="attrs"
+                            v-on="on">mdi-circle</v-icon>
+                        </template>
+                    <span>{{ tipo.descripcion }}</span>
+                    </v-tooltip>
+                </div>
+
+
+
             </v-card-title>
 
             <v-card-text>
@@ -215,12 +208,18 @@ export default {
       'light-green darken-2','lime lighten-1','green accent-4','yellow accent-3','orange accent-4','brown lighten-1','deep-orange lighten-2',
       'blue-grey darken-1'],
         categories:[],
+
+        tipos: [],
         };
     },
     mounted () {
       this.$refs.calendar.checkChange()
     },
     created() {
+        this.axios.get("/api/tipo-actividad/").then(response => {
+            this.tipos = response.data;
+
+        });
         const query =
             ((this.$store.state.user.role == 2)//ADMIN
             || this.$store.state.user.role == 3) //SUPERVISOR
@@ -310,7 +309,7 @@ export default {
                         name: name,
                         start: (item.fecha+' '+i.h_inicio.substr(0, 5)),
                         end: (item.fecha+' '+i.h_fin.substr(0, 5)),
-                        color: this.colors[this.rnd(0, this.colors.length - 1)],
+                        color: i.tipo.color,
                         timed: !allDay,
                         details: `Fecha: ${item.fecha}<br>
                                     Usuario: ${item.usuario.name}<br>
