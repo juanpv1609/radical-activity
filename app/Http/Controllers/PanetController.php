@@ -14,11 +14,14 @@ use Illuminate\Support\Facades\Crypt;
 
 class PanetController extends Controller
 {
+    public const API_PANET='http://soporte.gruporadical.com/proactivanet/api/';
+    public const PANET_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqdWFuLnBlcnVnYWNoaSIsIm92ciI6ImZhbHNlIiwiYXV0IjoiMCIsIm5iZiI6MTY0MDE4MzY4MCwiZXhwIjoxNjcxNzE5NjgwLCJpYXQiOjE2NDAxODM2ODAsImlzcyI6InByb2FjdGl2YW5ldCIsImF1ZCI6ImFwaSJ9.lWpR-tQIgBAY6F98c7lbFFpdZYiXq4FX5Ysm4PniEkg';
+
 
     public function verifyTicket(Request $request){
 
         //$host = env("API_QRADAR");
-        $base = env("API_PANET").'Incidents';
+        $base = API_PANET.'Incidents';
         $customer_id = $request->input('customer_id');
         $code = $request->input('code');
         $comment = $request->input('comment');
@@ -28,7 +31,7 @@ class PanetController extends Controller
         $ticket = null;
             # code...
         $response = Http::withHeaders([
-                                    'Authorization' => env("PANET_KEY"),
+                                    'Authorization' => PANET_KEY,
                                     ])->withOptions(['verify' => false])->accept('application/json')
                                     ->get($base.'?Code='.$code.'&PadCustomers_id='.$customer_id.'&Archived=false&PadTypes_id='.$type_id)->json();
                 //$response['comment'] = $item['comment'];
@@ -61,7 +64,7 @@ class PanetController extends Controller
     public function closeTicket(Request $request){
 
         //$host = env("API_QRADAR");
-        $base = env("API_PANET").'Incidents';
+        $base = API_PANET.'Incidents';
         $arrayRequest = $request->input('tickets');
         $customer_id = $request->input('customer_id');
         $type_id = $request->input('type_id');
@@ -73,7 +76,7 @@ class PanetController extends Controller
         $cerrados=0;
          foreach ($arrayRequest as $item) {
             $response = Http::withHeaders([
-                                    'Authorization' => env("PANET_KEY"),
+                                    'Authorization' => PANET_KEY,
                                     ])->withOptions(['verify' => false])->accept('application/json')
                                     ->get($base.'?Code='.$item['code'].'&PadCustomers_id='.$customer_id.'&Status=New,Assigned&Archived=false&PadTypes_id='.$type_id);
                 //$response['comment'] = $item['comment'];
@@ -84,7 +87,7 @@ class PanetController extends Controller
                 $Status                     = array_column($response->json(), 'Status');
 
                 $response2 = Http::withHeaders([
-                    'Authorization' => env("PANET_KEY"),
+                    'Authorization' => PANET_KEY,
                         ])->withOptions(['verify' => false])->accept('application/json')
                         ->put($base.'/'.$Id[0].'/close',[
                             "PawSvcAuthUsers_id" => $PawSvcAuthUsers_idCreator[0],
@@ -126,12 +129,12 @@ class PanetController extends Controller
 
     }
     public function getCustomers(){
-        $url = env("API_PANET").'Customers?$sort=Name&$fields=Name';
+        $url = API_PANET.'Customers?$sort=Name&$fields=Name';
 
 
             # code...
             $response = Http::withHeaders([
-                'Authorization' => env("PANET_KEY"),
+                'Authorization' => PANET_KEY,
                     ])->withOptions(['verify' => false])->accept('application/json')
                     ->get($url);
 
@@ -141,12 +144,12 @@ class PanetController extends Controller
 
     }
     public function getTypes(){
-        $url = env("API_PANET").'Types?$sort=Name&$fields=Name';
+        $url = API_PANET.'Types?$sort=Name&$fields=Name';
 
 
             # code...
             $response = Http::withHeaders([
-                'Authorization' => env("PANET_KEY"),
+                'Authorization' => PANET_KEY,
                     ])->withOptions(['verify' => false])->accept('application/json')
                     ->get($url);
 
