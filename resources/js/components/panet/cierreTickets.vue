@@ -160,12 +160,12 @@ export default {
     },
     created() {
         this.axios
-                .get('/api/customers')
+                .get('/api/customers/')
                 .then(response => {
                     this.customers = response.data;
                 });
                 this.axios
-                .get('/api/types')
+                .get('/api/types/')
                 .then(response => {
                     this.types = response.data;
                 });
