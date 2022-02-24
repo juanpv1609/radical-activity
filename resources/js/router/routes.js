@@ -20,6 +20,10 @@ import ReporteDetalle from "../components/reportes/ReporteResumen.vue";
 import ReporteContable from "../components/reportes/Reporte.vue";
 import Dashboard from "../components/dashboard/Dashboard.vue";
 
+//PROACTIVANET
+import cierreTickets from "../components/panet/cierreTickets.vue";
+
+
 const router = new VueRouter({
     mode: "history",
     routes: [
@@ -152,6 +156,15 @@ const router = new VueRouter({
             name: "dashboard",
             path: "/dashboard",
             component: Dashboard,
+            meta: {
+                requiresAuth: true
+            }
+        }
+        ,
+        {
+            name: "cierre-tickets",
+            path: "/cierre-tickets",
+            component: cierreTickets,
             meta: {
                 requiresAuth: true
             }

@@ -8,6 +8,7 @@ use App\Http\Controllers\AreaController;
 use App\Http\Controllers\PaisController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PanetController;
 use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\PersonaController;
 use App\Http\Controllers\HorariosController;
@@ -89,6 +90,14 @@ Route::middleware('api')->group(function () {
     Route::get('reporte-persona/{persona}', [ReportesController::class, 'reportePersona']);
     Route::get('reporte-actividades/{inicio}/{fin}/{usuarios}', [ReportesController::class, 'reporteActividades']);
     Route::get('reporte-actividades-contable/{fechas}/{usuarios}', [ReportesController::class, 'reporteActividadesContable']);
+
+// PROACTIVANET
+    Route::post('close-tickets', [PanetController::class,'closeTicket']);
+    Route::post('verify-tickets', [PanetController::class,'verifyTicket']);
+
+    Route::get('customers', [PanetController::class,'getCustomers']);
+    Route::get('types', [PanetController::class,'getTypes']);
+
 
 
 

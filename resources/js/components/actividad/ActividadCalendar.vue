@@ -148,8 +148,8 @@
                         >
                         <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
                         <v-spacer></v-spacer>
-                        <v-btn icon>
-                            <v-icon>mdi-pencil</v-icon>
+                        <v-btn icon @click="selectedOpen = false">
+                            <v-icon>mdi-window-close</v-icon>
                         </v-btn>
                         </v-toolbar>
                         <v-card-text>

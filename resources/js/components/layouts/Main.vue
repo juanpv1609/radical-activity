@@ -60,6 +60,25 @@
                             </v-list-item>
                         </v-list-group>
                     </div>
+                    <v-divider></v-divider>
+                    <div v-for="item in itemsPanet" :key="item.title">
+                        <v-list-item
+                            v-if="!item.subLinks"
+                            link
+                            :to="item.link"
+                            color="orange darken-4"
+                        >
+                            <v-list-item-icon>
+                                <v-icon>{{ item.icon }}</v-icon>
+                            </v-list-item-icon>
+
+                            <v-list-item-content>
+                                <v-list-item-title>{{
+                                    item.title
+                                }}</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+                    </div>
                 </v-list>
 
                 <!-- <template v-slot:append>
@@ -284,6 +303,14 @@ export default {
                     ],
                     isAdmin:true
                 }
+            ],
+            itemsPanet: [
+                {
+                    title: "ProactivaNET",
+                    link: "/cierre-tickets",
+                    icon: "mdi-open-in-new"
+                    ,isAdmin:false
+                },
             ],
             right: null
         };

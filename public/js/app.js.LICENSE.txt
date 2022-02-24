@@ -1015,6 +1015,10 @@
 
 /*! ./zh-Hant */
 
+/*! cpexcel.js (C) 2013-present SheetJS -- http://sheetjs.com */
+
+/*! cputils.js (C) 2013-present SheetJS -- http://sheetjs.com */
+
 /*! exports provided: Application */
 
 /*! exports provided: Application, Breakpoint, Goto, Icons, Lang, Presets, Theme */
@@ -1296,6 +1300,8 @@
 /*! exports provided: weekNumber, isLeapYear */
 
 /*! no static exports found */
+
+/*! sheetjs (C) 2013-present SheetJS -- http://sheetjs.com */
 
 /*! vue */
 

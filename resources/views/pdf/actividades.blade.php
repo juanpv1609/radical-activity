@@ -79,6 +79,7 @@ table.paleBlueRows tfoot td {
 
 <body style="font-size: 11px;-webkit-text-size-adjust: none">
     <div class="px-0">
+
         <table width="100%" style=" font-size: 6px;">
             <tr>
                 <td>

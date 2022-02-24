@@ -43,3 +43,6 @@ mix.js('resources/js/app.js', 'public/js')
     .sass('resources/sass/app.scss', 'public/css')
     .copy('node_modules/material-icons/css/material-icons.min.css',
      'public/css/material-icons.min.css');;
+mix.options({
+    legacyNodePolyfills: false
+});
