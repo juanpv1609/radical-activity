@@ -21,7 +21,7 @@ class PanetController extends Controller
     public function verifyTicket(Request $request){
 
         //$host = env("API_QRADAR");
-        $base = API_PANET.'Incidents';
+        $base = self::API_PANET.'Incidents';
         $customer_id = $request->input('customer_id');
         $code = $request->input('code');
         $comment = $request->input('comment');
@@ -31,7 +31,7 @@ class PanetController extends Controller
         $ticket = null;
             # code...
         $response = Http::withHeaders([
-                                    'Authorization' => PANET_KEY,
+                                    'Authorization' => self::PANET_KEY,
                                     ])->withOptions(['verify' => false])->accept('application/json')
                                     ->get($base.'?Code='.$code.'&PadCustomers_id='.$customer_id.'&Archived=false&PadTypes_id='.$type_id)->json();
                 //$response['comment'] = $item['comment'];
@@ -64,7 +64,7 @@ class PanetController extends Controller
     public function closeTicket(Request $request){
 
         //$host = env("API_QRADAR");
-        $base = API_PANET.'Incidents';
+        $base = self::API_PANET.'Incidents';
         $arrayRequest = $request->input('tickets');
         $customer_id = $request->input('customer_id');
         $type_id = $request->input('type_id');
@@ -76,7 +76,7 @@ class PanetController extends Controller
         $cerrados=0;
          foreach ($arrayRequest as $item) {
             $response = Http::withHeaders([
-                                    'Authorization' => PANET_KEY,
+                                    'Authorization' => self::PANET_KEY,
                                     ])->withOptions(['verify' => false])->accept('application/json')
                                     ->get($base.'?Code='.$item['code'].'&PadCustomers_id='.$customer_id.'&Status=New,Assigned&Archived=false&PadTypes_id='.$type_id);
                 //$response['comment'] = $item['comment'];
@@ -87,7 +87,7 @@ class PanetController extends Controller
                 $Status                     = array_column($response->json(), 'Status');
 
                 $response2 = Http::withHeaders([
-                    'Authorization' => PANET_KEY,
+                    'Authorization' => self::PANET_KEY,
                         ])->withOptions(['verify' => false])->accept('application/json')
                         ->put($base.'/'.$Id[0].'/close',[
                             "PawSvcAuthUsers_id" => $PawSvcAuthUsers_idCreator[0],
@@ -129,12 +129,12 @@ class PanetController extends Controller
 
     }
     public function getCustomers(){
-        $url = API_PANET.'Customers?$sort=Name&$fields=Name';
+        $url = self::API_PANET.'Customers?$sort=Name&$fields=Name';
 
 
             # code...
             $response = Http::withHeaders([
-                'Authorization' => PANET_KEY,
+                'Authorization' => self::PANET_KEY,
                     ])->withOptions(['verify' => false])->accept('application/json')
                     ->get($url);
 
@@ -144,12 +144,12 @@ class PanetController extends Controller
 
     }
     public function getTypes(){
-        $url = API_PANET.'Types?$sort=Name&$fields=Name';
+        $url = self::API_PANET.'Types?$sort=Name&$fields=Name';
 
 
             # code...
             $response = Http::withHeaders([
-                'Authorization' => PANET_KEY,
+                'Authorization' => self::PANET_KEY,
                     ])->withOptions(['verify' => false])->accept('application/json')
                     ->get($url);
 
