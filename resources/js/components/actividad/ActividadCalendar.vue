@@ -303,8 +303,11 @@ export default {
                 const temp=`actividades`
                 this.axios.get(`/api/${query2}`).then(response => {
                     this.actividades = response.data;
-                    //this.updateRange();
                     console.log(this.actividades);
+                    if ((this.$store.state.user.role == 1)) {
+                        this.updateRange();
+
+                    }
                 this.loading = false;
                 });
                 this.firstLoad = false;
@@ -383,7 +386,9 @@ export default {
                     //this.categories=item.usuario.name;
                     const allDay = this.rnd(0, 3) === 0
                     events.push({
+                        id: item.id,
                         name: name,
+                        usuario: item.usuario.id,
                         start: (item.fecha+' '+i.h_inicio.substr(0, 5)),
                         end: (item.fecha+' '+i.h_fin.substr(0, 5)),
                         color: i.tipo.color,
