@@ -169,7 +169,7 @@
                     @click:event="showEvent"
                     @click:more="viewDay"
                     @click:date="viewDay"
-                    @change="updateRangeFilter"
+                    @change="(this.$store.state.user.role>1) ? updateRangeFilter : updateRange"
                     ></v-calendar>
                     <v-menu
                     v-model="selectedOpen"
