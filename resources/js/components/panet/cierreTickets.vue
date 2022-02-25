@@ -175,7 +175,13 @@ export default {
         helpFile(){
             this.$swal.fire({
                         title: 'Atención',
-                        html: `El archivo debe contener una sola hoja y con la siguiente estructura: <br>
+                        html: `<h4>Para realizar el cierre de tickets deberá seguir los siguientes pasos:</h4><br>
+                                <ol>
+                                <li>Seleccionar un cliente</li>
+                                <li>Seleccionar un tipo de ticket</li>
+                                <li>Seleccionar un archivo .xls o .xlsx</li>
+                                </ol>
+                                El archivo debe contener una sola hoja y con la siguiente estructura: <br>
                         <center>
                         <table border="1" width="100%">
                         <thead>

@@ -1,8 +1,7 @@
 <template>
     <div>
-        <v-card elevation="2" >
-            <v-card-title >
-    <v-btn-toggle
+        <div class="d-flex justify-content-center pb-2">
+            <v-btn-toggle
                     v-model="icon"
                     borderless
                     dense
@@ -27,9 +26,7 @@
 
                 </v-btn-toggle>
                 <v-spacer></v-spacer>
-
-                <v-divider vertical ></v-divider>
-                <div v-for="tipo in tipos" :key="tipo.id">
+                <div v-for="tipo in tipos" :key="tipo.id" >
 
                     <v-tooltip bottom :color="tipo.color">
                         <template v-slot:activator="{ on, attrs }">
@@ -40,13 +37,56 @@
                     <span>{{ tipo.descripcion }}</span>
                     </v-tooltip>
                 </div>
+        </div>
 
 
-
-            </v-card-title>
+        <v-card elevation="2" :loading="loading" >
 
             <v-card-text>
+                <v-row dense v-if="this.$store.state.user.role>1">
+                    <v-autocomplete
+                    deletable-chips
+                    multiple
+                    small-chips
+                    clearable
+                    :items="usuarios"
+                    item-text="name"
+                    item-value="id"
+                    v-model="selectedUsuarios"
+                    label="Seleccione uno o varios usuarios"
 
+                    :disabled="actividades.length==0"
+                    return-object
+
+                    filled
+
+                >
+                    <template v-slot:prepend-item>
+                        <v-list-item ripple @click="toggle">
+                            <v-list-item-action>
+                                <v-icon
+                                    :color="selectedUsuarios.length > 0 ? 'indigo darken-4' : ''">
+                                    {{ icon }}
+                                </v-icon>
+                            </v-list-item-action>
+                            <v-list-item-content>
+                                <v-list-item-title>
+                                    Seleccionar Todo
+                                </v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+                        <v-divider class="mt-2"></v-divider>
+                    </template>
+                    <template v-slot:append-outer>
+                            <v-slide-x-reverse-transition
+                                mode="out-in"
+                            >
+                            <v-btn color="orange" x-large :disabled="selectedUsuarios.length==0" @click="updateRangeFilter">APLICAR FILTRO</v-btn>
+
+                            </v-slide-x-reverse-transition>
+                            </template>
+                </v-autocomplete>
+                </v-row>
                 <v-row class="fill-height">
                 <v-col>
                 <v-sheet height="64">
@@ -129,7 +169,7 @@
                     @click:event="showEvent"
                     @click:more="viewDay"
                     @click:date="viewDay"
-                    @change="updateRange"
+                    @change="updateRangeFilter"
                     ></v-calendar>
                     <v-menu
                     v-model="selectedOpen"
@@ -148,8 +188,11 @@
                         >
                         <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
                         <v-spacer></v-spacer>
-                        <v-btn icon @click="selectedOpen = false">
-                            <v-icon>mdi-window-close</v-icon>
+                        <v-btn icon :disabled="$store.state.user.id!=selectedEvent.usuario" :to="{
+                                        name: 'actividad-edit',
+                                        params: { id: selectedEvent.id }
+                                    }" title="Editar Actividad">
+                            <v-icon>mdi-pencil</v-icon>
                         </v-btn>
                         </v-toolbar>
                         <v-card-text>
@@ -183,7 +226,7 @@ export default {
     data() {
         return {
             firstLoad: true,
-            icon: 'justify',
+            //icon: 'justify',
             actividades: [],
             detalleActividades: [],
             update: false,
@@ -210,39 +253,72 @@ export default {
         categories:[],
 
         tipos: [],
+        usuarios: [],
+        idUsuarios: [],
+        selectedUsuarios: [],
         };
+    },
+    computed: {
+        likesAllUsers () {
+        return this.selectedUsuarios.length === this.usuarios.length
+      },
+      likesSomeUsers () {
+        return this.selectedUsuarios.length > 0 && !this.likesAllUsers
+      },
+      icon () {
+        if (this.likesAllUsers) return 'mdi-close-box'
+        if (this.likesSomeUsers) return 'mdi-minus-box'
+        return 'mdi-checkbox-blank-outline'
+      },
+      formatTime(value){
+            if (value) {
+                return moment(String(value)).format('hh:mm')
+            }
+        },
     },
     mounted () {
       this.$refs.calendar.checkChange()
     },
     created() {
+        //this.loading = true;
         this.axios.get("/api/tipo-actividad/").then(response => {
             this.tipos = response.data;
 
         });
-        const query =
+        if ((this.$store.state.user.role == 2)//ADMIN
+            || (this.$store.state.user.role == 3)) {
+                this.axios.get(`/api/usuarios-all`).then(response => {
+                this.usuarios = response.data;
+                //console.log(this.usuarios);
+            });
+        }
+
+
+        const query2 =
             ((this.$store.state.user.role == 2)//ADMIN
             || this.$store.state.user.role == 3) //SUPERVISOR
                 ? `actividades-calendar`
                 : `actividades/${this.$store.state.user.id}`;
 
                 const temp=`actividades`
-        this.axios.get(`/api/${query}`).then(response => {
-            this.actividades = response.data;
-            this.updateRange();
-            console.log(this.actividades);
-        this.loading = false;
-        });
-        this.firstLoad = false;
-    },
-    computed:{
-        formatTime(value){
-            if (value) {
-                return moment(String(value)).format('hh:mm')
-            }
-        },
+                this.axios.get(`/api/${query2}`).then(response => {
+                    this.actividades = response.data;
+                    //this.updateRange();
+                    console.log(this.actividades);
+                this.loading = false;
+                });
+                this.firstLoad = false;
     },
     methods: {
+        toggle() {
+            this.$nextTick(() => {
+                if (this.likesAllUsers) {
+                    this.selectedUsuarios = [];
+                } else {
+                    this.selectedUsuarios = this.usuarios.slice();
+                }
+            });
+        },
         findActividades(el) {
             console.log(el);
              this.axios.get(`/api/detalle-actividades/${el.id}`).then(res => {
@@ -292,6 +368,7 @@ export default {
         nativeEvent.stopPropagation()
       },
       updateRange () {
+          //console.log(this.selectedUsuarios);
 
           const events = []
             for (const item of this.actividades) {
@@ -300,8 +377,8 @@ export default {
                     const name =
                                 ((this.$store.state.user.role == 2)//ADMIN
                                 || this.$store.state.user.role == 3) //SUPERVISOR
-                                    ? `${item.usuario.name} - ${i.descripcion}`
-                                    : `${i.descripcion}`;
+                                    ? `${item.usuario.name} - ${i.tipo.descripcion}`
+                                    : `${i.tipo.descripcion}`;
 
                     //this.categories=item.usuario.name;
                     const allDay = this.rnd(0, 3) === 0
@@ -312,8 +389,9 @@ export default {
                         color: i.tipo.color,
                         timed: !allDay,
                         details: `Fecha: ${item.fecha}<br>
-                                    Usuario: ${item.usuario.name}<br>
-                                    Tipo Actividad: ${i.tipo.descripcion}<br>
+                                Usuario: ${item.usuario.name}<br>
+                                Tipo Actividad: ${i.tipo.descripcion}<br>
+                                Descripcion: ${i.descripcion}<br>
                                 Inicio: ${i.h_inicio.substr(0, 5)} <br>
                                 Fin: ${i.h_fin.substr(0, 5)} <br>`,
                     })
@@ -322,6 +400,56 @@ export default {
 
         this.events = events
       },
+      updateRangeFilter () {
+          this.loading = true;
+          console.log(this.selectedUsuarios);
+            var filtered_array=[];
+            var auxActividades = this.actividades;
+               this.selectedUsuarios.forEach(element => {
+                    auxActividades.filter(function (item) {
+                        if (item.usuario.name == element.name) {
+                            filtered_array.push(item)
+                        }
+                    });
+                    //this.actividades.push(filtered_array);
+                //console.log(filtered_array);
+            });
+        console.log(filtered_array);
+        //this.actividades = filtered_array;
+           const events = []
+            for (const item of filtered_array) {
+                //console.log(item);
+                for (const i of item.actividades) {
+                    const name =
+                                ((this.$store.state.user.role == 2)//ADMIN
+                                || this.$store.state.user.role == 3) //SUPERVISOR
+                                    ? `${item.usuario.name} - ${i.tipo.descripcion}`
+                                    : `${i.tipo.descripcion}`;
+
+                    //this.categories=item.usuario.name;
+                    const allDay = this.rnd(0, 3) === 0
+                    events.push({
+                        id: item.id,
+                        name: name,
+                        usuario: item.usuario.id,
+                        start: (item.fecha+' '+i.h_inicio.substr(0, 5)),
+                        end: (item.fecha+' '+i.h_fin.substr(0, 5)),
+                        color: i.tipo.color,
+                        timed: !allDay,
+                        details: `Fecha: ${item.fecha}<br>
+                                Usuario: ${item.usuario.name}<br>
+                                Tipo Actividad: ${i.tipo.descripcion}<br>
+                                Descripcion: ${i.descripcion}<br>
+                                Inicio: ${i.h_inicio.substr(0, 5)} <br>
+                                Fin: ${i.h_fin.substr(0, 5)} <br>`,
+                    })
+                }
+            }
+
+        this.events = events;
+        this.loading = false;
+      },
+
       rnd (a, b) {
         return Math.floor((b - a + 1) * Math.random()) + a
       },
