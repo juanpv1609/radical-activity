@@ -228,9 +228,9 @@ export default {
                         if (element.actividades.length>0) {
 
                             element.actividades.forEach(item => {
-                                console.log(item.actividad.horario_id);
+                                //console.log(item.actividad.horario_id);
                                 if (item.actividad.horario_id==3) { //si es horario N1 NOCTURNO 22:00 - 06:00
-                                    console.log(item.h_inicio);
+                                   // console.log(item.h_inicio);
                                     if (item.h_inicio=='22:00:00') {
                                         inicio = '00:00';
                                         fin = '08:00';
@@ -240,7 +240,7 @@ export default {
                                     inicio=item.h_inicio;
                                     fin=item.h_fin;
                                 }
-                                console.log(inicio+'+'+fin+'='+Math.abs((moment.duration(moment(fin,'HH:mm').diff(moment(inicio,'HH:mm'))).asHours())).toFixed(2));
+                               // console.log(inicio+'+'+fin+'='+Math.abs((moment.duration(moment(fin,'HH:mm').diff(moment(inicio,'HH:mm'))).asHours())).toFixed(2));
                                 var aux = {
                                     id: item.id,
                                     usuario: element.usuario.name,

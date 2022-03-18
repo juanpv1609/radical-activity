@@ -25,10 +25,12 @@ class ActividadesController extends Controller
         $role=[];
         $cargo=[];
         if (auth()->user()->role==2) { //ADMINISTRADOR
-            $cond = [];
+            $role = [1,2,3];
+            $cargo = [1,2,3,4,5,6,7,8,9,10,11];
+
 
         } else if(auth()->user()->role==3) { //SUPERVISOR
-            $role = [1,2,3];
+            $role = [1,3];
             $cargo = [1,2,3,4,5,6,7,8,9,10,11];
 
             if ((auth()->user()->cargo==9) || (auth()->user()->cargo==10)) { // coordinador CERT
