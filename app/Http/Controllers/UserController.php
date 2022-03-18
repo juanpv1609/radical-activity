@@ -40,8 +40,30 @@ class UserController extends Controller
         $cond=[
             ['is_deleted','==', 0],
             ];
+            $role=[];
+        $cargo=[];
+        if (auth()->user()->role==2) { //ADMINISTRADOR
+            $cond = [];
+        } elseif (auth()->user()->role==3) { //SUPERVISOR
+            $role = [1,2,3];
+            $cargo = [1,2,3,4,5,6,7,8,9,10,11];
 
-        $usuarios = User::with('rol','puesto.area')->where($cond)->whereNotIn('id',[19,50])->orderBy('name')->get()->toArray();
+            if ((auth()->user()->cargo==9) || (auth()->user()->cargo==10)) { // coordinador CERT
+                $role = [1,3];
+                $cargo = [1,2,3,4,5,6,7,8,9,10,11];
+            } elseif (auth()->user()->cargo==4) { // coordinador del CERT
+                $role = [1,3];
+                $cargo = [1,3,4];
+            } elseif (auth()->user()->cargo==8) { //coordinador del infraestructura
+                $role = [1,3];
+                $cargo = [7,8];
+            } elseif (auth()->user()->cargo==6) { //coordinador del infraestructura
+                $role = [1,3];
+                $cargo = [5,6];
+            }
+        }
+
+        $usuarios = User::with('rol','puesto.area')->where($cond)->whereIn('role',$role)->whereIn('cargo',$cargo)->whereNotIn('id',[19,50])->orderBy('name')->get()->toArray();
 
         return ($usuarios);
 
@@ -110,7 +132,11 @@ class UserController extends Controller
     public function update($id, Request $request)
     {
         $user = User::find($id);
-        $user->update($request->all());
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->role = $request->input('role');
+        $user->cargo = $request->input('cargo');
+        $user->save();
 
         return response()->json('user updated!');
     }

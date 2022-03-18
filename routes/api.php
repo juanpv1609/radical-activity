@@ -89,6 +89,8 @@ Route::middleware('api')->group(function () {
     Route::get('reporte-certificaciones/{certificaciones}', [ReportesController::class, 'reporteCertificaciones']);
     Route::get('reporte-persona/{persona}', [ReportesController::class, 'reportePersona']);
     Route::get('reporte-actividades/{inicio}/{fin}/{usuarios}', [ReportesController::class, 'reporteActividades']);
+    Route::get('reporte-actividadesXLSX/{inicio}/{fin}/{usuarios}', [ReportesController::class, 'reporteActividadesXLSX']);
+
     Route::get('reporte-actividades-contable/{fechas}/{usuarios}', [ReportesController::class, 'reporteActividadesContable']);
 
 // PROACTIVANET

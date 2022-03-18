@@ -62,22 +62,33 @@
                     </div>
                     <v-divider></v-divider>
                     <div v-for="item in itemsPanet" :key="item.title">
-                        <v-list-item
-                            v-if="!item.subLinks"
-                            link
-                            :to="item.link"
+                        <v-list-group
+                            :key="item.title"
+                            no-action
+                            :prepend-icon="item.icon"
                             color="orange darken-4"
+                            :disabled="($store.state.user.role==1 && item.isAdmin)"
+                            :title="($store.state.user.role==1 && item.isAdmin) ? 'Función no válida para su usuario':''"
                         >
-                            <v-list-item-icon>
-                                <v-icon>{{ item.icon }}</v-icon>
-                            </v-list-item-icon>
-
-                            <v-list-item-content>
+                            <template v-slot:activator>
                                 <v-list-item-title>{{
                                     item.title
                                 }}</v-list-item-title>
-                            </v-list-item-content>
-                        </v-list-item>
+                            </template>
+                            <v-list-item
+                                v-for="sublink in item.subLinks"
+                                :key="sublink.title"
+                                link
+                                :to="sublink.link"
+                            >
+                                <v-list-item-title>
+                                    {{ sublink.title }}</v-list-item-title
+                                >
+                                <v-list-item-icon>
+                                    <v-icon v-text="sublink.icon"></v-icon>
+                                </v-list-item-icon>
+                            </v-list-item>
+                        </v-list-group>
                     </div>
                 </v-list>
 
@@ -307,9 +318,20 @@ export default {
             itemsPanet: [
                 {
                     title: "ProactivaNET",
-                    link: "/cierre-tickets",
-                    icon: "mdi-open-in-new"
-                    ,isAdmin:false
+                    icon: "mdi-open-in-new",
+                    subLinks: [
+                        // { title: "General", link: "/reporte-general", icon: "mdi-certificate"},
+                        {
+                            title: "Cerrar",
+                            link: "/cierre-tickets",
+                            icon: "mdi-close-box-multiple-outline"
+                        },
+                        {
+                            title: "Verificar",
+                            link: "/verificar-tickets",
+                            icon: "mdi-check-all"
+                        },
+                    ],isAdmin:false
                 },
             ],
             right: null

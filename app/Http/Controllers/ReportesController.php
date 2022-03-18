@@ -266,6 +266,37 @@ class ReportesController extends Controller
         $pdf->loadView('pdf.actividades', compact('personas'));
         return $pdf->download('reporteActividades_'.$inicio.'_'.$fin.'.pdf');
     }
+    public function reporteActividadesXLSX($inicio,$fin,$users)
+    {
+        //dd($usuarios);
+        $inicio = $inicio;
+        $fin = $fin;
+        $usuarios = explode(",", $users);
+        //dd($request);
+        $personas=[];
+        $aux=[];
+
+        $persona=[];
+        $personas['inicio'] = $inicio;
+        $personas['fin'] = $fin;
+
+        foreach ($usuarios as $user) {
+            $usuario = User::with('rol','puesto.area')->find($user);
+            $actividad = Actividad::where('usuario_id', $usuario->id)->whereBetween('fecha',[$inicio,$fin])->get()->toArray();
+            $arrayActividades = [];
+            $persona['usuario'] = $usuario;
+            foreach ($actividad as $item) {
+                //$actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->where('dia', $item['id'])->get()->toArray();
+                array_push($arrayActividades, $item['id']);
+            }
+                $actividades = Actividades::with( 'tipo', 'status','actividad')->whereIn('dia', $arrayActividades)->get()->toArray();
+                $persona['actividades'] = $actividades;
+                array_push($aux,$persona);
+        }
+        $personas['usuarios'] = $aux;
+
+        return $personas;
+    }
     public function reportePersona($id)
     {
             $persona = Persona::with('pais','nacionalidad')->findOrFail($id);

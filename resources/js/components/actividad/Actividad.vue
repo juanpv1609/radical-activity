@@ -30,6 +30,7 @@
                 <v-spacer></v-spacer>
 
                 <v-col cols="auto">
+
                     <v-text-field
                         v-model="search"
                         append-icon="mdi-magnify"
@@ -41,16 +42,32 @@
                         dense
                     ></v-text-field>
                 </v-col>
+                <v-btn-toggle
+
+
+                    >
                 <v-btn
 
                     color="primary"
                     small
+                    dark
                     :to="{
                         name: 'actividad-new'
                     }"
                 >
-                    <v-icon>mdi-plus-thick</v-icon> NUEVO REGISTRO
+                    <v-icon color="white">mdi-plus-thick</v-icon> NUEVO REGISTRO
                 </v-btn>
+                <v-btn
+
+                    color="dark"
+                    small
+                    dark
+                    @click="exportData"
+                    :disabled="actividades.length==0"
+                >
+                    <v-icon color="white">mdi-export</v-icon> EXPORTAR
+                </v-btn>
+                </v-btn-toggle>
             </v-card-title>
 
             <v-card-text>
@@ -250,7 +267,7 @@
 
 <script>
 import moment from 'moment'
-
+import XLSX from 'xlsx/xlsx.js';
 export default {
     data() {
         return {
@@ -370,7 +387,37 @@ export default {
                 //this.dialogTareas=true;
             });
         },
+        exportData(){
+            //var data = [];
+            console.log(this.actividades);
+            var data = this.actividades.map((item) => {
+                        return {
+                            id: item.id,
+                            usuario: item.usuario.name,
+                            fecha: item.fecha,
+                            hora_inicio: item.hora_inicio,
+                            hora_fin: item.hora_fin,
+                            horas_p: item.horas_p,
+                            horas_np: item.horas_np,
+                            horas_total: item.horas_total,
+                            horario: item.horario.nombre,
+                            actividades: item.actividades_count,
+                            created_at: item.created_at,
+                        }
+                    });
+            /* this line is only needed if you are not adding a script tag reference */
+            //if(typeof XLSX == 'undefined') XLSX = require('xlsx/xlsx.js');
 
+            /* make the worksheet */
+            var ws = XLSX.utils.json_to_sheet(data);
+
+            /* add to workbook */
+            var wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Actividades");
+
+            /* generate an XLSX file */
+            XLSX.writeFile(wb, "sheetjs.xlsx");
+        },
 
         viewDocuments(el) {
             //console.log(el.documentos);

@@ -22,6 +22,7 @@ import Dashboard from "../components/dashboard/Dashboard.vue";
 
 //PROACTIVANET
 import cierreTickets from "../components/panet/cierreTickets.vue";
+import verificarTickets from "../components/panet/verificarTickets.vue";
 
 
 const router = new VueRouter({
@@ -165,6 +166,15 @@ const router = new VueRouter({
             name: "cierre-tickets",
             path: "/cierre-tickets",
             component: cierreTickets,
+            meta: {
+                requiresAuth: true
+            }
+        }
+        ,
+        {
+            name: "verificar-tickets",
+            path: "/verificar-tickets",
+            component: verificarTickets,
             meta: {
                 requiresAuth: true
             }

@@ -22,11 +22,38 @@ class ActividadesController extends Controller
         //$actividades = Actividades::with('actividad.usuario_id', 'actividad.horario', 'tipo', 'status')->get()->toArray();
 
         //return ($actividades);
-        $usuario_estandar= User::where('role',1)->get()->toArray();
+        $role=[];
+        $cargo=[];
+        if (auth()->user()->role==2) { //ADMINISTRADOR
+            $cond = [];
+
+        } else if(auth()->user()->role==3) { //SUPERVISOR
+            $role = [1,2,3];
+            $cargo = [1,2,3,4,5,6,7,8,9,10,11];
+
+            if ((auth()->user()->cargo==9) || (auth()->user()->cargo==10)) { // coordinador CERT
+                $role = [1,3];
+                $cargo = [1,2,3,4,5,6,7,8,9,10,11];
+            } else if (auth()->user()->cargo==4) { // coordinador del CERT
+                $role = [1];
+                $cargo = [1,3];
+            } else if (auth()->user()->cargo==8) { //coordinador del infraestructura
+                $role = [1];
+                $cargo = [7];
+            } else if (auth()->user()->cargo==6) { //coordinador del infraestructura
+                $role = [1];
+                $cargo = [5];
+            }
+        }
+
+
+        $usuario_estandar = User::with('rol','puesto.area')->whereIn('role',$role)->whereIn('cargo',$cargo)->get();
         $arrayUsuarios = [];
          foreach ($usuario_estandar as $usuario) {
              //$actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->where('dia', $item['id'])->get()->toArray();
-             array_push($arrayUsuarios, $usuario['id']);
+
+
+             array_push($arrayUsuarios, $usuario->id);
          }
          array_push($arrayUsuarios, auth()->user()->id);
 

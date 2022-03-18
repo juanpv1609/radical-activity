@@ -1,8 +1,34 @@
 <template>
     <div>
         <v-card elevation="2" :loading="loading">
-            <v-card-title class="d-flex justify-space-between mb-6"
+            <v-card-title class="d-flex justify-space-between"
                 >Resumen General
+                <v-spacer></v-spacer>
+                <v-col cols="auto" >
+                        <v-btn-toggle
+                        borderless
+
+                    >
+                        <v-btn
+
+                            color="red"
+                            :loading="loadingUpload"
+                            dark
+                            :disabled="selectedUsuarios.length==0"
+                            @click="generarReporte"
+                            >Reporte PDF</v-btn
+                        >
+                        <v-btn
+
+                            color="green"
+                            :loading="loadingUpload"
+                            dark
+                            :disabled="selectedUsuarios.length==0"
+                            @click="generarReporteXLSX"
+                            >Reporte XLSX</v-btn
+                        >
+                        </v-btn-toggle>
+                        </v-col>
             </v-card-title>
 
             <v-card-text>
@@ -38,17 +64,7 @@
                                         </v-date-picker>
                                     </v-menu>
                                 </v-col>
-                                 <v-col cols="12" >
-                            <v-btn
-                                block
-                                color="primary"
-                                :loading="loadingUpload"
-                                dark
-                                :disabled="selectedUsuarios.length==0"
-                                @click="generarReporte"
-                                >Generar Reporte</v-btn
-                            >
-                        </v-col>
+
                             </v-row>
 
                         </v-col>
@@ -107,6 +123,8 @@
 </template>
 
 <script>
+import XLSX from 'xlsx/xlsx.js';
+import moment from 'moment';
 export default {
     data() {
         return {
@@ -187,6 +205,79 @@ export default {
             this.selectedUsuarios=[];
             this.valid = true;
             window.open(url, "_blank");
+            this.initialData()
+        },
+        async generarReporteXLSX() {
+            this.loading = true;
+            this.loadingUpload = true;
+            let url;
+            this.idUsuarios = [];
+            this.selectedUsuarios.forEach(element => {
+                this.idUsuarios.push(element.id)
+                    });
+            console.log(this.dataReport);
+            var diff = 0.0;
+            var inicio = null;
+            var fin = null;
+              await this.axios
+                .get(`/api/reporte-actividadesXLSX/${this.dates[0]}/${this.dates[1]}/${this.idUsuarios}`)
+                .then(response => {
+                    //console.log(response);
+                    var data = [];
+                    response.data.usuarios.forEach(element => { //recorre usuarios
+                        if (element.actividades.length>0) {
+
+                            element.actividades.forEach(item => {
+                                console.log(item.actividad.horario_id);
+                                if (item.actividad.horario_id==3) { //si es horario N1 NOCTURNO 22:00 - 06:00
+                                    console.log(item.h_inicio);
+                                    if (item.h_inicio=='22:00:00') {
+                                        inicio = '00:00';
+                                        fin = '08:00';
+                                    }
+                                }else{
+
+                                    inicio=item.h_inicio;
+                                    fin=item.h_fin;
+                                }
+                                console.log(inicio+'+'+fin+'='+Math.abs((moment.duration(moment(fin,'HH:mm').diff(moment(inicio,'HH:mm'))).asHours())).toFixed(2));
+                                var aux = {
+                                    id: item.id,
+                                    usuario: element.usuario.name,
+                                    area: element.usuario.puesto.area.nombre,
+                                    puesto: element.usuario.puesto.descripcion,
+                                    tipo: item.tipo.descripcion,
+                                    fecha: item.actividad.fecha,
+                                    hora_inicio: item.h_inicio,
+                                    hora_fin: item.h_fin,
+                                    total: Math.abs((moment.duration(moment(fin,'HH:mm').diff(moment(inicio,'HH:mm'))).asHours())).toFixed(2),
+                                    // horas_p: item.actividad.horas_p,
+                                    // horas_np: item.actividad.horas_np,
+                                    // horas_total: item.actividad.horas_total,
+                                    descripcion: item.descripcion,
+                                };
+                                data.push(aux);
+                        });
+                        }
+                    //console.log(data);
+                    });
+                    /* make the worksheet */
+                    var ws = XLSX.utils.json_to_sheet(data);
+
+                    /* add to workbook */
+                    var wb = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(wb, ws, "Actividades");
+
+                    /* generate an XLSX file */
+                    XLSX.writeFile(wb, response.data.inicio+'_'+response.data.fin+"_actividades.xlsx");
+                })
+                .catch(error => console.log(error));
+
+            this.loading = false;
+            this.loadingUpload = false;
+            this.dates = [];
+            this.selectedUsuarios=[];
+            this.valid = true;
             this.initialData()
         }
     }
