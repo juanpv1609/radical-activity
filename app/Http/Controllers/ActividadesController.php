@@ -49,7 +49,7 @@ class ActividadesController extends Controller
         }
 
 
-        $usuario_estandar = User::with('rol','puesto.area')->whereIn('role',$role)->whereIn('cargo',$cargo)->get();
+        $usuario_estandar = User::with('rol','puesto.area')->where('is_deleted',0)->whereIn('role',$role)->whereIn('cargo',$cargo)->get();
         $arrayUsuarios = [];
          foreach ($usuario_estandar as $usuario) {
              //$actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->where('dia', $item['id'])->get()->toArray();
