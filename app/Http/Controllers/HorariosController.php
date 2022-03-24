@@ -15,7 +15,7 @@ class HorariosController extends Controller
     public function index()
     {
         if (auth()->user()->role==1) { //estandar
-            if((auth()->user()->cargo==3)||(auth()->user()->cargo==4)||(auth()->user()->cargo==5)||(auth()->user()->cargo==7)){ //N2
+            if((auth()->user()->cargo>=3)){ //N2
                 $cond=['estado' => 1,
                         'perfil_puesto' => 3];
 
