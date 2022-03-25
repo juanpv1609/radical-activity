@@ -37,7 +37,7 @@ class ActividadesController extends Controller
                 $role = [1,3];
                 $cargo = [1,2,3,4,5,6,7,8,9,10,11];
             } else if (auth()->user()->cargo==4) { // coordinador del CERT
-                $role = [1];
+                $role = [1,3];
                 $cargo = [1,3,4];
             } else if (auth()->user()->cargo==8) { //coordinador del infraestructura
                 $role = [1];
