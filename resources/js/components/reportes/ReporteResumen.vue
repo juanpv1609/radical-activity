@@ -2,7 +2,7 @@
     <div>
         <v-card elevation="2" :loading="loading">
             <v-card-title class="d-flex justify-space-between"
-                >Resumen General
+                >Detalle de actividades
                 <v-spacer></v-spacer>
                 <v-col cols="auto" >
                         <v-btn-toggle
@@ -16,7 +16,7 @@
                             dark
                             :disabled="selectedUsuarios.length==0"
                             @click="generarReporte"
-                            >Reporte PDF</v-btn
+                            ><v-icon color="white">mdi-file-pdf-box</v-icon> Reporte PDF</v-btn
                         >
                         <v-btn
 
@@ -25,7 +25,7 @@
                             dark
                             :disabled="selectedUsuarios.length==0"
                             @click="generarReporteXLSX"
-                            >Reporte XLSX</v-btn
+                            ><v-icon color="white">mdi-microsoft-excel</v-icon> Reporte XLSX</v-btn
                         >
                         </v-btn-toggle>
                         </v-col>

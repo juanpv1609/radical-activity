@@ -73,6 +73,16 @@
                                         >FILTRAR</v-btn
                                     >
                                 </v-col>
+                                <v-col cols="12">
+                                    <v-btn
+                                        block
+                                        color="green"
+                                        dark
+                                        :disabled="actividades.length==0"
+                                        @click="exportData">
+                                        Exportar XLSX
+                                    </v-btn>
+                                </v-col>
                              </v-row>
                          </v-col>
                          <v-col cols="12" sm="7">
@@ -170,7 +180,8 @@
 </template>
 
 <script>
-import moment from 'moment'
+import moment from 'moment';
+import XLSX from 'xlsx/xlsx.js';
 export default {
     data() {
         return {
@@ -323,6 +334,61 @@ export default {
             //this.dates = [];
             //this.selectedUsuarios=[];
             this.valid = true;
+        },
+        exportData(){
+            //var data = [];
+            console.log(this.headers);
+            console.log(this.actividades);
+            var data = [];
+            var header = [];
+            this.headers.forEach(element => {
+
+                header.push(element.text)
+            });
+            for (let index = 0; index < header.length; index++) {
+                const element = header[index];
+                var aux = {}
+
+            }
+                this.actividades.forEach(item => {
+                    data.push(item.nombre)
+                    item.horas_p.forEach(element => {
+                        data.push(element)
+
+                    });
+                    data.push(item.total)
+                });
+
+
+            console.log(header);
+            console.log(data);
+            // var data = this.actividades.map((item) => {
+            //             return {
+            //                 id: item.id,
+            //                 usuario: item.usuario.name,
+            //                 fecha: item.fecha,
+            //                 hora_inicio: item.hora_inicio,
+            //                 hora_fin: item.hora_fin,
+            //                 horas_p: item.horas_p,
+            //                 horas_np: item.horas_np,
+            //                 horas_total: item.horas_total,
+            //                 horario: item.horario.nombre,
+            //                 actividades: item.actividades_count,
+            //                 created_at: item.created_at,
+            //             }
+            //         });
+            /* this line is only needed if you are not adding a script tag reference */
+            //if(typeof XLSX == 'undefined') XLSX = require('xlsx/xlsx.js');
+
+            /* make the worksheet */
+            var ws = XLSX.utils.json_to_sheet(data,{header:header});
+
+            /* add to workbook */
+            var wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Actividades");
+
+            /* generate an XLSX file */
+            XLSX.writeFile(wb, this.dates[0]+"_"+this.dates[1]+"_ResumenActividades.xlsx");
         },
         async generarReporte() {
             this.loading = true;

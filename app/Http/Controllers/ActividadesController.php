@@ -59,7 +59,7 @@ class ActividadesController extends Controller
          }
          array_push($arrayUsuarios, auth()->user()->id);
 
-         $actividad = Actividad::with('usuario','horario')->whereIn('usuario_id', $arrayUsuarios)->orderBy('fecha','desc')->get();
+         $actividad = Actividad::with('usuario.puesto.area','horario')->whereIn('usuario_id', $arrayUsuarios)->orderBy('fecha','desc')->get();
          foreach ($actividad as $item) {
              # code...
              $actividades = Actividades::where('dia', $item->id)->get();
@@ -90,7 +90,7 @@ class ActividadesController extends Controller
          }
          array_push($arrayUsuarios, auth()->user()->id);
 
-         $actividad = Actividad::with('usuario','horario')->whereIn('usuario_id', $arrayUsuarios)->orderBy('fecha','desc')->get();
+         $actividad = Actividad::with('usuario.puesto.area','horario')->whereIn('usuario_id', $arrayUsuarios)->orderBy('fecha','desc')->get();
          foreach ($actividad as $item) {
              # code...
              $actividades = Actividades::with('tipo')->where('dia', $item->id)->get();
@@ -197,7 +197,7 @@ class ActividadesController extends Controller
 
     public function show($id)
     {
-        $actividad = Actividad::with('usuario','horario')->where('usuario_id',$id)->orderBy('fecha','desc')->get();
+        $actividad = Actividad::with('usuario.puesto.area','horario')->where('usuario_id',$id)->orderBy('fecha','desc')->get();
         foreach ($actividad as $item) {
             # code...
             $actividades = Actividades::with('tipo')->where('dia', $item->id)->get();

@@ -126,7 +126,7 @@
                             </v-list-item-title>
                             <v-list-item-subtitle>
                                 {{ $store.state.user.email }} <br>
-                                {{ $store.state.user.rol.nombre }} <br>
+                                {{ $store.state.user.role.nombre }} <br>
                                 {{ $store.state.user.puesto.descripcion }} ({{ $store.state.user.puesto.area.nombre }})
 
                             </v-list-item-subtitle>

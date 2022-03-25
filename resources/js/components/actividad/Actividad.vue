@@ -58,14 +58,13 @@
                     <v-icon color="white">mdi-plus-thick</v-icon> NUEVO REGISTRO
                 </v-btn>
                 <v-btn
-
-                    color="dark"
+                    v-show="actividades.length>0"
+                    color="green"
                     small
                     dark
                     @click="exportData"
-                    :disabled="actividades.length==0"
                 >
-                    <v-icon color="white">mdi-export</v-icon> EXPORTAR
+                    <v-icon color="white">mdi-microsoft-excel</v-icon> EXPORTAR
                 </v-btn>
                 </v-btn-toggle>
             </v-card-title>
@@ -100,7 +99,12 @@
                             <td>
                                 {{ row.item.usuario.name }}
                             </td>
-
+                            <td>
+                                {{ row.item.usuario.puesto.area.nombre }}
+                            </td>
+                            <td>
+                                {{ row.item.usuario.puesto.descripcion }}
+                            </td>
                             <!-- <td>{{ row.item.tipo.descripcion }}</td>
                             <td>
                                 <v-chip
@@ -239,6 +243,7 @@
                                             x-small
                                             :color="item.status.color"
                                             label
+                                            dark
                                         >
                                             {{ item.status.descripcion }}
                                         </v-chip>
@@ -292,6 +297,14 @@ export default {
                 {
                     text: "Usuario",
                     value: "usuario.name"
+                },
+                {
+                    text: "Area",
+                    value: "usuario.puesto.area.nombre"
+                },
+                {
+                    text: "Cargo",
+                    value: "usuario.puesto.descripcion"
                 },
 
                 {
@@ -393,6 +406,9 @@ export default {
             var data = this.actividades.map((item) => {
                         return {
                             id: item.id,
+                            usuario: item.usuario.name,
+                            area: item.usuario.puesto.area.nombre,
+                            cargo: item.usuario.puesto.descripcion,
                             usuario: item.usuario.name,
                             fecha: item.fecha,
                             hora_inicio: item.hora_inicio,
