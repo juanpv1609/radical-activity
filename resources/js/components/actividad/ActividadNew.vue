@@ -585,7 +585,7 @@ export default {
                         }
                         diff = moment.duration(moment(max,'HH:mm').diff(moment(min,'HH:mm'))).asHours();
 
-                    if (this.ActivityLine[i].tipo_actividad == 6 ) {
+                    if (this.ActivityLine[i].tipo_actividad == 6 ) { // tipo break
                         diff_tiempo_libre = moment.duration(moment(this.ActivityLine[i].h_fin,'HH:mm').diff(moment(this.ActivityLine[i].h_inicio,'HH:mm'))).asHours();
                     }
 
@@ -625,13 +625,13 @@ export default {
                 }
 
             console.log(tiempo_libre);
-            if (tiempo_libre==0 ) {
-                this.$swal.fire({
-                                title: 'Atención!',
-                                text: `No olvide registrar al menos una actividad de tipo "Break" o tiempo libre`,
-                                icon: 'warning',
-                                });
-            } else {
+            // if (tiempo_libre==0 ) {
+            //     this.$swal.fire({
+            //                     title: 'Atención!',
+            //                     text: `No olvide registrar al menos una actividad de tipo "Break" o tiempo libre`,
+            //                     icon: 'warning',
+            //                     });
+            // } else {
                 this.$swal
                 .fire({
                     title: "Esta seguro?",
@@ -680,7 +680,7 @@ export default {
                     }
                 });
 
-            }
+            //}
 
         },
         delimitActividades (v) {
