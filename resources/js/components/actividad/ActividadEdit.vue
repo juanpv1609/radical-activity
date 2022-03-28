@@ -674,13 +674,13 @@ export default {
                 }
 
             console.log(tiempo_libre);
-              if (tiempo_libre==0 ) {
+              /* if (tiempo_libre==0 ) {
                 this.$swal.fire({
                                 title: 'Atención!',
                                 text: `No olvide registrar al menos una actividad de tipo "Break" o tiempo libre`,
                                 icon: 'warning',
                                 });
-            } else {
+            } else { */
 
                 console.log(this.Activity);
                  this.$swal
@@ -731,7 +731,7 @@ export default {
                     });
                 }
                 });
-            }
+            //}
 
         },
         delimitActividades (v) {
