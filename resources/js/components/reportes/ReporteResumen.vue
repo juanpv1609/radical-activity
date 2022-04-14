@@ -79,6 +79,7 @@
                                 item-value="id"
                                 v-model="selectedUsuarios"
                                 label="Seleccione uno o varios usuarios"
+                                color="blue-grey lighten-2"
 
                                 :disabled="dates.length<=1"
                                 return-object
@@ -119,6 +120,13 @@
                 </v-form>
             </v-card-text>
         </v-card>
+         <v-treeview
+            selectable
+            selected-color="red"
+            :items="personas"
+            dense
+        ></v-treeview>
+
     </div>
 </template>
 
@@ -137,7 +145,8 @@ export default {
             idUsuarios: [],
             selectedUsuarios: [],
             dateRules: [v => !!v || "Date range is required"],
-            dataReport:{}
+            dataReport:{},
+            personas:[]
         };
     },
     computed: {
@@ -178,6 +187,119 @@ export default {
             this.axios.get(`/api/${query}`).then(response => {
                 this.usuarios = response.data;
                 console.log(this.usuarios);
+                var arrayN1SOC = [];
+                var arrayN2SOC = [];
+                var arrayCoordinadorSOC = [];
+                var arrayN2CIBER = [];
+                var arrayCoordinadorCIBER = [];
+                var arrayN2INFRA = [];
+                var arrayCoordinadorINFRA = [];
+                response.data.forEach(element => {
+                        if (element.puesto.id==1) { //n1
+                            arrayN1SOC.push({
+                                id: element.id,
+                                name: element.name,
+                            })
+                        } else if (element.puesto.id==3){ //n2
+                            arrayN2SOC.push({
+                                id: element.id,
+                                name: element.name,
+                            })
+                        } else if (element.puesto.id==4){
+                            arrayCoordinadorSOC.push({
+                                id: element.id,
+                                name: element.name,
+                            })
+                        }
+                        else if (element.puesto.id==7) { //n2
+                            arrayN2INFRA.push({
+                                id: element.id,
+                                name: element.name,
+                            })
+                        } else if (element.puesto.id==8){ //CoordinadorINFRA
+                            arrayCoordinadorINFRA.push({
+                                id: element.id,
+                                name: element.name,
+                            })
+                        }
+                        else if (element.puesto.id==5) { //n2
+                            arrayN2CIBER.push({
+                                id: element.id,
+                                name: element.name,
+                            })
+                        } else if (element.puesto.id==6){ //CoordinadorINFRA
+                            arrayCoordinadorCIBER.push({
+                                id: element.id,
+                                name: element.name,
+                            })
+                        }
+
+
+
+                });
+
+                this.personas = [
+
+                        {
+                            id: 1,
+                            name: 'SOC/CERT:',
+                            children: [
+                                {
+                                    id:2,
+                                    name: 'Ingeniero Nivel 1',
+                                    children:arrayN1SOC
+                                },
+                                {
+                                    id:3,
+                                    name: 'Ingeniero Nivel 2',
+                                    children:arrayN2SOC
+                                },
+                                {
+                                    id:4,
+                                    name: 'Coordinador',
+                                    children:arrayCoordinadorSOC
+                                }
+                            ]
+                        },
+                        {
+                            id: 5,
+                            name: 'CIBERSEGURIDAD:',
+                            children: [
+
+                                {
+                                    id:6,
+                                    name: 'Ingeniero Nivel 2',
+                                    children:arrayN2CIBER
+                                },
+                                {
+                                    id:7,
+                                    name: 'Coordinador',
+                                    children:arrayCoordinadorCIBER
+                                }
+                            ]
+                            }
+                        ,
+                        {
+                            id: 8,
+                            name: 'INFRAESTRUCTURA:',
+                            children: [
+
+                                {
+                                    id:9,
+                                    name: 'Ingeniero Nivel 2',
+                                    children:arrayN2INFRA
+                                },
+                                {
+                                    id:10,
+                                    name: 'Coordinador',
+                                    children:arrayCoordinadorINFRA
+                                }
+                            ]
+                        }
+
+
+                ]
+                console.log(this.personas);
 
                 this.loading = false;
             });
@@ -246,7 +368,9 @@ export default {
                                     usuario: element.usuario.name,
                                     area: element.usuario.puesto.area.nombre,
                                     puesto: element.usuario.puesto.descripcion,
+                                    cliente: (item.cliente) ? item.cliente : null,
                                     tipo: item.tipo.descripcion,
+                                    clasificacion: (item.clasif) ? item.clasif.nombre : null,
                                     fecha: item.actividad.fecha,
                                     hora_inicio: item.h_inicio,
                                     hora_fin: item.h_fin,
@@ -254,7 +378,7 @@ export default {
                                     // horas_p: item.actividad.horas_p,
                                     // horas_np: item.actividad.horas_np,
                                     // horas_total: item.actividad.horas_total,
-                                    descripcion: item.descripcion,
+                                    actividades: item.descripcion,
                                 };
                                 data.push(aux);
                         });

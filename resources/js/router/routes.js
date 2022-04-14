@@ -10,6 +10,7 @@ import ActividadCalendar from "../components/actividad/ActividadCalendar.vue";
 import ActividadNew from "../components/actividad/ActividadNew.vue";
 import ActividadEdit from "../components/actividad/ActividadEdit.vue";
 import AllAreas from "../components/area/AllAreas.vue";
+import Clasificacion from "../components/clasificacion/Clasificacion.vue";
 import Pais from "../components/pais/Pais.vue";
 import PerfilPuesto from "../components/perfilPuesto/PerfilPuesto.vue";
 import Horarios from "../components/horario/AllHorarios.vue";
@@ -97,6 +98,14 @@ const router = new VueRouter({
             name: "areas",
             path: "/areas",
             component: AllAreas,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            name: "clasificacion",
+            path: "/clasificacion",
+            component: Clasificacion,
             meta: {
                 requiresAuth: true
             }

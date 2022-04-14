@@ -147,6 +147,29 @@
                     </v-col>
                     <v-col cols="12" sm="2">
                         <v-autocomplete
+                                :items="customers"
+                                item-text="Name"
+                                item-value="Id"
+                                v-model="customer"
+                                label="Cliente"
+                                return-object
+                                small
+                                :disabled="(!start || !end)"
+                            ></v-autocomplete>
+                    </v-col>
+                    <v-col cols="12" sm="2">
+                        <v-autocomplete
+                            :items="clasificaciones"
+                            item-text="nombre"
+                            item-value="id"
+                            v-model="clasificacion"
+                            label="Clasificación"
+                            return-object
+                            :disabled="(!start || !end)"
+                        ></v-autocomplete>
+                    </v-col>
+                    <!-- <v-col cols="12" sm="2">
+                        <v-autocomplete
                             :items="tipoActividades"
                             item-text="descripcion"
                             item-value="id"
@@ -155,8 +178,8 @@
                             return-object
                             :disabled="(!start || !end)"
                         ></v-autocomplete>
-                    </v-col>
-                    <v-col cols="12" sm="6">
+                    </v-col> -->
+                    <v-col cols="12" sm="5">
                         <v-combobox
                             v-model="modelDescripcion"
                             :items="itemsDescripcion"
@@ -173,7 +196,7 @@
                         >
                         </v-combobox>
                     </v-col>
-                    <v-col cols="12" sm="2">
+                    <v-col cols="12" sm="1">
                         <v-btn
                             small
                             color="orange accent-4"
@@ -181,8 +204,9 @@
                             large
                             @click="controlFechas"
                             :disabled="(modelDescripcion.length == 0)"
+                            title="Agregar actividades a la lista"
                         >
-                            agregar
+                            <v-icon>mdi-plus-thick</v-icon>
                         </v-btn>
                     </v-col>
                 </v-row>
@@ -193,13 +217,13 @@
                                 <tr>
                                     <!-- <td>{{ row.item.fecha }}</td> -->
                                     <td>
-                                        {{ row.item.h_inicio }}
+                                        {{ row.item.h_inicio }} - {{ row.item.h_fin }}
                                     </td>
                                     <td>
-                                        {{ row.item.h_fin }}
+                                        {{ row.item.customer }}
                                     </td>
                                     <td>
-                                        {{ row.item.tipo_actividad_nombre }}
+                                        {{ row.item.clasificacion_nombre }}
                                     </td>
                                     <td>
                                         <v-chip
@@ -418,9 +442,10 @@ export default {
             valid: true,
             headers: [
                 //{ text: "Fecha", value: "fecha" },
-                { text: "Inicio", value: "inicio" },
-                { text: "Fin", value: "fin", sortable: false },
-                { text: "Tipo", value: "tipo", sortable: false },
+                { text: "Inicio - Fin", value: "inicio" },
+                { text: "Cliente", value: "customer", sortable: false },
+                { text: "Clasificación", value: "clasificacion_nombre", sortable: false },
+                //{ text: "Tipo", value: "tipo", sortable: false },
                 { text: "Actividades", value: "descripcion", sortable: false },
                 { text: "Colaboradores", value: "colaborador", sortable: false },
                 { text: "Observación / Resultados", value: "observacion", sortable: false },
@@ -430,7 +455,11 @@ export default {
             foto: null,
             ActivityLine: [],
             Activity: {},
-            hourRange:[]
+            hourRange:[],
+            customers:[],
+            customer:{},
+            clasificacion: {},
+            clasificaciones: [],
         };
     },
     computed:{
@@ -486,9 +515,21 @@ export default {
         },
         allowedStep: m => m % 5 === 0,
         initialData() {
+            //var obj = {Id:'fdsff-fsdfsf-fsfdsftr-gfgfd',Name:'OTRO (NO DEFINIDO)'};
+                    //this.customers.push(obj)
+            this.axios
+                .get('/api/customers/')
+                .then(response => {
+                    this.customers = response.data;
+                });
+                this.axios.get("/api/clasificacion/").then(response => {
+                this.clasificaciones = response.data;
+
+                });
+                    //console.log(this.customers);
             this.axios.get(`/api/horarios`).then(response => {
                 this.horarios = response.data;
-                console.log(this.horarios);
+                //console.log(this.horarios);
             });
             this.axios.get(`/api/tipo-actividad`).then(response => {
                 this.tipoActividades = response.data;
@@ -508,9 +549,9 @@ export default {
             this.start='22:00';
 
             }else{
-            this.minimo=this.horario.inicio;
-            this.start=this.minimo;
-            this.maximo=this.horario.fin;
+            this.minimo=this.horario.inicio.substring(0, 5);
+            this.start=this.minimo.substring(0, 5);
+            this.maximo=this.horario.fin.substring(0, 5);
             }
 
         },
@@ -534,6 +575,9 @@ export default {
                     var activityLine = {};
                     this.ActivityLine = this.ActivityLine || [];
                     console.log(this.modelDescripcion);
+                    activityLine.customer = this.customer.Name;
+                    activityLine.clasificacion = this.clasificacion.id;
+                    activityLine.clasificacion_nombre = this.clasificacion.nombre;
                     activityLine.tipo_actividad = this.tipoActividad.id;
                     activityLine.tipo_actividad_nombre = this.tipoActividad.descripcion;
                     activityLine.descripcion = this.modelDescripcion;
@@ -542,6 +586,7 @@ export default {
                     activityLine.h_inicio = this.start;
                     activityLine.h_fin = this.end;
                     activityLine.estado = true;
+                    console.log(activityLine);
                     this.ActivityLine.push(activityLine);
                     this.start = this.end;
                     //this.tipoActividad.id=null;

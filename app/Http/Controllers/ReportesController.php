@@ -10,6 +10,7 @@ use App\Models\Persona;
 use App\Models\Actividad;
 use App\Models\Actividades;
 use Illuminate\Http\Request;
+use App\Models\TipoActividad;
 use App\Models\PersonaEstudio;
 use App\Models\Certificaciones;
 use Illuminate\Support\Facades\App;
@@ -251,7 +252,7 @@ class ReportesController extends Controller
                 //$actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->where('dia', $item['id'])->get()->toArray();
                 array_push($arrayActividades, $item['id']);
             }
-                $actividades = Actividades::with( 'tipo', 'status','actividad')->whereIn('dia', $arrayActividades)->get()->toArray();
+                $actividades = Actividades::with( 'tipo', 'status','actividad','clasif')->whereIn('dia', $arrayActividades)->get()->toArray();
                 $persona['actividades'] = $actividades;
                 array_push($aux,$persona);
         }
@@ -284,12 +285,14 @@ class ReportesController extends Controller
             $usuario = User::with('rol','puesto.area')->find($user);
             $actividad = Actividad::where('usuario_id', $usuario->id)->whereBetween('fecha',[$inicio,$fin])->get()->toArray();
             $arrayActividades = [];
+
             $persona['usuario'] = $usuario;
+
+
             foreach ($actividad as $item) {
-                //$actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->where('dia', $item['id'])->get()->toArray();
-                array_push($arrayActividades, $item['id']);
+                 array_push($arrayActividades, $item['id']);
             }
-                $actividades = Actividades::with( 'tipo', 'status','actividad')->whereIn('dia', $arrayActividades)->get()->toArray();
+                $actividades = Actividades::with( 'tipo', 'status','actividad','clasif')->where('tipo_actividad','<>',6)->whereIn('dia', $arrayActividades)->get()->toArray();
                 $persona['actividades'] = $actividades;
                 array_push($aux,$persona);
         }

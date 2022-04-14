@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\User;
 use App\Models\Actividad;
+use App\Models\Clasificacion;
 use App\Models\TipoActividad;
 use App\Models\EstadoActividad;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +15,8 @@ class Actividades extends Model
     protected $table = 'actividades';
     protected $fillable = [
         'tipo_actividad',
+        'clasificacion',
+        'cliente',
         'descripcion',
         'dia',
         'h_inicio',
@@ -22,7 +25,7 @@ class Actividades extends Model
         'colaboradores',
         'estado',
         'verificada',
-        
+
         'is_verified_by'
     ];
     public $timestamps = false;
@@ -35,6 +38,10 @@ class Actividades extends Model
     public function tipo()
     {
         return $this->belongsTo(TipoActividad::class, 'tipo_actividad', 'id');
+    }
+    public function clasif() //tabla clasificacion
+    {
+        return $this->belongsTo(Clasificacion::class, 'clasificacion', 'id');
     }
     public function status()
     {

@@ -124,8 +124,8 @@
                                     {{ row.item.actividades_count }}
                                      </v-chip>
                                  </th>
-                                  <td>{{ row.item.hora_inicio }} </td>
-                            <td>{{ row.item.hora_fin }} </td>
+                                  <td>{{ row.item.hora_inicio.substring(0, 5) }} </td>
+                            <td>{{ row.item.hora_fin.substring(0, 5) }} </td>
                                   <td>
                                       <strong class="primary--text">{{ row.item.horas_total }}</strong>
 
@@ -227,13 +227,16 @@
                             <template v-slot:item="{item}" >
                                 <tr  >
                                     <td>
-                                        {{ item.h_inicio }}
+                                        {{ item.h_inicio.substring(0, 5) }}
                                     </td>
                                     <td>
-                                        {{ item.h_fin }}
+                                        {{ item.h_fin.substring(0, 5) }}
                                     </td>
                                     <td>
-                                        {{ item.tipo.descripcion }}
+                                        {{ (item.cliente) ? item.cliente : null }}
+                                    </td>
+                                    <td>
+                                        {{ (item.clasif) ? item.clasif.nombre : null }}
                                     </td>
                                     <td>
                                         {{ item.descripcion }}
@@ -353,9 +356,10 @@ export default {
             headersDetalle:[
                 { text: "Inicio", value: "h_inicio", },
                 { text: "Fin", value: "h_fin", },
+                { text: "Cliente", value: "cliente", },
                  {
-                    text: "Tipo",
-                    value: "tipo_actividad.descripcion",
+                    text: "Clasificación",
+                    value: "clasif.nombre",
                                     },
                 { text: "Descripción", value: "descripcion", },
                 {
@@ -393,9 +397,9 @@ export default {
             console.log(el);
              this.axios.get(`/api/detalle-actividades/${el.id}`).then(res => {
                 //this.contratos = res.data;
-                //console.log(res.data);
+                console.log(res.data);
                 this.detalleActividades = res.data;
-                this.title = el.usuario.name+': '+el.fecha;
+                this.title = 'Usuario: '+el.usuario.name+' | Fecha: '+el.fecha;
                 $("#exampleModal2").modal("show");
                 //this.dialogTareas=true;
             });
@@ -409,7 +413,7 @@ export default {
                             usuario: item.usuario.name,
                             area: item.usuario.puesto.area.nombre,
                             cargo: item.usuario.puesto.descripcion,
-                            usuario: item.usuario.name,
+                           // cliente: item.cliente,
                             fecha: item.fecha,
                             hora_inicio: item.hora_inicio,
                             hora_fin: item.hora_fin,

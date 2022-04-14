@@ -93,7 +93,7 @@ class ActividadesController extends Controller
          $actividad = Actividad::with('usuario.puesto.area','horario')->whereIn('usuario_id', $arrayUsuarios)->orderBy('fecha','desc')->get();
          foreach ($actividad as $item) {
              # code...
-             $actividades = Actividades::with('tipo')->where('dia', $item->id)->get();
+             $actividades = Actividades::with('tipo','clasif')->where('dia', $item->id)->get();
             $item->actividades_count=$actividades->count();
             $item->actividades=$actividades;
 
@@ -128,7 +128,7 @@ class ActividadesController extends Controller
              //$actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->where('dia', $item['id'])->get()->toArray();
              array_push($arrayActividades, $item['id']);
             }
-            $actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->whereIn('dia', $arrayActividades)->get()->toArray();
+            $actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo','clasif', 'status')->whereIn('dia', $arrayActividades)->get()->toArray();
 
 
         return ($actividades);
@@ -157,7 +157,9 @@ class ActividadesController extends Controller
         $listaActividades = [];
         foreach ($arrayActivities as $item) {
             $aux = [
-                'tipo_actividad' => $item['tipo_actividad'],
+                'cliente' => $item['customer'],
+                'clasificacion' => $item['clasificacion'],
+                'tipo_actividad' => isset($item['tipo_actividad']) ? $item['tipo_actividad'] : null,
                 'descripcion' => implode(",", $item['descripcion']),
                 'colaboradores' => implode(",", $item['colaboradores']),
                 'dia' => $actividad->id,
@@ -200,7 +202,7 @@ class ActividadesController extends Controller
         $actividad = Actividad::with('usuario.puesto.area','horario')->where('usuario_id',$id)->orderBy('fecha','desc')->get();
         foreach ($actividad as $item) {
             # code...
-            $actividades = Actividades::with('tipo')->where('dia', $item->id)->get();
+            $actividades = Actividades::with('tipo','clasif')->where('dia', $item->id)->get();
             $item->actividades_count=$actividades->count();
             $item->actividades=$actividades;
 
@@ -212,7 +214,7 @@ class ActividadesController extends Controller
     public function detalleActividades($id)
     {
 
-            $actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->where('dia', $id)->get()->toArray();
+            $actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo','clasif', 'status')->where('dia', $id)->get()->toArray();
 
 
         return ($actividades);
@@ -247,6 +249,8 @@ class ActividadesController extends Controller
          foreach ($arrayActivities as $item) {
 
             $actividades = new Actividades([
+                'cliente' => $item['customer'],
+                'clasificacion' => $item['clasificacion'],
                 'tipo_actividad' => $item['tipo_actividad'],
                 'descripcion' => implode(",", $item['descripcion']),
                 'colaboradores' => isset($item['colaboradores']) ? implode(",", $item['colaboradores']) : null,

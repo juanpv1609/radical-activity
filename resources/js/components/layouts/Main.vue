@@ -308,6 +308,7 @@ export default {
                         { title: "Paises", link: "/paises", icon: "mdi-earth" },
                         { title: "Perfil Laboral", link: "/perfil-puesto", icon: "mdi-sitemap" },
                         { title: "Horarios", link: "/horarios", icon: "mdi-clock-check" },
+                        { title: "Clasificación", link: "/clasificacion", icon: "mdi-folder" },
                         { title: "Tipo Actividad", link: "/tipo-actividad", icon: "mdi-clock-check" },
 
 

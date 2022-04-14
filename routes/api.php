@@ -19,6 +19,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ActividadesController;
 use App\Http\Controllers\NivelEstudioController;
 use App\Http\Controllers\PerfilPuestoController;
+use App\Http\Controllers\ClasificacionController;
 use App\Http\Controllers\TipoActividadController;
 use App\Http\Controllers\CertificacionesController;
 
@@ -55,6 +56,8 @@ Route::middleware('api')->group(function () {
 
 
     Route::resource('areas', AreaController::class);
+    Route::resource('clasificacion', ClasificacionController::class);
+
 
     Route::resource('paises', PaisController::class);
     Route::resource('horarios', HorariosController::class);

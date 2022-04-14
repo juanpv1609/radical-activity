@@ -142,7 +142,30 @@
                             ></v-time-picker>
                         </v-menu>
                     </v-col>
+                     <v-col cols="12" sm="2">
+                        <v-autocomplete
+                                :items="customers"
+                                item-text="Name"
+                                item-value="Id"
+                                v-model="customer"
+                                label="Cliente"
+                                return-object
+                                small
+                                :disabled="(!start || !end)"
+                            ></v-autocomplete>
+                    </v-col>
                     <v-col cols="12" sm="2">
+                        <v-autocomplete
+                            :items="clasificaciones"
+                            item-text="nombre"
+                            item-value="id"
+                            v-model="clasificacion"
+                            label="Clasificación"
+                            return-object
+                            :disabled="(!start || !end)"
+                        ></v-autocomplete>
+                    </v-col>
+                    <!-- <v-col cols="12" sm="2">
                         <v-autocomplete
                             :items="tipoActividades"
                             item-text="descripcion"
@@ -152,8 +175,8 @@
                             return-object
                             :disabled="(!start || !end)"
                         ></v-autocomplete>
-                    </v-col>
-                    <v-col cols="12" sm="6">
+                    </v-col> -->
+                    <v-col cols="12" sm="5">
                         <v-combobox
                             v-model="modelDescripcion"
                             :items="itemsDescripcion"
@@ -170,7 +193,7 @@
                         >
                         </v-combobox>
                     </v-col>
-                    <v-col cols="12" sm="2">
+                    <v-col cols="12" sm="1">
                         <v-btn
                             small
                             color="primary"
@@ -179,7 +202,7 @@
                             @click="controlFechas"
                             :disabled="(modelDescripcion.length == 0)"
                         >
-                            agregar
+                            <v-icon>mdi-plus-thick</v-icon>
                         </v-btn>
                     </v-col>
                 </v-row>
@@ -190,13 +213,13 @@
                                 <tr>
                                     <!-- <td>{{ row.item.fecha }}</td> -->
                                     <td>
-                                        {{ row.item.h_inicio }}
+                                         {{ row.item.h_inicio }} - {{ row.item.h_fin }}
                                     </td>
                                     <td>
-                                        {{ row.item.h_fin }}
+                                        {{ row.item.customer }}
                                     </td>
                                     <td>
-                                        {{ row.item.tipo_actividad_nombre }}
+                                        {{ row.item.clasificacion_nombre }}
                                     </td>
                                     <td>
                                         <v-chip
@@ -415,13 +438,14 @@ export default {
             valid: true,
             headers: [
                 //{ text: "Fecha", value: "fecha" },
-                { text: "Inicio", value: "inicio" },
-                { text: "Fin", value: "fin" },
-                { text: "Tipo", value: "tipo" },
-                { text: "Actividades", value: "descripcion" },
-                { text: "Colaboradores", value: "colaborador" },
-                { text: "Observación / Resultados", value: "observacion" },
-                { text: "Completada", value: "estado" },
+                { text: "Inicio - Fin", value: "inicio" },
+                { text: "Cliente", value: "customer", sortable: false },
+                { text: "Clasificación", value: "clasificacion_nombre", sortable: false },
+                //{ text: "Tipo", value: "tipo", sortable: false },
+                { text: "Actividades", value: "descripcion", sortable: false },
+                { text: "Colaboradores", value: "colaborador", sortable: false },
+                { text: "Observación / Resultados", value: "observacion", sortable: false },
+                { text: "Completada", value: "estado", sortable: false },
                 { text: "Eliminar", value: "controls", sortable: false }
             ],
             foto: null,
@@ -429,6 +453,10 @@ export default {
             Activity: {},
             hourRange:[],
             usuario:"",
+            customers:[],
+            customer:{},
+            clasificacion: {},
+            clasificaciones: [],
         };
     },
     computed:{
@@ -492,6 +520,15 @@ export default {
                     this.usuario = response.data;
 
                 });
+                this.axios
+                .get('/api/customers/')
+                .then(response => {
+                    this.customers = response.data;
+                });
+                this.axios.get("/api/clasificacion/").then(response => {
+                this.clasificaciones = response.data;
+
+                });
             this.axios.get(`/api/detalle-actividades/${this.$route.params.id}`).then(res => {
                 console.log(res.data);
                 var data = res.data;
@@ -505,9 +542,11 @@ export default {
 
                     var activityLine = {};
                     this.ActivityLine = this.ActivityLine || [];
-                    //console.log(this.modelDescripcion);
-                    activityLine.tipo_actividad = element.tipo_actividad;
-                    activityLine.tipo_actividad_nombre = element.tipo.descripcion;
+                    activityLine.customer = element.cliente;
+                    activityLine.clasificacion = element.clasificacion.id;
+                    activityLine.clasificacion_nombre = element.clasificacion.nombre;
+                    //activityLine.tipo_actividad = element.tipo_actividad;
+                    //activityLine.tipo_actividad_nombre = element.tipo.descripcion;
                     //this.modelDescripcion=(element.descripcion).split(',')
                     activityLine.descripcion = (element.descripcion).split(',')
                     activityLine.observacion = element.observacion;
@@ -537,6 +576,15 @@ export default {
             this.axios.get(`/api/tipo-actividad`).then(response => {
                 this.tipoActividades = response.data;
             });
+            this.axios
+                .get('/api/customers/')
+                .then(response => {
+                    this.customers = response.data;
+                });
+                this.axios.get("/api/clasificacion/").then(response => {
+                this.clasificaciones = response.data;
+
+                });
             this.start=null;
             this.end=null;
         },
@@ -578,6 +626,9 @@ export default {
                  var activityLine = {};
                 this.ActivityLine = this.ActivityLine || [];
                 console.log(this.modelDescripcion);
+                activityLine.customer = this.customer.Name;
+                    activityLine.clasificacion = this.clasificacion.id;
+                    activityLine.clasificacion_nombre = this.clasificacion.nombre;
                 activityLine.tipo_actividad = this.tipoActividad.id;
                 activityLine.tipo_actividad_nombre = this.tipoActividad.descripcion;
                 activityLine.descripcion = this.modelDescripcion;
