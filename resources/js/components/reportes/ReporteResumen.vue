@@ -1,49 +1,50 @@
 <template>
     <div>
         <v-card elevation="2" :loading="loading">
-            <v-card-title class="d-flex justify-space-between"
+            <v-card-title class="indigo white--text text-h5"
                 >Detalle de actividades
-                <v-spacer></v-spacer>
-                <v-col cols="auto" >
-                        <v-btn-toggle
-                        borderless
+                <v-divider></v-divider>
+                     <v-col cols="auto">
+                            <v-btn-toggle
+                                    borderless
 
-                    >
-                        <v-btn
+                                >
+                                    <v-btn
 
-                            color="red"
-                            :loading="loadingUpload"
-                            dark
-                            :disabled="selectedUsuarios.length==0"
-                            @click="generarReporte"
-                            ><v-icon color="white">mdi-file-pdf-box</v-icon> Reporte PDF</v-btn
-                        >
-                        <v-btn
+                                        color="red"
+                                        :loading="loadingUpload"
+                                        dark
+                                        v-show="dates.length>=1"
+                                        @click="generarReporte"
+                                        dense
+                                        ><v-icon color="white">mdi-file-pdf-box</v-icon> Reporte PDF</v-btn
+                                    >
+                                    <v-btn
 
-                            color="green"
-                            :loading="loadingUpload"
-                            dark
-                            :disabled="selectedUsuarios.length==0"
-                            @click="generarReporteXLSX"
-                            ><v-icon color="white">mdi-microsoft-excel</v-icon> Reporte XLSX</v-btn
-                        >
-                        </v-btn-toggle>
+                                        color="green"
+                                        :loading="loadingUpload"
+                                        dark
+                                        v-show="dates.length>=1"
+                                        @click="generarReporteXLSX"
+                                        dense
+
+                                        ><v-icon color="white">mdi-microsoft-excel</v-icon> Reporte XLSX</v-btn
+                                    >
+                                    </v-btn-toggle>
                         </v-col>
             </v-card-title>
-
             <v-card-text>
-                <v-form ref="form" v-model="valid">
-                     <v-row>
-                        <v-col cols="12" sm="3">
-                            <v-row>
-                                <v-col cols="12">
-                                     <v-menu
+                     <v-row class="pt-4">
+                        <v-col cols="3" >
+                             <v-menu
                                         v-model="menu"
                                         :close-on-content-click="false"
                                         :nudge-right="40"
                                         transition="scale-transition"
                                         offset-y
                                         min-width="auto"
+                                        :disabled="selectedUsuarios.length == 0"
+                                        dense
                                     >
                                         <template v-slot:activator="{ on, attrs }">
                                             <v-text-field
@@ -63,25 +64,38 @@
                                         <v-date-picker v-model="dates" range>
                                         </v-date-picker>
                                     </v-menu>
-                                </v-col>
-
-                            </v-row>
-
+                             <v-treeview
+                                selectable
+                                selected-color="red"
+                                :items="personas"
+                                dense
+                                v-model="selectedUsuarios"
+                                return-object
+                                >
+                                <template v-slot:prepend="{ item }">
+                                    <v-icon v-if="!item.children">
+                                    mdi-account
+                                    </v-icon>
+                                </template>
+                            </v-treeview>
                         </v-col>
-                        <v-col cols="12" sm="9">
+                        <v-divider vertical></v-divider>
+                        <v-col
+                                class="d-flex text-center pa-4"
+                            >
                             <v-autocomplete
-                                deletable-chips
+
                                 multiple
                                 small-chips
-                                clearable
+
                                 :items="usuarios"
                                 item-text="name"
                                 item-value="id"
                                 v-model="selectedUsuarios"
-                                label="Seleccione uno o varios usuarios"
+                                label="Usuarios seleccionados"
                                 color="blue-grey lighten-2"
 
-                                :disabled="dates.length<=1"
+                                disabled="true"
                                 return-object
 
                             >
@@ -102,30 +116,15 @@
                                     <v-divider class="mt-2"></v-divider>
                                 </template>
                             </v-autocomplete>
-                        </v-col>
 
+
+
+
+
+                        </v-col>
                     </v-row>
-                   <!--  <v-row align="center"
-                        justify="center">
-                        <v-col cols="12" class="m-auto">
-                            <v-img
-                                src="../img/building.png"
-                                alt="Logo"
-                                max-height="300px"
-                                max-width="600px"
-                            ></v-img>
-                        </v-col>
-
-                    </v-row> -->
-                </v-form>
             </v-card-text>
         </v-card>
-         <v-treeview
-            selectable
-            selected-color="red"
-            :items="personas"
-            dense
-        ></v-treeview>
 
     </div>
 </template>
@@ -187,52 +186,26 @@ export default {
             this.axios.get(`/api/${query}`).then(response => {
                 this.usuarios = response.data;
                 console.log(this.usuarios);
-                var arrayN1SOC = [];
-                var arrayN2SOC = [];
-                var arrayCoordinadorSOC = [];
-                var arrayN2CIBER = [];
-                var arrayCoordinadorCIBER = [];
-                var arrayN2INFRA = [];
-                var arrayCoordinadorINFRA = [];
+                var arrayN1 = [];
+                var arrayN2 = [];
+                var arrayCoordinador = [];
                 response.data.forEach(element => {
-                        if (element.puesto.id==1) { //n1
-                            arrayN1SOC.push({
+                    if (element.puesto.id==1) { //N1
+                        arrayN1.push({
                                 id: element.id,
                                 name: element.name,
                             })
-                        } else if (element.puesto.id==3){ //n2
-                            arrayN2SOC.push({
+                    } else if (element.puesto.id==3 || element.puesto.id==5 || element.puesto.id==7){ //N2
+                        arrayN2.push({
                                 id: element.id,
                                 name: element.name,
                             })
-                        } else if (element.puesto.id==4){
-                            arrayCoordinadorSOC.push({
+                    } else if (element.puesto.id==4 || element.puesto.id==6 || element.puesto.id==8){ //COORDINADORES
+                        arrayCoordinador.push({
                                 id: element.id,
                                 name: element.name,
                             })
-                        }
-                        else if (element.puesto.id==7) { //n2
-                            arrayN2INFRA.push({
-                                id: element.id,
-                                name: element.name,
-                            })
-                        } else if (element.puesto.id==8){ //CoordinadorINFRA
-                            arrayCoordinadorINFRA.push({
-                                id: element.id,
-                                name: element.name,
-                            })
-                        }
-                        else if (element.puesto.id==5) { //n2
-                            arrayN2CIBER.push({
-                                id: element.id,
-                                name: element.name,
-                            })
-                        } else if (element.puesto.id==6){ //CoordinadorINFRA
-                            arrayCoordinadorCIBER.push({
-                                id: element.id,
-                                name: element.name,
-                            })
-                        }
+                    }
 
 
 
@@ -241,61 +214,22 @@ export default {
                 this.personas = [
 
                         {
-                            id: 1,
-                            name: 'SOC/CERT:',
-                            children: [
-                                {
-                                    id:2,
-                                    name: 'Ingeniero Nivel 1',
-                                    children:arrayN1SOC
-                                },
-                                {
-                                    id:3,
-                                    name: 'Ingeniero Nivel 2',
-                                    children:arrayN2SOC
-                                },
-                                {
-                                    id:4,
-                                    name: 'Coordinador',
-                                    children:arrayCoordinadorSOC
-                                }
-                            ]
+                            id:1,
+                            name: 'Ingeniero Nivel 1',
+                            children:arrayN1
                         },
                         {
-                            id: 5,
-                            name: 'CIBERSEGURIDAD:',
-                            children: [
-
-                                {
-                                    id:6,
-                                    name: 'Ingeniero Nivel 2',
-                                    children:arrayN2CIBER
-                                },
-                                {
-                                    id:7,
-                                    name: 'Coordinador',
-                                    children:arrayCoordinadorCIBER
-                                }
-                            ]
-                            }
-                        ,
+                            id:2,
+                            name: 'Ingeniero Nivel 2',
+                            children:arrayN2
+                        },
                         {
-                            id: 8,
-                            name: 'INFRAESTRUCTURA:',
-                            children: [
-
-                                {
-                                    id:9,
-                                    name: 'Ingeniero Nivel 2',
-                                    children:arrayN2INFRA
-                                },
-                                {
-                                    id:10,
-                                    name: 'Coordinador',
-                                    children:arrayCoordinadorINFRA
-                                }
-                            ]
+                            id:3,
+                            name: 'Coordinador',
+                            children:arrayCoordinador
                         }
+
+
 
 
                 ]
@@ -312,7 +246,7 @@ export default {
             this.selectedUsuarios.forEach(element => {
                 this.idUsuarios.push(element.id)
                     });
-            console.log(this.dataReport);
+           // console.log(this.dataReport);
               await this.axios
                 .get(`/api/reporte-actividades/${this.dates[0]}/${this.dates[1]}/${this.idUsuarios}`)
                 .then(response => {
@@ -334,10 +268,11 @@ export default {
             this.loadingUpload = true;
             let url;
             this.idUsuarios = [];
+                console.log(this.selectedUsuarios);
             this.selectedUsuarios.forEach(element => {
                 this.idUsuarios.push(element.id)
                     });
-            console.log(this.dataReport);
+
             var diff = 0.0;
             var inicio = null;
             var fin = null;
