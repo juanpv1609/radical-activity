@@ -10,7 +10,7 @@
             lazy-validation
         >
     <v-card elevation="12" :loading="loading" class="m-auto "
-    max-width="800">
+    max-width="1000">
     <v-row>
         <v-col cols="6" class="m-auto" >
           <v-img src="../img/login.png" alt="Logo"  ></v-img>
@@ -19,8 +19,9 @@
 
 
 
-         <v-card-text>
-        <v-img src="../img/nuevologo-radical.png" alt="Logo"  ></v-img>
+         <v-card-text >
+             <center><v-img src="../img/LOGOTIPO.png" max-width="400" max-height="200" alt="Logo"  ></v-img></center>
+
         <v-divider></v-divider>
              <h2 class="text-center "> Iniciar Sesión</h2>
 
@@ -33,7 +34,7 @@
                         :rules="emailRules"
                         prepend-inner-icon="mdi-email"
                         outlined
-                        dense
+
                         color="orange darken-4"
                     ></v-text-field>
                 </v-col>
@@ -44,7 +45,7 @@
                         v-model="form.password"
                         required
                         outlined
-                        dense
+
                         color="orange darken-4"
                         :rules="passwordRules"
                         @keyup.enter="login"
@@ -118,7 +119,7 @@
             this.$store.dispatch("login", this.form).then(()=>{
                this.loading = false;
                 //this.$router.push({ path: this.redirect || "/contratos" }, () => { }, () => { });
-               this.$router.push({ name: 'actividad' }).then(()=>{
+               this.$router.push({ name: 'mi-actividad' }).then(()=>{
                    this.$store.commit('SET_LAYOUT', 'main-layout')
                    }).catch(() => [])
 

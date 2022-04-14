@@ -6,7 +6,9 @@ import Home from "../components/Home.vue";
 
 import AllUsuarios from "../components/usuario/AllUsuarios.vue";
 import Actividad from "../components/actividad/Actividad.vue";
+import MiActividad from "../components/actividad/MiActividad.vue";
 import ActividadCalendar from "../components/actividad/ActividadCalendar.vue";
+import MiActividadCalendar from "../components/actividad/MiActividadCalendar.vue";
 import ActividadNew from "../components/actividad/ActividadNew.vue";
 import ActividadEdit from "../components/actividad/ActividadEdit.vue";
 import AllAreas from "../components/area/AllAreas.vue";
@@ -71,9 +73,25 @@ const router = new VueRouter({
             }
         },
         {
+            name: "mi-actividad",
+            path: "/mi-actividad",
+            component: MiActividad,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
             name: "actividad-calendar",
             path: "/actividad-calendar",
             component: ActividadCalendar,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            name: "mi-actividad-calendar",
+            path: "/mi-actividad-calendar",
+            component: MiActividadCalendar,
             meta: {
                 requiresAuth: true
             }

@@ -9,7 +9,7 @@
                     active-class="primary--text"
 
                 >
-                    <v-btn value="left" :to="{ name: 'actividad'}">
+                    <v-btn value="left" :to="{ name: 'mi-actividad'}">
                     <span class="hidden-sm-and-down">Lista</span>
 
                     <v-icon right>
@@ -17,7 +17,7 @@
                     </v-icon>
                     </v-btn>
 
-                    <v-btn value="center" :to="{ name: 'actividad-calendar'}">
+                    <v-btn value="center" :to="{ name: 'mi-actividad-calendar'}">
                     <span class="hidden-sm-and-down">Calendario</span>
 
                     <v-icon right>
@@ -42,6 +42,21 @@
                         dense
                     ></v-text-field>
                 </v-col>
+                <v-btn-toggle
+
+
+                    >
+                <v-btn
+
+                    color="primary"
+                    small
+                    dark
+                    :to="{
+                        name: 'actividad-new'
+                    }"
+                >
+                    <v-icon color="white">mdi-plus-thick</v-icon> NUEVO REGISTRO
+                </v-btn>
                 <v-btn
                     v-show="selected.length>0"
                     color="green"
@@ -51,6 +66,7 @@
                 >
                     <v-icon color="white">mdi-microsoft-excel</v-icon> EXPORTAR
                 </v-btn>
+                </v-btn-toggle>
             </v-card-title>
 
             <v-card-text>
@@ -369,11 +385,7 @@ export default {
         };
     },
     created() {
-        const query =
-            ((this.$store.state.user.role == 2)//ADMIN
-            || this.$store.state.user.role == 3) //SUPERVISOR
-                ? `actividades`
-                : `actividades/${this.$store.state.user.id}`;
+        const query = `mi-actividad/${this.$store.state.user.id}`;
         this.axios.get(`/api/${query}`).then(response => {
             this.actividades = response.data;
             console.log(this.actividades);

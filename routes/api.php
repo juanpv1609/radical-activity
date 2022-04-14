@@ -62,8 +62,12 @@ Route::middleware('api')->group(function () {
     Route::resource('paises', PaisController::class);
     Route::resource('horarios', HorariosController::class);
     Route::resource('actividades', ActividadesController::class);
+    Route::get('mi-actividad/{usuario}', [ActividadesController::class, 'miActividad']);
+
     Route::get('detalle-actividades/{id}', [ActividadesController::class,'detalleActividades']);
     Route::get('actividades-calendar', [ActividadesController::class,'actividadesCalendar']);
+    Route::get('mi-actividad-calendar/{usuario}', [ActividadesController::class,'miActividadCalendar']);
+
 
 
     Route::resource('tipo-actividad', TipoActividadController::class);

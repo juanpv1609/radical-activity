@@ -108,30 +108,48 @@ class ActividadesController extends Controller
         return ($actividad);
 
     }
-    public function indexcopy()
+    public function miActividadCalendar($usuario)
     {
-        //$actividades = Actividades::with('actividad.usuario_id', 'actividad.horario', 'tipo', 'status')->get()->toArray();
 
-        //return ($actividades);
-        $usuario_estandar= User::where('role',1)->get()->toArray();
-        $arrayUsuarios = [];
-         foreach ($usuario_estandar as $usuario) {
-             //$actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->where('dia', $item['id'])->get()->toArray();
-             array_push($arrayUsuarios, $usuario['id']);
+
+         $actividad = Actividad::with('usuario.puesto.area','horario')->where('usuario_id', $usuario)->orderBy('fecha','desc')->get();
+         foreach ($actividad as $item) {
+             # code...
+             $actividades = Actividades::with('tipo','clasif')->where('dia', $item->id)->get();
+            $item->actividades_count=$actividades->count();
+            $item->actividades=$actividades;
+
+             $item->hora_inicio = $actividades->min('h_inicio');
+             $item->hora_fin= $actividades->max('h_fin');
+
+
          }
 
-         $actividad = Actividad::whereIn('usuario_id', $arrayUsuarios)->get()->toArray();
 
-         $arrayActividades = [];
-         //dd($actividad);
+
+        return ($actividad);
+
+    }
+    public function miActividad($usuario)
+    {
+
+
+
+         $actividad = Actividad::with('usuario.puesto.area', 'horario')->where('usuario_id', $usuario)->orderBy('fecha', 'desc')->get();
          foreach ($actividad as $item) {
-             //$actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->where('dia', $item['id'])->get()->toArray();
-             array_push($arrayActividades, $item['id']);
-            }
-            $actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo','clasif', 'status')->whereIn('dia', $arrayActividades)->get()->toArray();
+             # code...
+             $actividades = Actividades::where('dia', $item->id)->get();
+             $item->actividades_count=$actividades->count();
+             //$item->actividades=$actividades;
+
+             $item->hora_inicio = $actividades->min('h_inicio');
+             $item->hora_fin= $actividades->max('h_fin');
+         }
 
 
-        return ($actividades);
+
+        return ($actividad);
+
 
     }
 

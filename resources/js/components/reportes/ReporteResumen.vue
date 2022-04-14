@@ -1,12 +1,13 @@
 <template>
     <div>
         <v-card elevation="2" :loading="loading">
-            <v-card-title class="indigo white--text text-h5"
+            <v-card-title class="primary white--text text-h5"
                 >Detalle de actividades
                 <v-divider></v-divider>
                      <v-col cols="auto">
                             <v-btn-toggle
                                     borderless
+                                    dense
 
                                 >
                                     <v-btn
@@ -14,21 +15,21 @@
                                         color="red"
                                         :loading="loadingUpload"
                                         dark
-                                        v-show="dates.length>=1"
+                                        v-show="dates.length>=1 && selectedUsuarios.length > 0"
                                         @click="generarReporte"
                                         dense
-                                        ><v-icon color="white">mdi-file-pdf-box</v-icon> Reporte PDF</v-btn
+                                        ><v-icon color="white">mdi-file-pdf-box</v-icon></v-btn
                                     >
                                     <v-btn
 
                                         color="green"
                                         :loading="loadingUpload"
                                         dark
-                                        v-show="dates.length>=1"
+                                        v-show="dates.length>=1 && selectedUsuarios.length > 0"
                                         @click="generarReporteXLSX"
                                         dense
 
-                                        ><v-icon color="white">mdi-microsoft-excel</v-icon> Reporte XLSX</v-btn
+                                        ><v-icon color="white">mdi-microsoft-excel</v-icon></v-btn
                                     >
                                     </v-btn-toggle>
                         </v-col>
@@ -43,7 +44,6 @@
                                         transition="scale-transition"
                                         offset-y
                                         min-width="auto"
-                                        :disabled="selectedUsuarios.length == 0"
                                         dense
                                     >
                                         <template v-slot:activator="{ on, attrs }">

@@ -6,7 +6,7 @@
                     <v-list-item-content>
                         <v-list-item-title class="title">
                             <v-img
-                                src="../img/nuevologo-radical.png"
+                                src="../img/LOGOTIPO.png"
                                 alt="Logo"
                             ></v-img>
                         </v-list-item-title>
@@ -275,8 +275,20 @@ export default {
                 {
                     title: "Actividades",
                     link: "/actividad",
-                    icon: "mdi-table-search"
-                    ,isAdmin:false
+                    icon: "mdi-account-clock-outline",
+                    subLinks: [
+                        // { title: "General", link: "/reporte-general", icon: "mdi-certificate"},
+                        {
+                            title: "Mi actividad",
+                            link: "/mi-actividad",
+                            icon: "mdi-account-box"
+                        },
+                        {
+                            title: "Supervisar",
+                            link: "/actividad",
+                            icon: "mdi-table-search "
+                        },
+                    ],isAdmin:false
                 },
                 {
                     title: "Reportes",
