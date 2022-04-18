@@ -119,12 +119,8 @@
                                     {{ row.item.actividades_count }}
                                      </v-chip>
                                  </th>
-                                  <td>
-                                        {{ (row.item.h_inicio) ? row.item.h_inicio.substring(0, 5) : null }}
-                                    </td>
-                                    <td>
-                                        {{ (row.item.h_fin) ? row.item.h_fin.substring(0, 5) : null }}
-                                    </td>
+                                  <td>{{ row.item.hora_inicio }} </td>
+                            <td>{{ row.item.hora_fin }} </td>
                                   <td>
                                       <strong class="primary--text">{{ row.item.horas_total }}</strong>
 
@@ -226,10 +222,10 @@
                             <template v-slot:item="{item}" >
                                 <tr  >
                                     <td>
-                                        {{ (item.h_inicio) ? item.h_inicio.substring(0, 5) : null }}
+                                        {{ item.h_inicio }}
                                     </td>
                                     <td>
-                                        {{ (item.h_fin) ? item.h_fin.substring(0, 5) : null }}
+                                        {{ item.h_fin }}
                                     </td>
                                     <td>
                                         {{ (item.cliente) ? item.cliente : null }}
