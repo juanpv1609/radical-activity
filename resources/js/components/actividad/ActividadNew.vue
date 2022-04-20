@@ -656,7 +656,7 @@ export default {
                         }
                         diff = moment.duration(moment(max,'HH:mm').diff(moment(min,'HH:mm'))).asHours();
 
-                    if (this.ActivityLine[i].clasificacion == 0 ) { // tipo break
+                    if (this.ActivityLine[i].clasificacion == 14 ) { // tipo break
                         diff_tiempo_libre = moment.duration(moment(this.ActivityLine[i].h_fin,'HH:mm').diff(moment(this.ActivityLine[i].h_inicio,'HH:mm'))).asHours();
                     }
 
@@ -690,7 +690,7 @@ export default {
                     this.Activity.activities.forEach(element => {
                     //actividade tipo break / almuerzo
 
-                        tiempo_libre+=(element.clasificacion==0) ? true: false;
+                        tiempo_libre+=(element.clasificacion==14) ? true: false;
 
                     });
                 }
