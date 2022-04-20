@@ -390,7 +390,13 @@ export default {
             this.actividades = response.data;
             console.log(this.actividades);
         this.loading = false;
-        });
+        }).catch((err)=> {
+                    this.$swal.fire({
+                                title: 'Error',
+                                html: `${err}`,
+                                icon: 'error'
+                                })
+                }).finally();
         this.firstLoad = false;
     },
     computed:{
@@ -410,7 +416,13 @@ export default {
                 this.title = 'Usuario: '+el.usuario.name+' | Fecha: '+el.fecha;
                 $("#exampleModal2").modal("show");
                 //this.dialogTareas=true;
-            });
+            }).catch((err)=> {
+                    this.$swal.fire({
+                                title: 'Error',
+                                html: `${err}`,
+                                icon: 'error'
+                                })
+                }).finally();
         },
         exportData(){
             //var data = [];

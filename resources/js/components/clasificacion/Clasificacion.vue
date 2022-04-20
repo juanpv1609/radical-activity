@@ -48,9 +48,9 @@
                 >
                 <template v-slot:item="row">
                     <tr>
-                        <td>{{row.item.id}}</td>
                         <td>{{row.item.nombre}}</td>
                         <td>{{row.item.descripcion}}</td>
+                        <td><v-chip small dark :style="`background:${row.item.color}`">{{row.item.color}}</v-chip></td>
                         <td>
                              <v-chip v-if="row.item.estado==1"
                             class="ma-2"
@@ -97,8 +97,7 @@
                                             required
                                         ></v-text-field>
                                     </v-col>
-                                </v-row>
-                                <v-row>
+
                                     <v-col cols="12">
                                         <v-text-field
                                             v-model="clasificacion.descripcion"
@@ -106,8 +105,6 @@
                                             required
                                         ></v-text-field>
                                     </v-col>
-                                </v-row>
-                                <v-row>
                                     <v-col cols="12">
                                         <v-select :items="estado"
                                             v-model="clasificacion.estado"
@@ -122,6 +119,18 @@
                                             </template>
                                         </v-select>
                                     </v-col>
+                                <v-col cols="12">
+                                    <v-color-picker
+                                    dot-size="28"
+                                    hide-canvas
+                                    hide-inputs
+                                    mode="hexa"
+                                    show-swatches
+                                    swatches-max-height="100"
+                                    v-model="color"
+
+                                    ></v-color-picker>
+                                </v-col>
                                 </v-row>
                             <small>*indicates required field</small>
                         </v-card-text>
@@ -178,42 +187,50 @@ export default {
                 { text: "DESHABILITADA", value: 0 },
             ],
             headers: [
-                {
-                    text: "Id",
-                    // align: 'start',
-                    // filterable: false,
-                    value: "id"
-                },
                 { text: "Nombre", value: "nombre" },
                 { text: "Descripcion", value: "descripcion" },
+                { text: "Color", value: "color" ,sortable: false, filterable:false},
                 { text: "Estado", value: "estado" },
                 { text: "Acciones", sortable: false }
-            ]
+            ],
+            color:{}
         };
     },
     created() {
 
-        this.axios.get("/api/clasificacion/").then(response => {
+        this.initialData();
+    },
+    methods: {
+        initialData(){
+            this.axios.get("/api/clasificacion/").then(response => {
             this.clasificaciones = response.data;
             this.loading = false;
 
-        });
-    },
-    methods: {
+        }).catch((err)=> {
+                    this.$swal.fire({
+                                title: 'Error',
+                                html: `${err}`,
+                                icon: 'error'
+                                })
+                }).finally();
+        },
         createClasificacion() {
+            this.clasificacion.color=this.color.hex
+            console.log(this.clasificacion);
             this.loading = true;
             this.axios
                 .post("/api/clasificacion", this.clasificacion)
                 .then(() => {
                     this.dialog = false;
-                    this.axios.get("/api/clasificacion/").then(response => {
-                        this.clasificaciones = response.data;
-                        this.loading = false;
+                    this.initialData();
 
-                    });
-                })
-                .catch(err => console.log(err))
-                .finally(() => (this.loading = false));
+                }).catch((err)=> {
+                    this.$swal.fire({
+                                title: 'Error',
+                                html: `${err}`,
+                                icon: 'error'
+                                })
+                }).finally();
         },
         addClasificacion() {
             this.titleForm = "Nueva Clasificación";
@@ -228,19 +245,25 @@ export default {
             this.clasificacion.nombre = el.nombre;
             this.clasificacion.descripcion = el.descripcion;
             this.clasificacion.estado = el.estado;
+            this.color = (el.color);
             this.dialog = true;
         },
         updateClasificacion() {
+            console.log(this.color);
+            this.clasificacion.color=this.color
             this.loading = true;
             this.axios
-                .patch(`/api/areas/${this.clasificacion.id}`, this.clasificacion)
+                .patch(`/api/clasificacion/${this.clasificacion.id}`, this.clasificacion)
                 .then(res => {
                     this.dialog = false;
-                    this.axios.get("/api/clasificacion/").then(response => {
-                        this.clasificaciones = response.data;
-                        this.loading = false;
-                    });
-                });
+                    this.initialData();
+                }).catch((err)=> {
+                    this.$swal.fire({
+                                title: 'Error',
+                                html: `${err}`,
+                                icon: 'error'
+                                })
+                }).finally();
         },
         deleteClasificacion(el) {
             this.loading = true;
@@ -248,7 +271,13 @@ export default {
                 let i = this.clasificaciones.map(data => data.id).indexOf(el.id);
                 this.clasificaciones.splice(i, 1);
                 this.loading = false;
-            });
+            }).catch((err)=> {
+                    this.$swal.fire({
+                                title: 'Error',
+                                html: `${err}`,
+                                icon: 'error'
+                                })
+                }).finally();
         }
     }
 };

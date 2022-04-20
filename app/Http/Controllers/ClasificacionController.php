@@ -23,14 +23,17 @@ class ClasificacionController extends Controller
     }
     public function store(Request $request)
     {
+        //dd($request);
         $clasificacion = new Clasificacion([
             'nombre' => $request->input('nombre'),
             'descripcion' => $request->input('descripcion'),
-            'estado' => 1
+            'color' => ($request->input('color')!==null) ? $request->input('color') : 'primary',
+            'estado' => $request->input('estado'),
+            'is_deleted' => 0,
         ]);
         $clasificacion->save();
 
-        return response()->json('pais created!');
+        return response()->json('clasificacion created!');
     }
 
 
@@ -43,7 +46,13 @@ class ClasificacionController extends Controller
     public function update($id, Request $request)
     {
         $clasificacion = Clasificacion::find($id);
-        $clasificacion->update($request->all());
+        $clasificacion->nombre  = $request->input('nombre');
+        $clasificacion->descripcion = $request->input('descripcion');
+        $clasificacion->color   = $request->input('color');
+        $clasificacion->estado  = $request->input('estado');
+
+        $clasificacion->save();
+
 
         return response()->json('clasificacion updated!');
     }
