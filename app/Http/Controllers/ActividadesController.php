@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
+use App\Models\User;
 use App\Models\Horario;
 use App\Models\Actividad;
 use App\Models\Actividades;
 use Illuminate\Http\Request;
 use App\Mail\ActividadesEmail;
-use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 
 class ActividadesController extends Controller
@@ -69,7 +70,7 @@ class ActividadesController extends Controller
 
                  $item->hora_inicio = $actividades->min('h_inicio');
                  $item->hora_fin= $actividades->max('h_fin');
-             }
+             }else{break;}
 
          }
 
@@ -102,7 +103,7 @@ class ActividadesController extends Controller
 
                   $item->hora_inicio = $actividades->min('h_inicio');
                   $item->hora_fin= $actividades->max('h_fin');
-             }
+             }else{break;}
 
 
          }
@@ -126,7 +127,7 @@ class ActividadesController extends Controller
 
                  $item->hora_inicio = $actividades->min('h_inicio');
                  $item->hora_fin= $actividades->max('h_fin');
-             }
+             }else{break;}
 
          }
 
@@ -150,7 +151,7 @@ class ActividadesController extends Controller
 
                  $item->hora_inicio = $actividades->min('h_inicio');
                  $item->hora_fin= $actividades->max('h_fin');
-             }
+             }else{break;}
          }
 
 
@@ -164,6 +165,8 @@ class ActividadesController extends Controller
     {
         $arrayActivities = $request->input("activities");
         //dd($arrayActivities);
+
+
         $actividad = new Actividad([
             'usuario_id'        => $request->input('usuario'),
             'horario_id'        => $request->input('horario'),
@@ -219,6 +222,7 @@ class ActividadesController extends Controller
             Mail::to($arrayDestinatarios)
                 ->send(new ActividadesEmail($details));
         }
+
         return response()->json('activities created!');
     }
 
@@ -234,7 +238,7 @@ class ActividadesController extends Controller
 
                 $item->hora_inicio = $actividades->min('h_inicio');
                 $item->hora_fin= $actividades->max('h_fin');
-            }
+            }else{break;}
         }
         return ($actividad);
     }
@@ -242,6 +246,18 @@ class ActividadesController extends Controller
     {
 
             $actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo','clasif', 'status')->where('dia', $id)->get()->toArray();
+
+
+        return ($actividades);
+    }
+     public function verificarActividades($fecha,$usuario)
+    {
+        $cond = [
+            "fecha" => $fecha,
+            "usuario_id"=>$usuario
+        ];
+
+            $actividades = Actividad::where($cond)->get();
 
 
         return ($actividades);

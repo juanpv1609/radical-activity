@@ -33,6 +33,7 @@
 
                                 min="1950-01-01"
                                 @change="setFecha"
+                                :rules="[() => !!fechaHoy || 'This field is required']"
                             >
                             </v-date-picker>
                         </v-dialog>
@@ -57,7 +58,9 @@
                         return-object
                         :hint="horario.id ? horario.nombre + ' ('+horario.inicio + ' - ' + horario.fin+')' : 'Seleccione un horario'"
                         @change="setHorario()"
-                        persistent-hint >
+                        persistent-hint
+                        :rules="[() => !!horario || 'This field is required']"
+                        >
                         <template slot="selection" slot-scope="data">
                             <!-- HTML that describe how select should render selected items -->
                             {{ data.item.nombre }}
@@ -142,6 +145,7 @@
                                 :allowed-hours="(horario.id==3)? allowedHours:null"
                                 :allowed-minutes="allowedStep"
                                 @click:minute="$refs.fin.save(end)"
+
                             ></v-time-picker>
                         </v-menu>
                     </v-col>
@@ -165,7 +169,7 @@
                             v-model="clasificacion"
                             label="Clasificación"
                             return-object
-                            :disabled="(!start || !end)"
+                            :disabled="!customer.Name"
                         ></v-autocomplete>
                     </v-col>
                     <!-- <v-col cols="12" sm="2">
@@ -192,7 +196,7 @@
                             deletable-chips
                             :delimiters="[';']"
                             @change="delimitActividades"
-                            :disabled="!tipoActividad"
+                            :disabled="!clasificacion.id"
                         >
                         </v-combobox>
                     </v-col>
@@ -203,8 +207,8 @@
                             block
                             large
                             @click="controlFechas"
-                            :disabled="(modelDescripcion.length == 0)"
                             title="Agregar actividades a la lista"
+                            :disabled="(modelDescripcion.length == 0)"
                         >
                             <v-icon>mdi-plus-thick</v-icon>
                         </v-btn>
@@ -392,7 +396,7 @@
 
             <v-card-actions v-if="ActivityLine.length > 0">
                 <v-spacer></v-spacer>
-                <v-btn block color="primary" large @click="enviarActividades"
+                <v-btn block color="primary" large @click="verificarFechaActividades"
                     >enviar {{ActivityLine.length}} actividades</v-btn
                 >
             </v-card-actions>
@@ -592,6 +596,8 @@ export default {
                     //this.tipoActividad.id=null;
                     this.end = null;
                     this.descripcion = null;
+                    this.customer={}
+                    this.clasificacion={}
                     this.modelDescripcion = [];
 
 
@@ -602,6 +608,26 @@ export default {
                 el.h_inicio
             );
             this.ActivityLine.splice(i, 1);
+        },
+        verificarFechaActividades(){
+
+            this.axios.get(`/api/verificar-actividades/${this.fechaHoy}/${this.$store.state.user.id}`).then(res => {
+                if (res.data.length>0) { //verifica si tiene actividades registradas con la misma fecha
+                    this.$swal.fire({
+                                title: 'Error',
+                                html: `Estimado usuario ya tiene actividades registradas con fecha ${this.fechaHoy}, procure modificar la actividad creada anteriormente`,
+                                icon: 'error'
+                                })
+                } else {
+                    this.enviarActividades()
+                }
+            }).catch((err)=> {
+                    this.$swal.fire({
+                                title: 'Error',
+                                html: `${err}`,
+                                icon: 'error'
+                                })
+                }).finally();
         },
         enviarActividades() {
             //this.loading = true;

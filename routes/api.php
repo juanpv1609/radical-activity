@@ -65,6 +65,8 @@ Route::middleware('api')->group(function () {
     Route::get('mi-actividad/{usuario}', [ActividadesController::class, 'miActividad']);
 
     Route::get('detalle-actividades/{id}', [ActividadesController::class,'detalleActividades']);
+    Route::get('verificar-actividades/{fecha}/{usuario}', [ActividadesController::class,'verificarActividades']);
+
     Route::get('actividades-calendar', [ActividadesController::class,'actividadesCalendar']);
     Route::get('mi-actividad-calendar/{usuario}', [ActividadesController::class,'miActividadCalendar']);
 
