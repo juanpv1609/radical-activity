@@ -28,7 +28,7 @@
                 <v-spacer></v-spacer>
                 <div v-for="tipo in tipos" :key="tipo.id" >
 
-                    <v-tooltip bottom :color="tipo.color">
+                    <v-tooltip bottom :color="tipo.color" >
                         <template v-slot:activator="{ on, attrs }">
 
                             <v-icon :color="tipo.color" v-bind="attrs"

@@ -57,18 +57,19 @@ class ActividadesController extends Controller
 
              array_push($arrayUsuarios, $usuario->id);
          }
-         array_push($arrayUsuarios, auth()->user()->id);
+         //array_push($arrayUsuarios, auth()->user()->id);
 
          $actividad = Actividad::with('usuario.puesto.area','horario')->whereIn('usuario_id', $arrayUsuarios)->orderBy('fecha','desc')->get();
          foreach ($actividad as $item) {
              # code...
-             $actividades = Actividades::where('dia', $item->id)->get();
-            $item->actividades_count=$actividades->count();
-            //$item->actividades=$actividades;
+             $actividades = Actividades::with('tipo','clasif')->where('dia', $item->id)->get();
+             if ($actividades->count()>0) {
+                 $item->actividades_count=$actividades->count();
+                 //$item->actividades=$actividades;
 
-             $item->hora_inicio = $actividades->min('h_inicio');
-             $item->hora_fin= $actividades->max('h_fin');
-
+                 $item->hora_inicio = $actividades->min('h_inicio');
+                 $item->hora_fin= $actividades->max('h_fin');
+             }
 
          }
 
@@ -88,17 +89,20 @@ class ActividadesController extends Controller
              //$actividades = Actividades::with('actividad.usuario', 'actividad.horario', 'tipo', 'status')->where('dia', $item['id'])->get()->toArray();
              array_push($arrayUsuarios, $usuario['id']);
          }
-         array_push($arrayUsuarios, auth()->user()->id);
+        // array_push($arrayUsuarios, auth()->user()->id);
 
          $actividad = Actividad::with('usuario.puesto.area','horario')->whereIn('usuario_id', $arrayUsuarios)->orderBy('fecha','desc')->get();
          foreach ($actividad as $item) {
              # code...
              $actividades = Actividades::with('tipo','clasif')->where('dia', $item->id)->get();
-            $item->actividades_count=$actividades->count();
-            $item->actividades=$actividades;
+             if ($actividades->count()>0) {
+                 # code...
+                 $item->actividades_count=$actividades->count();
+                 $item->actividades=$actividades;
 
-             $item->hora_inicio = $actividades->min('h_inicio');
-             $item->hora_fin= $actividades->max('h_fin');
+                  $item->hora_inicio = $actividades->min('h_inicio');
+                  $item->hora_fin= $actividades->max('h_fin');
+             }
 
 
          }
@@ -116,12 +120,13 @@ class ActividadesController extends Controller
          foreach ($actividad as $item) {
              # code...
              $actividades = Actividades::with('tipo','clasif')->where('dia', $item->id)->get();
-            $item->actividades_count=$actividades->count();
-            $item->actividades=$actividades;
+             if ($actividades->count()>0) {
+                 $item->actividades_count=$actividades->count();
+                 $item->actividades=$actividades;
 
-             $item->hora_inicio = $actividades->min('h_inicio');
-             $item->hora_fin= $actividades->max('h_fin');
-
+                 $item->hora_inicio = $actividades->min('h_inicio');
+                 $item->hora_fin= $actividades->max('h_fin');
+             }
 
          }
 
@@ -139,11 +144,13 @@ class ActividadesController extends Controller
          foreach ($actividad as $item) {
              # code...
              $actividades = Actividades::where('dia', $item->id)->get();
-             $item->actividades_count=$actividades->count();
-             //$item->actividades=$actividades;
+             if ($actividades->count()>0) {
+                 $item->actividades_count=$actividades->count();
+                 //$item->actividades=$actividades;
 
-             $item->hora_inicio = $actividades->min('h_inicio');
-             $item->hora_fin= $actividades->max('h_fin');
+                 $item->hora_inicio = $actividades->min('h_inicio');
+                 $item->hora_fin= $actividades->max('h_fin');
+             }
          }
 
 
@@ -221,11 +228,13 @@ class ActividadesController extends Controller
         foreach ($actividad as $item) {
             # code...
             $actividades = Actividades::with('tipo','clasif')->where('dia', $item->id)->get();
-            $item->actividades_count=$actividades->count();
-            $item->actividades=$actividades;
+            if ($actividades->count()>0) {
+                $item->actividades_count=$actividades->count();
+                $item->actividades=$actividades;
 
-            $item->hora_inicio = $actividades->min('h_inicio');
-            $item->hora_fin= $actividades->max('h_fin');
+                $item->hora_inicio = $actividades->min('h_inicio');
+                $item->hora_fin= $actividades->max('h_fin');
+            }
         }
         return ($actividad);
     }

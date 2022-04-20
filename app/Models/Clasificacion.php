@@ -10,9 +10,10 @@ class Clasificacion extends Model
     protected $table = 'clasificacion';
     protected $fillable = ['nombre',
                             'descripcion',
+                            'color',
                             'estado',
                         'is_deleted'];
-    //public $timestamps = false;
+    public $timestamps = false;
     protected $guarded = [];
     use HasFactory;
 }
