@@ -185,8 +185,8 @@ class ActividadesController extends Controller
         $listaActividades = [];
         foreach ($arrayActivities as $item) {
             $aux = [
-                'cliente' => $item['customer'],
-                'clasificacion' => $item['clasificacion'],
+                'cliente' => $item['customer']['Name'],
+                'clasificacion' => $item['clasificacion']['id'],
                 'tipo_actividad' => isset($item['tipo_actividad']) ? $item['tipo_actividad'] : null,
                 'descripcion' => implode(",", $item['descripcion']),
                 'colaboradores' => implode(",", $item['colaboradores']),
@@ -292,9 +292,9 @@ class ActividadesController extends Controller
          foreach ($arrayActivities as $item) {
 
             $actividades = new Actividades([
-                'cliente' => $item['customer'],
-                'clasificacion' => $item['clasificacion'],
-                'tipo_actividad' => $item['tipo_actividad'],
+                'cliente' => $item['customer']['Name'],
+                'clasificacion' => $item['clasificacion']['id'],
+                'tipo_actividad' => isset($item['tipo_actividad']) ? $item['tipo_actividad'] : null,
                 'descripcion' => implode(",", $item['descripcion']),
                 'colaboradores' => isset($item['colaboradores']) ? implode(",", $item['colaboradores']) : null,
                 'dia' => $actividad->id,

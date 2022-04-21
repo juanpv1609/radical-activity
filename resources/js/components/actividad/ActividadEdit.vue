@@ -543,8 +543,8 @@ export default {
                     var activityLine = {};
                     this.ActivityLine = this.ActivityLine || [];
                     activityLine.customer = element.cliente;
-                    activityLine.clasificacion = element.clasificacion.id;
-                    activityLine.clasificacion_nombre = element.clasificacion.nombre;
+                    activityLine.clasificacion = element.clasif.id;
+                    activityLine.clasificacion_nombre = element.clasif.nombre;
                     //activityLine.tipo_actividad = element.tipo_actividad;
                     //activityLine.tipo_actividad_nombre = element.tipo.descripcion;
                     //this.modelDescripcion=(element.descripcion).split(',')

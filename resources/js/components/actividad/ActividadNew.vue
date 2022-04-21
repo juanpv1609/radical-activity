@@ -169,6 +169,7 @@
                             v-model="clasificacion"
                             label="Clasificación"
                             return-object
+                            small
                             :disabled="!customer.Name"
                         ></v-autocomplete>
                     </v-col>
@@ -216,7 +217,7 @@
                 </v-row>
                 <v-row v-if="ActivityLine.length > 0">
                     <v-col cols="12">
-                        <v-data-table :headers="headers" :items="ActivityLine"  class="elevation-2">
+                        <v-data-table :headers="headers" :items="ActivityLine"  class="elevation-2" dense>
                             <template v-slot:item="row">
                                 <tr>
                                     <!-- <td>{{ row.item.fecha }}</td> -->
@@ -224,25 +225,47 @@
                                         {{ row.item.h_inicio }} - {{ row.item.h_fin }}
                                     </td>
                                     <td>
-                                        {{ row.item.customer }}
+                                        <!-- {{ row.item.customer }} -->
+                                         <v-autocomplete
+                                        :items="customers"
+                                        item-text="Name"
+                                        item-value="Id"
+                                        v-model="row.item.customer"
+                                        return-object
+                                        small
+                                        dense
+                                    ></v-autocomplete>
+
                                     </td>
                                     <td>
-                                        {{ row.item.clasificacion_nombre }}
-                                    </td>
-                                    <td>
-                                        <v-chip
-                                            v-for="actividad in row.item
-                                                .descripcion"
-                                            :key="actividad"
+                                        <v-autocomplete
+                                            :items="clasificaciones"
+                                            item-text="nombre"
+                                            item-value="id"
+                                            v-model="row.item.clasificacion"
+                                            return-objects
                                             small
-                                            label
-                                            class="ma-1"
-                                        >
-                                            {{ actividad }}
-                                        </v-chip>
+                                            dense
+                                        ></v-autocomplete>
                                     </td>
                                     <td>
-                                        <v-edit-dialog
+
+                                        <v-combobox
+                                            v-model="row.item.descripcion"
+                                            :items="itemsDescripcion"
+                                            hide-selected
+                                            multiple
+                                            persistent-hint
+                                            small-chips
+                                            deletable-chips
+                                            dense
+                                            :delimiters="[';']"
+                                            @change="delimitActividades"
+                                        >
+                                        </v-combobox>
+                                    </td>
+                                    <!-- <td> -->
+                                       <!--  <v-edit-dialog
                                             :return-value.sync="
                                                 row.item.colaboradores
                                             "
@@ -287,8 +310,8 @@
                                                 >
                                                 </v-combobox>
                                             </template>
-                                        </v-edit-dialog>
-                                    </td>
+                                        </v-edit-dialog> -->
+                                    <!-- </td> -->
                                     <td>
                                         <v-edit-dialog
                                             :return-value.sync="
@@ -322,14 +345,14 @@
                                         </v-edit-dialog>
                                     </td>
 
-                                    <td >
+
+                                    <td>
                                         <v-checkbox
                                             v-model="row.item.estado"
                                             color="success"
                                             dense
+                                            title="Completada/No completada"
                                         ></v-checkbox>
-                                    </td>
-                                    <td>
                                         <v-btn
                                             icon
                                             color="error"
@@ -337,6 +360,15 @@
                                             @click="deleteActivityLine(row.item)"
                                         >
                                             <v-icon dark>mdi-delete</v-icon>
+                                        </v-btn>
+                                        <v-btn
+                                            icon
+                                            color="blue"
+                                            x-small
+                                            @click="duplicateActivityLine(row.item)"
+                                            title="Duplicar"
+                                        >
+                                            <v-icon dark>mdi-content-duplicate</v-icon>
                                         </v-btn>
                                     </td>
                                 </tr>
@@ -451,10 +483,10 @@ export default {
                 { text: "Clasificación", value: "clasificacion_nombre", sortable: false },
                 //{ text: "Tipo", value: "tipo", sortable: false },
                 { text: "Actividades", value: "descripcion", sortable: false },
-                { text: "Colaboradores", value: "colaborador", sortable: false },
+               // { text: "Colaboradores", value: "colaborador", sortable: false },
                 { text: "Observación / Resultados", value: "observacion", sortable: false },
-                { text: "Completada", value: "estado", sortable: false },
-                { text: "Eliminar", value: "controls", sortable: false }
+                //{ text: "Completada", value: "estado", sortable: false },
+                { text: "Acciones", value: "controls", sortable: false }
             ],
             foto: null,
             ActivityLine: [],
@@ -579,8 +611,9 @@ export default {
                     var activityLine = {};
                     this.ActivityLine = this.ActivityLine || [];
                     console.log(this.modelDescripcion);
-                    activityLine.customer = this.customer.Name;
-                    activityLine.clasificacion = this.clasificacion.id;
+                    activityLine.customer = this.customer;
+                    activityLine.clasificacion = this.clasificacion;
+                    activityLine.clasificacion_id = this.clasificacion.id;
                     activityLine.clasificacion_nombre = this.clasificacion.nombre;
                     activityLine.tipo_actividad = this.tipoActividad.id;
                     activityLine.tipo_actividad_nombre = this.tipoActividad.descripcion;
@@ -608,6 +641,24 @@ export default {
                 el.h_inicio
             );
             this.ActivityLine.splice(i, 1);
+        },
+        duplicateActivityLine(el) {
+
+            console.log(el);
+            var activityLine = {};
+                    this.ActivityLine = this.ActivityLine || [];
+                    activityLine.customer = el.customer;
+                    activityLine.clasificacion = el.clasificacion;
+                    //activityLine.tipo_actividad = el.tipoActividad.id;
+                    //activityLine.tipo_actividad_nombre = el.tipoActividad.descripcion;
+                    activityLine.descripcion = el.descripcion;
+                    activityLine.observacion = null;
+                    activityLine.colaboradores = el.modelColaboradores || [];
+                    activityLine.h_inicio = el.h_inicio;
+                    activityLine.h_fin = el.h_fin;
+                    activityLine.estado = true;
+                    console.log(activityLine);
+                    this.ActivityLine.push(activityLine);
         },
         verificarFechaActividades(){
 
@@ -641,7 +692,8 @@ export default {
             //this.Activity.colaboradores = this.modelColaboradores;
             this.Activity.activities = this.ActivityLine;
 
-            console.log(this.ActivityLine);
+            console.log(this.Activity);
+            //return true;
             var min = this.ActivityLine[0].h_inicio;
             var max = this.ActivityLine[0].h_fin;
             var diff = 0.0;
