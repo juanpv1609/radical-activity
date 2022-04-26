@@ -114,7 +114,7 @@
                         name: 'actividad-new'
                     }"
                 >
-                    <v-icon color="white">mdi-plus-thick</v-icon> REGISTRAR ACTIVIDAD
+                    REGISTRAR ACTIVIDAD
                 </v-btn>
                 <v-spacer></v-spacer>
                 <v-spacer ></v-spacer>
