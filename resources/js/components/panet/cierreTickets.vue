@@ -19,7 +19,7 @@
                     @click="verificarTickets"
                     :disabled="(ticketsFile.length==0)"
                 >
-                    ENVIADOS: {{ (tickets.length>0) ? tickets.length+'/'+ticketsFile.length+' TICKETS' : '' }}
+                    TICKETS ANALIZADOS: {{ (tickets.length>0) ? tickets.length+'/'+ticketsFile.length+' TICKETS' : '' }}
                 </v-btn>
           </v-col>
 

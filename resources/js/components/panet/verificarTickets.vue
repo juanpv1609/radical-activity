@@ -46,7 +46,7 @@
                     @click="verificarTickets"
                     v-show="(ticketsFile.length>0)"
                 >
-                  TICKETS ENVIADOS: {{ (tickets.length>0) ? tickets.length+' DE '+ticketsFile.length : '' }}
+                  TICKETS ANALIZADOS: {{ (tickets.length>0) ? tickets.length+' DE '+ticketsFile.length : '' }}
                 </v-btn>
           </v-col>
 
@@ -285,23 +285,28 @@ export default {
                       this.ticketsFile.forEach(element => {
                           this.loading = true;
                         //console.log(element);
-                        this.axios
-                            .post('/api/verify-tickets', element)
-                            .then(resp => {
-                                console.log(resp.data);
-                                auxTickets.push(resp.data);
-                                if (resp.data.status=== 'Closed') {
-                                    this.cerrados.push(resp.data)
-                                } else {
-                                    this.abiertos.push(resp.data)
-                                }
+                        setTimeout(
+                        function(){
+                            //the work you want to perform
+                            this.axios
+                                .post('/api/verify-tickets', element)
+                                .then(resp => {
+                                    console.log(resp.data);
+                                    auxTickets.push(resp.data);
+                                    if (resp.data.status=== 'Closed') {
+                                        this.cerrados.push(resp.data)
+                                    } else {
+                                        this.abiertos.push(resp.data)
+                                    }
 
 
-                            })
-                            .catch((err) => {
-                                console.log(err);
+                                })
+                                .catch((err) => {
+                                    console.log(err);
 
-                            })
+                                })
+                        }
+                    , 300)
                     });
                     this.loading = false;
                     this.tickets = await auxTickets;
