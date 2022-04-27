@@ -306,7 +306,7 @@ export default {
 
                                 })
                         }
-                    , 300)
+                    , 500)
                     });
                     this.loading = false;
                     this.tickets = await auxTickets;
