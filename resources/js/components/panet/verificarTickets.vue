@@ -285,7 +285,7 @@ export default {
                       this.ticketsFile.forEach(element => {
                           this.loading = true;
                         //console.log(element);
-                        setTimeout(
+                        setInterval(
                         function(){
                             //the work you want to perform
                             this.axios
@@ -306,7 +306,7 @@ export default {
 
                                 })
                         }
-                    , 500)
+                    , 1000)
                     });
                     this.loading = false;
                     this.tickets = await auxTickets;
