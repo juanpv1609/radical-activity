@@ -285,28 +285,24 @@ export default {
                       this.ticketsFile.forEach(element => {
                           this.loading = true;
                         //console.log(element);
-                        setInterval(
-                        function(){
-                            //the work you want to perform
-                            this.axios
-                                .post('/api/verify-tickets', element)
-                                .then(resp => {
-                                    console.log(resp.data);
-                                    auxTickets.push(resp.data);
-                                    if (resp.data.status=== 'Closed') {
-                                        this.cerrados.push(resp.data)
-                                    } else {
-                                        this.abiertos.push(resp.data)
-                                    }
+                        
+                        this.axios
+                            .post('/api/verify-tickets', element)
+                            .then(resp => {
+                                console.log(resp.data);
+                                auxTickets.push(resp.data);
+                                if (resp.data.status=== 'Closed') {
+                                    this.cerrados.push(resp.data)
+                                } else {
+                                    this.abiertos.push(resp.data)
+                                }
 
 
-                                })
-                                .catch((err) => {
-                                    console.log(err);
+                            })
+                            .catch((err) => {
+                                console.log(err);
 
-                                })
-                        }
-                    , 1000)
+                            })
                     });
                     this.loading = false;
                     this.tickets = await auxTickets;
