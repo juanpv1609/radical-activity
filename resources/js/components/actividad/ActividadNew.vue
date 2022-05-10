@@ -87,6 +87,7 @@
                             offset-y
                             max-width="290px"
                             min-width="290px"
+                            dense
                         >
                             <template v-slot:activator="{ on, attrs }">
                                 <v-text-field
@@ -96,6 +97,7 @@
                                     v-bind="attrs"
                                     v-on="on"
                                     :disabled="!horario.id"
+                                    dense
                                 ></v-text-field>
                             </template>
                             <v-time-picker
@@ -123,6 +125,7 @@
                             offset-y
                             max-width="290px"
                             min-width="290px"
+                            dense
                         >
                             <template v-slot:activator="{ on, attrs }">
                                 <v-text-field
@@ -132,6 +135,7 @@
                                     v-bind="attrs"
                                     v-on="on"
                                     :disabled="!horario.id"
+                                    dense
                                 ></v-text-field>
                             </template>
                             <v-time-picker
@@ -158,6 +162,8 @@
                                 label="Cliente"
                                 return-object
                                 small
+                                clearable
+                                dense
                                 :disabled="(!start || !end)"
                             ></v-autocomplete>
                     </v-col>
@@ -170,6 +176,8 @@
                             label="Clasificación"
                             return-object
                             small
+                            clearable
+                            dense
                             :disabled="!customer.Name"
                         ></v-autocomplete>
                     </v-col>
@@ -198,6 +206,7 @@
                             :delimiters="[';']"
                             @change="delimitActividades"
                             :disabled="!clasificacion.id"
+                            dense
                         >
                         </v-combobox>
                     </v-col>
@@ -758,8 +767,11 @@ export default {
                 this.$swal
                 .fire({
                     title: "Esta seguro?",
-                    html: `Estimado ${this.$store.state.user.name} a continuación registrará <strong>${this.Activity.activities.length}</strong>
-                    actividades correspondientes al <strong>${this.Activity.fecha}</strong> <br>
+                    html: `Estimado ${this.$store.state.user.name} a continuación registrará sus actividades de acuerdo a lo siguiente: <br>
+                    Fecha: <strong>${this.Activity.fecha}</strong> <br>
+                    Actividades: <strong>${this.Activity.activities.length}</strong> <br>
+                    Inicio: <strong>${min}</strong> <br>
+                    Fin: <strong>${max}</strong> <br>
                     Con un total de <strong>${(diff-diff_tiempo_libre).toFixed(2)}</strong> horas registradas.`,
                     icon: "question",
                     showConfirmButton: true,

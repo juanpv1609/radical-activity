@@ -8,6 +8,7 @@
                             <v-img
                                 src="../img/LOGOTIPO.png"
                                 alt="Logo"
+                                max-width="200" max-height="100"
                             ></v-img>
                         </v-list-item-title>
                     </v-list-item-content>

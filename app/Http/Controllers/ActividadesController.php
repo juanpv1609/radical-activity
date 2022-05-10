@@ -292,8 +292,8 @@ class ActividadesController extends Controller
          foreach ($arrayActivities as $item) {
 
             $actividades = new Actividades([
-                'cliente' => $item['customer']['Name'],
-                'clasificacion' => $item['clasificacion']['id'],
+                'cliente' => $item['customer'],
+                'clasificacion' => $item['clasificacion'],
                 'tipo_actividad' => isset($item['tipo_actividad']) ? $item['tipo_actividad'] : null,
                 'descripcion' => implode(",", $item['descripcion']),
                 'colaboradores' => isset($item['colaboradores']) ? implode(",", $item['colaboradores']) : null,

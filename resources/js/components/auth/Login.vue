@@ -20,7 +20,7 @@
 
 
          <v-card-text >
-             <center><v-img src="../img/LOGOTIPO.png" max-width="400" max-height="200" alt="Logo"  ></v-img></center>
+             <center><v-img src="../img/LOGOTIPO.png" max-width="300" max-height="150" alt="Logo"  ></v-img></center>
 
         <v-divider></v-divider>
              <h2 class="text-center "> Iniciar Sesión</h2>
