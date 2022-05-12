@@ -187,6 +187,7 @@
 </template>
 
 <script>
+import XLSX from 'xlsx/xlsx.js';
 import moment from 'moment'
 export default {
     data() {
