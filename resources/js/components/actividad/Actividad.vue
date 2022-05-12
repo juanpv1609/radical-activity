@@ -290,9 +290,6 @@ export default {
                     text: "Fecha",
                     value: "fecha"
                 },
-               /*  { text: "Inicio", value: "h_inicio", groupable: false },
-                { text: "Fin", value: "h_fin", groupable: false },
-                { text: "Descripción", value: "descripcion", groupable: false }, */
                 {
                     text: "Usuario",
                     value: "usuario.name"

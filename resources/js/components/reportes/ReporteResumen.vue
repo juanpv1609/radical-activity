@@ -95,7 +95,6 @@
                                 label="Usuarios seleccionados"
                                 color="blue-grey lighten-2"
 
-                                disabled="true"
                                 return-object
 
                             >
@@ -123,15 +122,72 @@
 
                         </v-col>
                     </v-row>
+<br>
+
+                <!-- <v-row v-if="data_actividades.length>0">
+                        <v-data-table
+                    :headers="headers"
+                    :items="data_actividades"
+                    :search="search"
+                    class="elevation-2"
+                    :loading="loading"
+                    loading-text="Loading... Please wait"
+                    dense
+                    items-per-page="25"
+                    :footer-props="{
+                        showFirstLastPage: true,
+                        firstIcon: 'mdi-arrow-collapse-left',
+                        lastIcon: 'mdi-arrow-collapse-right',
+                        prevIcon: 'mdi-minus',
+                        nextIcon: 'mdi-plus'
+                        }"
+                >
+                    <template v-slot:item="row">
+                        <tr>
+                            <td >
+                                {{ row.item.usuario }}
+                            </td>
+                            <td>
+                                {{ row.item.area }}
+                            </td>
+                            <td>
+                                {{ row.item.puesto }}
+                            </td>
+                            <td>
+                                {{ row.item.cliente }}
+                            </td>
+                            <td>
+                                {{ row.item.tipo }}
+                            </td>
+                            <td>
+                                {{ row.item.clasificacion }}
+                            </td>
+                            <td>
+                                {{ row.item.fecha }}
+                            </td>
+                                  <td>{{ row.item.hora_inicio }} </td>
+                                    <td>{{ row.item.hora_fin }} </td>
+                                  <td>
+                                      <strong class="primary--text">{{ row.item.total }}</strong>
+
+                                 </td>
+                             <td>
+                                 {{ row.item.actividades }}
+
+                            </td>
+                        </tr>
+                    </template>
+                </v-data-table>
+                    </v-row> -->
             </v-card-text>
         </v-card>
+
 
     </div>
 </template>
 
 <script>
-import XLSX from 'xlsx/xlsx.js';
-import moment from 'moment';
+import moment from 'moment'
 export default {
     data() {
         return {
@@ -145,7 +201,66 @@ export default {
             selectedUsuarios: [],
             dateRules: [v => !!v || "Date range is required"],
             dataReport:{},
-            personas:[]
+            personas:[],
+            data_actividades:[],
+            search: "",
+             headers: [
+
+                {
+                    text: "Usuario",
+                    value: "usuario"
+                },
+                {
+                    text: "Area",
+                    value: "area"
+                },
+                {
+                    text: "Cargo",
+                    value: "puesto"
+                },
+
+                {
+                    text: "Cliente",
+                    value: "cliente",
+                },
+                {
+                    text: "Tipo",
+                    value: "tipo",
+                },
+                {
+                    text: "Clasificacion",
+                    value: "clasificacion",
+                },
+                {
+                    text: "Fecha",
+                    value: "fecha",
+                },
+                {
+                    text: "Inicio",
+                    value: "hora_inicio",
+                    sortable: false,
+                    filterable: false,
+                },
+                {
+                    text: "Fin",
+                    value: "hora_fin",
+                    sortable: false,
+                    filterable: false,
+                },
+                {
+                    text: "Horas",
+                    value: "total",
+                    filterable: false,
+                    align: "start"
+                },
+                 {
+                    text: "Actividades",
+                    value: "actividades",
+                    sortable: false,
+                    filterable: false,
+                    align: "start"
+                }
+            ],
         };
     },
     computed: {
@@ -270,8 +385,8 @@ export default {
             this.idUsuarios = [];
                 console.log(this.selectedUsuarios);
             this.selectedUsuarios.forEach(element => {
-                this.idUsuarios.push(element.id)
-                    });
+                    this.idUsuarios.push(element.id)
+            });
 
             var diff = 0.0;
             var inicio = null;
@@ -279,9 +394,10 @@ export default {
               await this.axios
                 .get(`/api/reporte-actividadesXLSX/${this.dates[0]}/${this.dates[1]}/${this.idUsuarios}`)
                 .then(response => {
-                    //console.log(response);
+                    //console.log(response.data);
                     var data = [];
                     response.data.usuarios.forEach(element => { //recorre usuarios
+                    //console.log(element.actividades);
                         if (element.actividades.length>0) {
 
                             element.actividades.forEach(item => {
@@ -304,7 +420,7 @@ export default {
                                     area: element.usuario.puesto.area.nombre,
                                     puesto: element.usuario.puesto.descripcion,
                                     cliente: (item.cliente) ? item.cliente : null,
-                                    tipo: item.tipo.descripcion,
+                                    tipo: (item.tipo) ? item.tipo.descripcion : null,
                                     clasificacion: (item.clasif) ? item.clasif.nombre : null,
                                     fecha: item.actividad.fecha,
                                     hora_inicio: item.h_inicio,
@@ -315,20 +431,19 @@ export default {
                                     // horas_total: item.actividad.horas_total,
                                     actividades: item.descripcion,
                                 };
+                                //console.log(aux);
                                 data.push(aux);
+                                //this.data_actividades.push(aux);
                         });
                         }
                     //console.log(data);
                     });
-                    /* make the worksheet */
+                    this.data_actividades=data;
                     var ws = XLSX.utils.json_to_sheet(data);
-
-                    /* add to workbook */
                     var wb = XLSX.utils.book_new();
                     XLSX.utils.book_append_sheet(wb, ws, "Actividades");
-
-                    /* generate an XLSX file */
                     XLSX.writeFile(wb, response.data.inicio+'_'+response.data.fin+"_actividades.xlsx");
+
                 })
                 .catch(error => console.log(error));
 
