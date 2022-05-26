@@ -19,7 +19,7 @@
                     @click="verificarTickets"
                     :disabled="(ticketsFile.length==0)"
                 >
-                    TICKETS ANALIZADOS: {{ (tickets.length>0) ? tickets.length+'/'+ticketsFile.length+' TICKETS' : '' }}
+                {{ (tickets.length>0) ? tickets.length+' de '+ticketsFile.length+' TICKETS ANALIZADOS' : '' }}
                 </v-btn>
           </v-col>
 
@@ -98,8 +98,8 @@
                                         <td>{{row.item.code}}</td>
                                        <td>
                                             <v-chip small dark
-                                            :color="(row.item.status) ? 'red' : 'green'">
-                                                {{(row.item.status) ? 'Cerrado' : 'Nuevo'}}
+                                            color="blue" >
+                                               {{ row.item.status_name }}
                                             </v-chip>
                                             </td>
                                         <td>{{row.item.comment}}</td>
@@ -232,6 +232,7 @@ export default {
                             type: this.type.Id,
                             typeName: this.type.Name,
                             status: null,
+                            statusName: null,
                         }
                     });
 
