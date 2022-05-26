@@ -267,7 +267,7 @@ export default {
                             .post('/api/close-tickets', element)
                             .then(resp => {
                                 console.log(resp.data);
-                                auxTickets.push(resp.data);
+                                auxTickets.unshift(resp.data);
 
                             })
                             .catch((err) => {
