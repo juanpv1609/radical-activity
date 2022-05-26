@@ -294,6 +294,7 @@ export default {
                                 if (resp.data.status=== 'Closed') {
                                     this.cerrados.push(resp.data)
                                 } else {
+                                    console.log(resp.data);
                                     this.abiertos.push(resp.data)
                                 }
 

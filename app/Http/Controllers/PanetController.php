@@ -111,12 +111,10 @@ class PanetController extends Controller
                                     ->get($base.'?Code='.$code.'&PadTypes_id='.$type_id);
                 //$response['comment'] = $item['comment'];
                 //$ticket = $response['PawSvcAuthUsers_idCreator']['Id'];
-        if ($response->successful()) { //busqueda de ID del ticket
-            $Id                         = array_column($response->json(), 'Id');
-            $PawSvcAuthUsers_idCreator  = array_column($response->json(), 'PawSvcAuthUsers_idCreator');
-            $Status                     = array_column($response->json(), 'Status');
-
-            $response2 = Http::withHeaders([
+        $Id                         = array_column($response->json(), 'Id');
+        $PawSvcAuthUsers_idCreator  = array_column($response->json(), 'PawSvcAuthUsers_idCreator');
+        $Status                     = array_column($response->json(), 'Status');
+         $response2 = Http::withHeaders([
                 'Authorization' => self::PANET_KEY,
                     ])->withOptions(['verify' => false])->accept('application/json')
                     ->put($base.'/'.$Id[0].'/close', [
@@ -132,7 +130,6 @@ class PanetController extends Controller
                     'comment' => $comment,
                     'status' => $response2->successful()
                     ];
-               return ($ticket);
 
             } else {
                 $ticket = [
@@ -142,13 +139,10 @@ class PanetController extends Controller
                     'comment' => $comment,
                     'status' => $response->successful()
                     ];
-               return ($ticket);
 
             }
 
-        } else {
-            return $response->status();
-        }
+        return ($ticket);
 
 
         /* if (count($arrayResult)>0) { //guarda en la bdd
