@@ -262,14 +262,7 @@ export default {
                       this.ticketsFile.forEach(element => {
                           this.loading = true;
                         //console.log(element);
-                        this.loading=true;
-                        this.$swal.fire({
-                        title: 'Espere',
-                        html: `Enviando tickets para el cierre...`,
-                        icon: 'warning',
-                        allowOutsideClick: false
-                    });
-                    this.$swal.showLoading();
+
                         this.axios
                             .post('/api/close-tickets', element)
                             .then(resp => {
@@ -282,17 +275,10 @@ export default {
 
                             })
                     });
-                    this.$swal.fire({
-                                        title: 'Correcto',
-                                        html: `Tickets cerrados correctamente!`,
-                                        icon: 'success',
-                                        timer: 1500,
-                                        timerProgressBar: true,
-                                        });
-                    }
-                });
                     this.loading = false;
                     this.tickets =  auxTickets;
+                    }
+                });
 
 
        },

@@ -280,12 +280,12 @@ export default {
 
 
        },
-       async verificarTickets(){
+        verificarTickets(){
            var auxTickets=[];
                       this.ticketsFile.forEach(element => {
                           this.loading = true;
                         //console.log(element);
-                        
+
                         this.axios
                             .post('/api/verify-tickets', element)
                             .then(resp => {
@@ -305,7 +305,7 @@ export default {
                             })
                     });
                     this.loading = false;
-                    this.tickets = await auxTickets;
+                    this.tickets =  auxTickets;
                     this.filtraTickets();
        },
         sendMultiple(){
