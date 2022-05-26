@@ -246,7 +246,7 @@ export default {
 
        },
 
-       async verificarTickets(){
+        verificarTickets(){
            var auxTickets=[];
             this.$swal
                 .fire({
@@ -282,10 +282,17 @@ export default {
 
                             })
                     });
+                    this.$swal.fire({
+                                        title: 'Correcto',
+                                        html: `Tickets cerrados correctamente!`,
+                                        icon: 'success',
+                                        timer: 1500,
+                                        timerProgressBar: true,
+                                        });
                     }
                 });
                     this.loading = false;
-                    this.tickets = await auxTickets;
+                    this.tickets =  auxTickets;
 
 
        },
