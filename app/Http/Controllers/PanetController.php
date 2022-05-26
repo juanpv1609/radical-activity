@@ -108,7 +108,7 @@ class PanetController extends Controller
         $response = Http::withHeaders([
                                     'Authorization' => self::PANET_KEY,
                                     ])->withOptions(['verify' => false])->accept('application/json')
-                                    ->get($base.'?Code='.$code.'&PadCustomers_id='.$customer_id.'&Archived=false&PadTypes_id='.$type_id);
+                                    ->get($base.'?Code='.$code.'&PadCustomers_id='.$customer_id.'&Status=New,Assigned&&Archived=false&PadTypes_id='.$type_id);
                 //$response['comment'] = $item['comment'];
                 //$ticket = $response['PawSvcAuthUsers_idCreator']['Id'];
         if ($response->successful()) { //busqueda de ID del ticket
