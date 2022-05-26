@@ -128,7 +128,8 @@ class PanetController extends Controller
                     'code' => $code,
                     'PawSvcAuthUsers_idCreator' => $PawSvcAuthUsers_idCreator[0],
                     'comment' => $comment,
-                    'status' => $response2->successful()
+                    'status' => $response2->successful(),
+                    'status_name' =>  array_column($response2->json(), 'Status')[0]
                     ];
 
             } else {
@@ -137,7 +138,8 @@ class PanetController extends Controller
                     'code' => $code,
                     'PawSvcAuthUsers_idCreator' => $PawSvcAuthUsers_idCreator[0],
                     'comment' => $comment,
-                    'status' => $response->successful()
+                    'status' => $response->successful(),
+                    'status_name' => $Status[0]
                     ];
 
             }
