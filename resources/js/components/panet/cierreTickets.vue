@@ -9,6 +9,23 @@
                                     <v-icon >mdi-help-circle </v-icon>
                                 </v-btn>
           <v-spacer></v-spacer>
+          <v-chip-group
+
+                                >
+                                    <v-chip
+                                    color="green"
+                                    dark
+                                    @click="filtraTicketsA"
+                                    >
+                                    Abiertos: {{ abiertos.length }}
+                                    </v-chip>
+                                    <v-chip
+                                    color="red"
+                                    dark
+                                    >
+                                    Cerrados: {{ cerrados.length }}
+                                    </v-chip>
+                                </v-chip-group>
            <v-col cols="auto">
               <v-btn
                     class="mx-2"
@@ -154,7 +171,9 @@ export default {
             customers:[],
             customer:{},
             types:[],
-            type:{}
+            type:{},
+            cerrados:[],
+            abiertos:[],
         };
     },
     created() {
@@ -171,6 +190,10 @@ export default {
 
     },
     methods: {
+        filtraTicketsA(){
+        this.tickets.filter((item) => item.status_name !== 'Closed');
+
+    },
         helpFile(){
             this.$swal.fire({
                         title: 'Atención',
@@ -269,6 +292,12 @@ export default {
                             .then(resp => {
                                 console.log(resp.data);
                                 auxTickets.unshift(resp.data);
+                                if (resp.data.status_name=== 'Closed') {
+                                    this.cerrados.push(resp.data)
+                                } else {
+                                    console.log(resp.data);
+                                    this.abiertos.push(resp.data)
+                                }
 
                             })
                             .catch((err) => {
