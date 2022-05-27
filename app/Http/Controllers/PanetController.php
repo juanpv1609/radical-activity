@@ -112,13 +112,13 @@ class PanetController extends Controller
                 //$response['comment'] = $item['comment'];
                 //$ticket = $response['PawSvcAuthUsers_idCreator']['Id'];
         $Id                         = array_column($response->json(), 'Id');
-        $PawSvcAuthUsers_idCreator  = array_column($response->json(), 'PawSvcAuthUsers_idCreator');
+        $PawSvcAuthUsers_idCreator  = "666b0093-467e-419c-aa9c-f07080c7cf0b"; //ID de usuario Nivel1
         $Status                     = array_column($response->json(), 'Status');
          $response2 = Http::withHeaders([
                 'Authorization' => self::PANET_KEY,
                     ])->withOptions(['verify' => false])->accept('application/json')
                     ->put($base.'/'.$Id[0].'/close', [
-                        "PawSvcAuthUsers_id" => $PawSvcAuthUsers_idCreator[0],
+                        "PawSvcAuthUsers_id" => $PawSvcAuthUsers_idCreator,
                         "Resolution" => true,
                         "ClosingComments" => $comment
                     ]);
@@ -126,17 +126,17 @@ class PanetController extends Controller
                 $ticket = [
                     'Id' => $Id[0],
                     'code' => $code,
-                    'PawSvcAuthUsers_idCreator' => $PawSvcAuthUsers_idCreator[0],
+                    'PawSvcAuthUsers_idCreator' => $PawSvcAuthUsers_idCreator,
                     'comment' => $comment,
                     'status' => $response2->successful(),
-                    'status_name' =>  array_column($response2->json(), 'Status')[0]
+                    'status_name' =>  "Closed"
                     ];
 
             } else {
                 $ticket = [
                     'Id' => $Id[0],
                     'code' => $code,
-                    'PawSvcAuthUsers_idCreator' => $PawSvcAuthUsers_idCreator[0],
+                    'PawSvcAuthUsers_idCreator' => $PawSvcAuthUsers_idCreator,
                     'comment' => $comment,
                     'status' => $response->successful(),
                     'status_name' => $Status[0]

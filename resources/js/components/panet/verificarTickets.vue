@@ -290,7 +290,7 @@ export default {
                             .post('/api/verify-tickets', element)
                             .then(resp => {
                                 console.log(resp.data);
-                                auxTickets.push(resp.data);
+                                auxTickets.unshift(resp.data);
                                 if (resp.data.status=== 'Closed') {
                                     this.cerrados.push(resp.data)
                                 } else {

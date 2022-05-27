@@ -9,23 +9,23 @@
                                     <v-icon >mdi-help-circle </v-icon>
                                 </v-btn>
           <v-spacer></v-spacer>
-          <v-chip-group
+          <v-btn-toggle
 
                                 >
-                                    <v-chip
+                                    <v-btn
                                     color="green"
                                     dark
                                     @click="filtraTicketsA"
                                     >
                                     Abiertos: {{ abiertos.length }}
-                                    </v-chip>
-                                    <v-chip
+                                    </v-btn>
+                                    <v-btn
                                     color="red"
                                     dark
                                     >
                                     Cerrados: {{ cerrados.length }}
-                                    </v-chip>
-                                </v-chip-group>
+                                    </v-btn>
+                                </v-btn-toggle>
            <v-col cols="auto">
               <v-btn
                     class="mx-2"
@@ -36,7 +36,7 @@
                     @click="verificarTickets"
                     :disabled="(ticketsFile.length==0)"
                 >
-                {{ (tickets.length>0) ? tickets.length+' de '+ticketsFile.length+' TICKETS ANALIZADOS' : '' }}
+               TICKETS ANALIZADOS:  {{ (tickets.length>0) ? tickets.length+' de '+ticketsFile.length : '' }}
                 </v-btn>
           </v-col>
 
@@ -191,7 +191,20 @@ export default {
     },
     methods: {
         filtraTicketsA(){
-        this.tickets.filter((item) => item.status_name !== 'Closed');
+        this.tickets=this.tickets.filter((item) => item.status_name !== 'Closed');
+        this.ticketsFile = this.tickets.map((item) => {
+                        return {
+                            Id: null,
+                            code: item.code,
+                            comment: item.comment,
+                            customer_id: this.customer.Id,
+                            customerName: this.customer.Name,
+                            type: this.type.Id,
+                            typeName: this.type.Name,
+                            status: null,
+                            statusName: null,
+                        }
+                    });
 
     },
         helpFile(){
@@ -272,6 +285,8 @@ export default {
 
         verificarTickets(){
            var auxTickets=[];
+           this.abiertos=[];
+           this.cerrados=[];
             this.$swal
                 .fire({
                     title: "Esta seguro?",
@@ -305,10 +320,10 @@ export default {
 
                             })
                     });
-                    this.loading = false;
                     this.tickets =  auxTickets;
                     }
                 });
+                    this.loading = false;
 
 
        },
