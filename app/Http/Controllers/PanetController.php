@@ -111,9 +111,9 @@ class PanetController extends Controller
                                     ->get($base.'?Code='.$code.'&PadTypes_id='.$type_id);
                 //$response['comment'] = $item['comment'];
                 //$ticket = $response['PawSvcAuthUsers_idCreator']['Id'];
-        $Id                         = array_column($response->json()->toArray(), 'Id');
+        $Id                         = array_column($response->json(), 'Id');
         $PawSvcAuthUsers_idCreator  = "666b0093-467e-419c-aa9c-f07080c7cf0b"; //ID de usuario Nivel1
-        $Status                     = array_column($response->json()->toArray(), 'Status');
+        $Status                     = array_column($response->json(), 'Status');
          $response2 = Http::withHeaders([
                 'Authorization' => self::PANET_KEY,
                     ])->withOptions(['verify' => false])->accept('application/json')
