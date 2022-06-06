@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\Crypt;
 
 class PanetController extends Controller
 {
-    //public const API_PANET='http://soporte.gruporadical.com/proactivanet/api/'; //PRODUCCION
-    public const API_PANET='http://10.1.11.99/proactivanet/api/'; //LOCAL
+    public const API_PANET='http://soporte.gruporadical.com/proactivanet/api/'; //PRODUCCION
+    //public const API_PANET='http://10.1.11.99/proactivanet/api/'; //LOCAL
     public const PANET_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqdWFuLnBlcnVnYWNoaSIsIm92ciI6ImZhbHNlIiwiYXV0IjoiMCIsIm5iZiI6MTY0MDE4MzY4MCwiZXhwIjoxNjcxNzE5NjgwLCJpYXQiOjE2NDAxODM2ODAsImlzcyI6InByb2FjdGl2YW5ldCIsImF1ZCI6ImFwaSJ9.lWpR-tQIgBAY6F98c7lbFFpdZYiXq4FX5Ysm4PniEkg';
 
 
