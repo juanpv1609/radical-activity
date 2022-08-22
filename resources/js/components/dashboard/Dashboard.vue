@@ -136,6 +136,21 @@
                         </v-card>
 
                     </v-col>
+                    <v-col cols="4">
+                        <v-card>
+                            <v-card-title>
+                                Distribución de la demanda por cliente
+                            </v-card-title>
+                            <v-card-text>
+                                <GChart
+                                    type="PieChart"
+                                    :data="chartDataCliente"
+                                    :options="chartOptionsCliente"
+                                />
+                            </v-card-text>
+                        </v-card>
+
+                    </v-col>
                     <v-col cols="12">
                        <!--  <v-card>
                             <v-card-title>
@@ -251,6 +266,18 @@ export default {
                 chartArea: {width: '100%',height: '100%'}
 
             },
+            chartDataCliente:[
+                ['Tipo Actividad', 'Tiempo']
+            ],
+            chartOptionsCliente:{
+                legend:{
+                    position:'left',
+                    alignment:'center'
+                },
+                fontSize:12,
+                chartArea: {width: '100%',height: '100%'}
+
+            },
             actividades:[]
 
         };
@@ -313,7 +340,15 @@ export default {
             //this.actividades=response.data;
             //console.log('tipo  '+response.data);
             response.data.forEach(element => {
-                this.chartDataTipo.push([element.descripcion,parseFloat(element.total)])
+                this.chartDataTipo.push([element.nombre,parseFloat(element.total)])
+            });
+
+        });
+        this.axios.get("/api/dashboardPorCliente/").then(response => {
+            //this.actividades=response.data;
+            //console.log('tipo  '+response.data);
+            response.data.forEach(element => {
+                this.chartDataCliente.push([element.cliente,parseFloat(element.total)])
             });
 
         });

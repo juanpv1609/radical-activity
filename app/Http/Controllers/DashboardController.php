@@ -73,11 +73,32 @@ class DashboardController extends Controller
 
         $result = DB::table('actividades')
             ->join('actividad', 'actividad.id', '=', 'actividades.dia')
-            ->join('tipo_actividad', 'tipo_actividad.id', '=', 'actividades.tipo_actividad')
-            ->select('tipo_actividad.descripcion', DB::raw('SUM(actividad.horas_total) as total'))
+            ->join('clasificacion', 'clasificacion.id', '=', 'actividades.clasificacion')
+            ->select('clasificacion.nombre', DB::raw('SUM(actividad.horas_total) as total'))
             //->where('actividades.h_inicio','=','22:00:00')
             ->whereIn('actividad.usuario_id',$arrayUsuarios)
-            ->groupBy('tipo_actividad.descripcion')
+            ->groupBy('clasificacion.nombre')
+            ->get();
+        return $result;
+    }
+    public function porCliente(){
+        $arrayUsuarios=[];
+
+        if (auth()->user()->role>=2) {
+            $usuario_estandar= User::get()->toArray();
+            foreach ($usuario_estandar as $usuario) {
+                array_push($arrayUsuarios, $usuario['id']);
+            }
+        } else {
+            array_push($arrayUsuarios, auth()->user()->id);
+        }
+
+        $result = DB::table('actividades')
+            ->join('actividad', 'actividad.id', '=', 'actividades.dia')
+            ->select('actividades.cliente', DB::raw('SUM(actividad.horas_total) as total'))
+            ->whereNotNull('actividades.cliente')
+            ->whereIn('actividad.usuario_id',$arrayUsuarios)
+            ->groupBy('actividades.cliente')
             ->get();
         return $result;
     }

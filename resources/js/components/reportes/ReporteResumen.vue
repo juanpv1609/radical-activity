@@ -305,7 +305,8 @@ export default {
                 var arrayN1 = [];
                 var arrayN2 = [];
                 var arrayCoordinador = [];
-                response.data.forEach(element => {
+                if (response.data.length>1) {
+                    response.data.forEach(element => {
                     if (element.puesto.id==1) { //N1
                         arrayN1.push({
                                 id: element.id,
@@ -326,6 +327,25 @@ export default {
 
 
                 });
+                } else {
+                    if (response.data.puesto.id==1) { //N1
+                        arrayN1.push({
+                                id: response.data.id,
+                                name: response.data.name,
+                            })
+                    } else if (response.data.puesto.id==3 || response.data.puesto.id==5 || response.data.puesto.id==7){ //N2
+                        arrayN2.push({
+                                id: response.data.id,
+                                name: response.data.name,
+                            })
+                    } else if (response.data.puesto.id==4 || response.data.puesto.id==6 || response.data.puesto.id==8){ //COORDINADORES
+                        arrayCoordinador.push({
+                                id: response.data.id,
+                                name: response.data.name,
+                            })
+                    }
+                }
+
 
                 this.personas = [
 
