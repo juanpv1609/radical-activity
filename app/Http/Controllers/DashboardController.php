@@ -99,6 +99,7 @@ class DashboardController extends Controller
             ->whereNotNull('actividades.cliente')
             ->whereIn('actividad.usuario_id',$arrayUsuarios)
             ->groupBy('actividades.cliente')
+            ->orderBy('total','desc')
             ->get();
         return $result;
     }

@@ -136,14 +136,14 @@
                         </v-card>
 
                     </v-col>
-                    <v-col cols="4">
+                    <v-col cols="8">
                         <v-card>
                             <v-card-title>
                                 Distribución de la demanda por cliente
                             </v-card-title>
                             <v-card-text>
                                 <GChart
-                                    type="PieChart"
+                                    type="ColumnChart"
                                     :data="chartDataCliente"
                                     :options="chartOptionsCliente"
                                 />
@@ -267,15 +267,13 @@ export default {
 
             },
             chartDataCliente:[
-                ['Tipo Actividad', 'Tiempo']
+                ['Cliente', 'Horas']
             ],
             chartOptionsCliente:{
-                legend:{
-                    position:'left',
-                    alignment:'center'
-                },
+                legend: {position: 'top', maxLines: 3},
                 fontSize:12,
-                chartArea: {width: '100%',height: '100%'}
+                isStacked: true,
+                chartArea: {width: '100%'}
 
             },
             actividades:[]
@@ -346,8 +344,9 @@ export default {
         });
         this.axios.get("/api/dashboardPorCliente/").then(response => {
             //this.actividades=response.data;
-            //console.log('tipo  '+response.data);
+            console.log('cliente  '+response.data);
             response.data.forEach(element => {
+                console.log(element);
                 this.chartDataCliente.push([element.cliente,parseFloat(element.total)])
             });
 
@@ -371,9 +370,9 @@ export default {
             this.chartDataCalendar.push(['Fecha','Total']);
 
             this.axios.get(`/api/dashboardCalendario/${this.$store.state.user.id}`).then(response => {
-            console.log(response.data);
+            //console.log(response.data);
             response.data.forEach(element => {
-                console.log(element.fecha+': '+element.total);
+                //console.log(element.fecha+': '+element.total);
                 const arrayFecha = element.fecha.split('-');
 
                     this.chartDataCalendar.push([new Date(arrayFecha[0],arrayFecha[1]-1,arrayFecha[2]),parseFloat(element.total)])
