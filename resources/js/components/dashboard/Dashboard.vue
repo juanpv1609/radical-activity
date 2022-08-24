@@ -1,5 +1,4 @@
 <template>
-
     <div>
         <!-- <v-card elevation="2">
             <v-card-title
@@ -14,14 +13,17 @@
         </v-card-text>
         </v-card> -->
 
-        <v-card  :loading="loading" style="background:#F5F5F5;" outlined color="transparent" >
-            <v-card-title
-          >
-
-           <v-icon>mdi-view-dashboard</v-icon> Dashboard
-          <v-spacer></v-spacer>
-              <v-col cols="auto" v-if="$store.state.user.role>=2">
-                        <v-menu
+        <v-card
+            :loading="loading"
+            style="background:#F5F5F5;"
+            outlined
+            color="transparent"
+        >
+            <v-card-title>
+                <v-icon>mdi-view-dashboard</v-icon> Dashboard
+                <v-spacer></v-spacer>
+                <v-col cols="auto" v-if="$store.state.user.role >= 2">
+                    <v-menu
                         v-model="menu"
                         :close-on-content-click="false"
                         :nudge-right="40"
@@ -37,18 +39,15 @@
                                 readonly
                                 v-bind="attrs"
                                 v-on="on"
-
                                 dense
-
                                 single-line
                                 hide-details
                             ></v-text-field>
                         </template>
-                        <v-date-picker v-model="dates" range>
-                        </v-date-picker>
+                        <v-date-picker v-model="dates" range> </v-date-picker>
                     </v-menu>
                 </v-col>
-                <v-col cols="auto" v-if="$store.state.user.role>=2" >
+                <v-col cols="auto" v-if="$store.state.user.role >= 2">
                     <v-autocomplete
                         deletable-chips
                         multiple
@@ -59,16 +58,19 @@
                         item-value="id"
                         v-model="selectedUsuarios"
                         label="Seleccione uno o varios usuarios"
-
-                        :disabled="dates.length<=1"
+                        :disabled="dates.length <= 1"
                         return-object
-
                     >
                         <template v-slot:prepend-item>
                             <v-list-item ripple @click="toggle">
                                 <v-list-item-action>
                                     <v-icon
-                                        :color="selectedUsuarios.length > 0 ? 'indigo darken-4' : ''">
+                                        :color="
+                                            selectedUsuarios.length > 0
+                                                ? 'indigo darken-4'
+                                                : ''
+                                        "
+                                    >
                                         {{ icon }}
                                     </v-icon>
                                 </v-list-item-action>
@@ -83,15 +85,14 @@
                     </v-autocomplete>
                 </v-col>
                 <v-col cols="auto">
-                    <v-btn v-if="selectedUsuarios.length > 0"
-
+                    <v-btn
+                        v-if="selectedUsuarios.length > 0"
                         color="primary"
                         dark
-                        >aplicar</v-btn>
+                        >aplicar</v-btn
+                    >
                 </v-col>
-
-
-        </v-card-title>
+            </v-card-title>
 
             <v-card-text>
                 <v-row dense>
@@ -108,14 +109,13 @@
                                 />
                             </v-card-text>
                         </v-card>
-
                     </v-col>
-                     <v-col cols="8">
+                    <v-col cols="8">
                         <v-card>
                             <v-card-title>
                                 Distribución diaria de actividades
                                 <v-spacer></v-spacer>
-                               <!--  <v-autocomplete
+                                <!--  <v-autocomplete
                                     :items="usuarios"
                                     item-text="name"
                                     item-value="id"
@@ -127,16 +127,15 @@
                             </v-card-title>
                             <v-card-text>
                                 <GChart
-                                :settings="{packages: ['calendar']}"
+                                    :settings="{ packages: ['calendar'] }"
                                     type="Calendar"
                                     :data="chartDataCalendar"
                                     :options="chartOptionsCalendar"
                                 />
                             </v-card-text>
                         </v-card>
-
                     </v-col>
-                    <v-col cols="8">
+                    <v-col cols="12">
                         <v-card>
                             <v-card-title>
                                 Distribución de la demanda por cliente
@@ -149,10 +148,9 @@
                                 />
                             </v-card-text>
                         </v-card>
-
                     </v-col>
                     <v-col cols="12">
-                       <!--  <v-card>
+                        <!--  <v-card>
                             <v-card-title>
                                 Distribución diaria
                             </v-card-title>
@@ -164,7 +162,7 @@
                                 />
                             </v-card-text>
                         </v-card> -->
-                         <!-- <v-card>
+                        <!-- <v-card>
                             <v-card-title>
                                 Persona vs Tiempo
                             </v-card-title>
@@ -176,31 +174,21 @@
                                 />
                             </v-card-text>
                         </v-card> -->
-
                     </v-col>
-
-
                 </v-row>
-
-
             </v-card-text>
-
         </v-card>
-
-
     </div>
-
 </template>
 
 <script>
-import { GChart } from 'vue-google-charts'
+import { GChart } from "vue-google-charts";
 export default {
     components: {
-    GChart
-  },
+        GChart
+    },
     data() {
         return {
-
             loading: false,
             loadingUpload: false,
             dates: [],
@@ -209,96 +197,78 @@ export default {
             idUsuarios: [],
             selectedUsuarios: [],
             dateRules: [v => !!v || "Date range is required"],
-            usuarios:[],
-            usuario:{},
-            search:"",
+            usuarios: [],
+            usuario: {},
+            search: "",
             chartDataCalendar: [],
             chartOptionsCalendar: {
                 calendar: {
-                dayOfWeekLabel: {
-                    fontSize: 12,
-                    bold: true,
+                    dayOfWeekLabel: {
+                        fontSize: 12,
+                        bold: true
+                    },
+                    dayOfWeekRightSpace: 10,
+                    daysOfWeek: "DLMMJVS"
                 },
-                dayOfWeekRightSpace: 10,
-                daysOfWeek: 'DLMMJVS',
-                },
-                fontSize:12,
-                chartArea: {width: '100%',height: '100%'}
-
+                fontSize: 12,
+                chartArea: { width: "100%", height: "100%" }
             },
-            chartDataPersona:[
-                ['Usuario', 'Tiempo']
-            ],
-            chartOptionsPersona:{
+            chartDataPersona: [["Usuario", "Tiempo"]],
+            chartOptionsPersona: {
                 height: 300,
-                fontSize:12,
-                legend:{
-                    position:'top',
-                    maxLines:3,
-                    alignment:'center'
-                },
-
-
+                fontSize: 12,
+                legend: {
+                    position: "top",
+                    maxLines: 3,
+                    alignment: "center"
+                }
             },
-            chartDataFecha:[
-                ['Fecha', 'Horas Productivas']
-            ],
-            chartOptionsFecha:{
-                fontSize:12,
-                legend:{
-                    position:'top',
-                    maxLines:3,
-                    alignment:'center'
+            chartDataFecha: [["Fecha", "Horas Productivas"]],
+            chartOptionsFecha: {
+                fontSize: 12,
+                legend: {
+                    position: "top",
+                    maxLines: 3,
+                    alignment: "center"
                 },
-                chartArea: {width: '100%'}
-
-
+                chartArea: { width: "100%" }
             },
-            chartDataTipo:[
-                ['Tipo Actividad', 'Tiempo']
-            ],
-            chartOptionsTipo:{
-                legend:{
-                    position:'left',
-                    alignment:'center'
+            chartDataTipo: [["Tipo Actividad", "Tiempo"]],
+            chartOptionsTipo: {
+                legend: {
+                    position: "left",
+                    alignment: "center"
                 },
-                fontSize:12,
-                chartArea: {width: '100%',height: '100%'}
-
+                fontSize: 12,
+                chartArea: { width: "100%", height: "100%" }
             },
-            chartDataCliente:[
-                ['Cliente', 'Horas']
-            ],
-            chartOptionsCliente:{
-                legend: {position: 'top', maxLines: 3},
-                fontSize:12,
+            chartDataCliente: [["Cliente", "Horas"]],
+            chartOptionsCliente: {
+                legend: { position: "top", maxLines: 3 },
+                fontSize: 12,
                 isStacked: true,
-                chartArea: {width: '100%'}
-
+                chartArea: { width: "100%", height: "100%" }
             },
-            actividades:[]
-
+            actividades: []
         };
     },
     computed: {
         dateRangeText() {
             return this.dates.join(" ~ ");
         },
-        likesAllUsers () {
-        return this.selectedUsuarios.length === this.usuarios.length
-      },
-      likesSomeUsers () {
-        return this.selectedUsuarios.length > 0 && !this.likesAllUsers
-      },
-      icon () {
-        if (this.likesAllUsers) return 'mdi-close-box'
-        if (this.likesSomeUsers) return 'mdi-minus-box'
-        return 'mdi-checkbox-blank-outline'
-      },
+        likesAllUsers() {
+            return this.selectedUsuarios.length === this.usuarios.length;
+        },
+        likesSomeUsers() {
+            return this.selectedUsuarios.length > 0 && !this.likesAllUsers;
+        },
+        icon() {
+            if (this.likesAllUsers) return "mdi-close-box";
+            if (this.likesSomeUsers) return "mdi-minus-box";
+            return "mdi-checkbox-blank-outline";
+        }
     },
     created() {
-
-
         this.getData();
     },
     methods: {
@@ -311,15 +281,15 @@ export default {
                 }
             });
         },
-        getData(){
+        getData() {
             const query =
-            ((this.$store.state.user.role == 2)//ADMIN
-            || (this.$store.state.user.role == 3)) //SUPERVISOR
-                ? `usuarios-all`
-                : `user`;
+                this.$store.state.user.role == 2 || //ADMIN
+                this.$store.state.user.role == 3 //SUPERVISOR
+                    ? `usuarios-all`
+                    : `user`;
             this.axios.get(`/api/${query}`).then(response => {
                 this.usuarios = response.data;
-               // console.log(this.usuarios);
+                // console.log(this.usuarios);
 
                 this.loading = false;
             });
@@ -334,59 +304,77 @@ export default {
                         this.loading=false;
 
             }); */
-        this.axios.get("/api/dashboardPorTipo/").then(response => {
-            //this.actividades=response.data;
-            //console.log('tipo  '+response.data);
-            response.data.forEach(element => {
-                this.chartDataTipo.push([element.nombre,parseFloat(element.total)])
+            this.axios.get("/api/dashboardPorTipo/").then(response => {
+                //this.actividades=response.data;
+                //console.log('tipo  '+response.data);
+                response.data.forEach(element => {
+                    this.chartDataTipo.push([
+                        element.nombre,
+                        parseFloat(element.total)
+                    ]);
+                });
             });
-
-        });
-        this.axios.get("/api/dashboardPorCliente/").then(response => {
-            //this.actividades=response.data;
-            console.log('cliente  '+response.data);
-            response.data.forEach(element => {
-                console.log(element);
-                this.chartDataCliente.push([element.cliente,parseFloat(element.total)])
+            this.axios.get("/api/dashboardPorCliente/").then(response => {
+                //this.actividades=response.data;
+                console.log("cliente  " + response.data);
+                response.data.forEach(element => {
+                    console.log(element);
+                    this.chartDataCliente.push([
+                        element.cliente,
+                        parseFloat(element.total)
+                    ]);
+                });
             });
-
-        });
-        this.axios.get("/api/dashboardPorFecha/").then(response => {
-            //this.actividades=response.data;
-            //console.log(response.data);
-            response.data.forEach(element => {
-                const arrayFecha = element.fecha.split('-');
-                this.chartDataFecha.push([new Date(arrayFecha[0],arrayFecha[1]-1,arrayFecha[2]),parseFloat(element.total)])
+            this.axios.get("/api/dashboardPorFecha/").then(response => {
+                //this.actividades=response.data;
+                //console.log(response.data);
+                response.data.forEach(element => {
+                    const arrayFecha = element.fecha.split("-");
+                    this.chartDataFecha.push([
+                        new Date(
+                            arrayFecha[0],
+                            arrayFecha[1] - 1,
+                            arrayFecha[2]
+                        ),
+                        parseFloat(element.total)
+                    ]);
+                });
             });
-
-        });
-        this.getDataCalendar();
-
-
+            this.getDataCalendar();
         },
-        getDataCalendar(){
+        getDataCalendar() {
             //console.log(this.usuario);
-            this.chartDataCalendar=[];
-            this.chartDataCalendar.push(['Fecha','Total']);
+            this.chartDataCalendar = [];
+            this.chartDataCalendar.push(["Fecha", "Total"]);
 
-            this.axios.get(`/api/dashboardCalendario/${this.$store.state.user.id}`).then(response => {
-            //console.log(response.data);
-            response.data.forEach(element => {
-                //console.log(element.fecha+': '+element.total);
-                const arrayFecha = element.fecha.split('-');
+            this.axios
+                .get(`/api/dashboardCalendario/${this.$store.state.user.id}`)
+                .then(response => {
+                    //console.log(response.data);
+                    response.data.forEach(element => {
+                        //console.log(element.fecha+': '+element.total);
+                        const arrayFecha = element.fecha.split("-");
 
-                    this.chartDataCalendar.push([new Date(arrayFecha[0],arrayFecha[1]-1,arrayFecha[2]),parseFloat(element.total)])
-
-            });
-
-        });
+                        this.chartDataCalendar.push([
+                            new Date(
+                                arrayFecha[0],
+                                arrayFecha[1] - 1,
+                                arrayFecha[2]
+                            ),
+                            parseFloat(element.total)
+                        ]);
+                    });
+                });
         },
-        SortArray(x, y){
-            if (x.total < y.total) {return -1;}
-            if (x.total > y.total) {return 1;}
+        SortArray(x, y) {
+            if (x.total < y.total) {
+                return -1;
+            }
+            if (x.total > y.total) {
+                return 1;
+            }
             return 0;
         }
-
     }
 };
 </script>
