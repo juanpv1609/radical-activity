@@ -247,7 +247,7 @@ export default {
                 legend: { position: "top", maxLines: 3 },
                 fontSize: 12,
                 isStacked: true,
-                chartArea: { width: "100%", height: "100%" }
+                chartArea: { width: "100%"}
             },
             actividades: []
         };
