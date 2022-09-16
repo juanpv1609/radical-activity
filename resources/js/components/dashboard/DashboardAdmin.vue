@@ -175,20 +175,6 @@
                             </v-card-text>
                         </v-card> -->
                     </v-col>
-                    <v-col cols="12">
-                        <v-card>
-                            <v-card-title>
-                                Horas registradas por usuario
-                            </v-card-title>
-                            <v-card-text>
-                                <GChart
-                                    type="ColumnChart"
-                                    :data="chartDataUsuario"
-                                    :options="chartOptionsUsuario"
-                                />
-                            </v-card-text>
-                        </v-card>
-                    </v-col>
                 </v-row>
             </v-card-text>
         </v-card>
@@ -261,12 +247,6 @@ export default {
                 legend: { position: "top", maxLines: 3 },
                 fontSize: 12,
                 isStacked: true,
-                chartArea: { width: "100%" }
-            },
-            chartDataUsuario: [["Usuario", "Horas"]],
-            chartOptionsUsuario: {
-                fontSize: 12,
-                isStacked: false,
                 chartArea: { width: "100%" }
             },
             actividades: []
@@ -348,46 +328,15 @@ export default {
             this.axios.get("/api/dashboardPorFecha/").then(response => {
                 //this.actividades=response.data;
                 console.log(response.data);
-                this.chartDataFecha = [];
-                this.chartDataFecha.push(["Fecha", "Usuario"]);
-                //columnas
-                let nuevoObjeto = {};
-                response.data.forEach(x => {
-                    //Si la ciudad no existe en nuevoObjeto entonces
-                    //la creamos e inicializamos el arreglo de profesionales.
-                    if (!nuevoObjeto.hasOwnProperty(x.fecha)) {
-                        nuevoObjeto[x.fecha] = {
-                            usuarios: []
-                        };
-                    }
 
-                    //Agregamos los datos de usuarios.
-                    nuevoObjeto[x.fecha].usuarios.push({
-                        nombre: x.name,
-                        horas: parseFloat(x.total)
-                    });
-                });
-                console.log(nuevoObjeto);
-
-                /* response.data.forEach(element => {
+                response.data.forEach(element => {
                     const arrayFecha = element.fecha.split("-");
                     this.chartDataFecha.push([
                         new Date(
                             arrayFecha[0],
                             arrayFecha[1] - 1,
                             arrayFecha[2]
-                        ),
-                        element.name,
-                        parseFloat(element.total)
-                    ]);
-                }); */
-            });
-            this.axios.get("/api/dashboardPorUsuario/").then(response => {
-                //this.actividades=response.data;
-                console.log(response.data);
-                response.data.forEach(element => {
-                    this.chartDataUsuario.push([
-                        element.name,
+                        ),element.name,
                         parseFloat(element.total)
                     ]);
                 });

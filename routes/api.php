@@ -85,6 +85,9 @@ Route::middleware('api')->group(function () {
 
     Route::get('dashboardPorCliente', [DashboardController::class,'porCliente']);
 
+    Route::get('dashboardPorUsuario', [DashboardController::class,'porUsuario']);
+
+
     Route::get('dashboardPorFecha', [DashboardController::class,'porFecha']);
 
     Route::get('dashboardCalendario/{usuario}', [DashboardController::class,'calendario']);

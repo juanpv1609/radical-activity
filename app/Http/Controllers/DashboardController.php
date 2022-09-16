@@ -100,6 +100,32 @@ class DashboardController extends Controller
             ->whereIn('actividad.usuario_id',$arrayUsuarios)
             ->groupBy('actividades.cliente')
             ->orderBy('total','desc')
+            ->take(20)
+            ->get();
+        return $result;
+    }
+    public function porUsuario(){
+        $arrayUsuarios=[];
+
+        if (auth()->user()->role>=2) {
+            $usuario_estandar= User::get()->toArray();
+            foreach ($usuario_estandar as $usuario) {
+                array_push($arrayUsuarios, $usuario['id']);
+            }
+        } else {
+            array_push($arrayUsuarios, auth()->user()->id);
+        }
+
+        $result = DB::table('actividades')
+            ->join('actividad', 'actividad.id', '=', 'actividades.dia')
+            ->join('users', 'users.id', '=', 'actividad.usuario_id')
+            ->select('users.name', DB::raw('SUM(actividad.horas_total) as total'))
+            //->whereNotNull('actividades.cliente')
+            ->where('users.is_deleted','=',0)
+            ->whereIn('actividad.usuario_id',$arrayUsuarios)
+            ->groupBy('users.name')
+            ->orderBy('users.name','asc')
+            //->take(20)
             ->get();
         return $result;
     }
@@ -116,11 +142,14 @@ class DashboardController extends Controller
         }
 
         $result = DB::table('actividad')
-            ->select('fecha', DB::raw('SUM(horas_total) as total'))
-            ->where('usuario_id',auth()->user()->id)
-            ->groupBy('fecha')
-            ->havingRaw('SUM(horas_total) > ?', [0])
-            ->orderBy('fecha','ASC')
+            ->select('actividad.fecha','users.name', DB::raw('SUM(actividad.horas_total) as total'))
+            ->join('users', 'users.id', '=', 'actividad.usuario_id')
+            ->where('users.is_deleted','=',0)
+            ->whereIn('actividad.usuario_id',$arrayUsuarios)
+            ->whereBetween('actividad.fecha',[Carbon::now()->startOfMonth(),Carbon::now()->endOfMonth()])
+            ->groupBy('actividad.fecha','users.name')
+            //->havingRaw('SUM(actividad.horas_total) > ?', [0])
+            ->orderBy('actividad.fecha','ASC')
             ->get();
         return $result;
     }
