@@ -8,6 +8,7 @@
                             <v-img
                                 src="../img/LOGOTIPO.png"
                                 alt="Logo"
+                                max-width="200" max-height="100"
                             ></v-img>
                         </v-list-item-title>
                     </v-list-item-content>
@@ -105,7 +106,17 @@
                 <v-app-bar-nav-icon
                     @click.stop="mini = !mini"
                 ></v-app-bar-nav-icon>
+                <v-btn
 
+                    color="primary"
+                    small
+                    dark
+                    :to="{
+                        name: 'actividad-new'
+                    }"
+                >
+                    REGISTRAR ACTIVIDAD
+                </v-btn>
                 <v-spacer></v-spacer>
                 <v-spacer ></v-spacer>
                 <v-icon small>mdi-account-circle</v-icon><span> {{$store.state.user.name}}</span>
@@ -116,6 +127,7 @@
                         </v-btn>
                     </template>
                     <v-list dense max-width="300px">
+
                         <v-list-item>
                             <v-list-item-avatar>
                                 <v-icon x-large>mdi-account-circle</v-icon>

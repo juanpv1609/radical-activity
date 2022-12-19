@@ -280,7 +280,10 @@ class ReportesController extends Controller
         $persona=[];
         $personas['inicio'] = $inicio;
         $personas['fin'] = $fin;
-
+        $cond = [
+            ["tipo_actividad","<>",6],
+            ["clasificacion","<>",14]
+        ];
         foreach ($usuarios as $user) {
             $usuario = User::with('rol','puesto.area')->find($user);
             $actividad = Actividad::where('usuario_id', $usuario->id)->whereBetween('fecha',[$inicio,$fin])->get()->toArray();
@@ -292,7 +295,8 @@ class ReportesController extends Controller
             foreach ($actividad as $item) {
                  array_push($arrayActividades, $item['id']);
             }
-                $actividades = Actividades::with( 'tipo', 'status','actividad','clasif')->where('tipo_actividad','<>',6)->whereIn('dia', $arrayActividades)->get()->toArray();
+                $actividades = Actividades::with( 'tipo', 'status','actividad','clasif')
+                ->whereIn('dia', $arrayActividades)->get()->toArray();
                 $persona['actividades'] = $actividades;
                 array_push($aux,$persona);
         }

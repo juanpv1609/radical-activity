@@ -9,7 +9,34 @@
                                     <v-icon >mdi-help-circle </v-icon>
                                 </v-btn>
           <v-spacer></v-spacer>
+          <v-chip-group
+
+                                >
+                                    <v-chip
+                                    color="green"
+                                    dark
+                                    >
+                                    Abiertos: {{ abiertos.length }}
+                                    </v-chip>
+                                    <v-chip
+                                    color="red"
+                                    dark
+                                    >
+                                    Cerrados: {{ cerrados.length }}
+                                    </v-chip>
+                                </v-chip-group>
            <v-col cols="auto">
+               <!-- <v-btn
+                    class="mx-2"
+                    block
+                    elevation="2"
+                    x-large
+                    color="red"
+                    @click="filtraTickets"
+                    :disabled="(tickets.length==0)"
+                >
+                    OMITIR TICKETS CERRADOS
+                </v-btn> -->
               <v-btn
                     class="mx-2"
                     block
@@ -17,9 +44,9 @@
                     x-large
                     color="primary"
                     @click="verificarTickets"
-                    :disabled="(tickets.length==0)"
+                    v-show="(ticketsFile.length>0)"
                 >
-                    VERIFICAR {{ (tickets.length>0) ? tickets.length+' TICKETS' : '' }}
+                  TICKETS ANALIZADOS: {{ (tickets.length>0) ? tickets.length+' DE '+ticketsFile.length : '' }}
                 </v-btn>
           </v-col>
 
@@ -78,6 +105,7 @@
                     </v-form>
                     <v-row dense>
                         <v-col >
+
                             <v-data-table
                                     :headers="headers"
                                     :items="tickets"
@@ -139,13 +167,14 @@ export default {
             },
             ticket: {},
             tickets: [],
+            ticketsFile: [],
             loading: false,
             titleForm: null,
             search: "",
             headers: [
                 { text: "Ticket",value: "code", sortable: false  },
 
-                { text: "Estado", value: "status" ,sortable: false},
+                { text: "Estado", value: "status" },
                 { text: "Comentario de cierre", value: "comment" },
                 { text: "Eliminar", sortable: false }
             ],
@@ -153,7 +182,9 @@ export default {
             customers:[],
             customer:{},
             types:[],
-            type:{}
+            type:{},
+            cerrados:[],
+            abiertos:[],
         };
     },
     created() {
@@ -208,7 +239,12 @@ export default {
         onChange(event) {
       this.file = event.target.files ? event.target.files[0] : null;
     },
-         onChangeFile() {
+    filtraTickets(){
+        this.cerrados = this.tickets.filter((item) => item.status === 'Closed');
+        this.abiertos = this.tickets.filter((item) => item.status !== 'Closed');
+
+    },
+             onChangeFile() {
              var aux_tickets = [];
             var reader = new FileReader();
 
@@ -221,7 +257,7 @@ export default {
                     var aux = XLSX.utils.sheet_to_json(worksheet);
 
 
-                     this.tickets = aux.map((item) => {
+                     this.ticketsFile = aux.map((item) => {
                         return {
                             Id: null,
                             code: item.ticket,
@@ -244,16 +280,23 @@ export default {
 
 
        },
-       async verificarTickets(){
+        verificarTickets(){
            var auxTickets=[];
-                      this.tickets.forEach(element => {
+                      this.ticketsFile.forEach(element => {
+                          this.loading = true;
                         //console.log(element);
+
                         this.axios
                             .post('/api/verify-tickets', element)
                             .then(resp => {
                                 console.log(resp.data);
-                                auxTickets.push(resp.data);
-
+                                auxTickets.unshift(resp.data);
+                                if (resp.data.status=== 'Closed') {
+                                    this.cerrados.push(resp.data)
+                                } else {
+                                    console.log(resp.data);
+                                    this.abiertos.push(resp.data)
+                                }
 
 
                             })
@@ -262,7 +305,9 @@ export default {
 
                             })
                     });
-                    this.tickets = await auxTickets;
+                    this.loading = false;
+                    this.tickets =  auxTickets;
+                    this.filtraTickets();
        },
         sendMultiple(){
             console.log(this.tickets);

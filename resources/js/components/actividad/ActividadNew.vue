@@ -33,6 +33,7 @@
 
                                 min="1950-01-01"
                                 @change="setFecha"
+                                :rules="[() => !!fechaHoy || 'This field is required']"
                             >
                             </v-date-picker>
                         </v-dialog>
@@ -57,7 +58,9 @@
                         return-object
                         :hint="horario.id ? horario.nombre + ' ('+horario.inicio + ' - ' + horario.fin+')' : 'Seleccione un horario'"
                         @change="setHorario()"
-                        persistent-hint >
+                        persistent-hint
+                        :rules="[() => !!horario || 'This field is required']"
+                        >
                         <template slot="selection" slot-scope="data">
                             <!-- HTML that describe how select should render selected items -->
                             {{ data.item.nombre }}
@@ -84,6 +87,7 @@
                             offset-y
                             max-width="290px"
                             min-width="290px"
+                            dense
                         >
                             <template v-slot:activator="{ on, attrs }">
                                 <v-text-field
@@ -93,6 +97,7 @@
                                     v-bind="attrs"
                                     v-on="on"
                                     :disabled="!horario.id"
+                                    dense
                                 ></v-text-field>
                             </template>
                             <v-time-picker
@@ -120,6 +125,7 @@
                             offset-y
                             max-width="290px"
                             min-width="290px"
+                            dense
                         >
                             <template v-slot:activator="{ on, attrs }">
                                 <v-text-field
@@ -129,6 +135,7 @@
                                     v-bind="attrs"
                                     v-on="on"
                                     :disabled="!horario.id"
+                                    dense
                                 ></v-text-field>
                             </template>
                             <v-time-picker
@@ -142,6 +149,7 @@
                                 :allowed-hours="(horario.id==3)? allowedHours:null"
                                 :allowed-minutes="allowedStep"
                                 @click:minute="$refs.fin.save(end)"
+
                             ></v-time-picker>
                         </v-menu>
                     </v-col>
@@ -154,6 +162,8 @@
                                 label="Cliente"
                                 return-object
                                 small
+                                clearable
+                                dense
                                 :disabled="(!start || !end)"
                             ></v-autocomplete>
                     </v-col>
@@ -165,7 +175,10 @@
                             v-model="clasificacion"
                             label="Clasificación"
                             return-object
-                            :disabled="(!start || !end)"
+                            small
+                            clearable
+                            dense
+                            :disabled="!customer.Name"
                         ></v-autocomplete>
                     </v-col>
                     <!-- <v-col cols="12" sm="2">
@@ -192,7 +205,8 @@
                             deletable-chips
                             :delimiters="[';']"
                             @change="delimitActividades"
-                            :disabled="!tipoActividad"
+                            :disabled="!clasificacion.id"
+                            dense
                         >
                         </v-combobox>
                     </v-col>
@@ -203,8 +217,8 @@
                             block
                             large
                             @click="controlFechas"
-                            :disabled="(modelDescripcion.length == 0)"
                             title="Agregar actividades a la lista"
+                            :disabled="(modelDescripcion.length == 0)"
                         >
                             <v-icon>mdi-plus-thick</v-icon>
                         </v-btn>
@@ -212,7 +226,7 @@
                 </v-row>
                 <v-row v-if="ActivityLine.length > 0">
                     <v-col cols="12">
-                        <v-data-table :headers="headers" :items="ActivityLine"  class="elevation-2">
+                        <v-data-table :headers="headers" :items="ActivityLine"  class="elevation-2" dense>
                             <template v-slot:item="row">
                                 <tr>
                                     <!-- <td>{{ row.item.fecha }}</td> -->
@@ -220,25 +234,47 @@
                                         {{ row.item.h_inicio }} - {{ row.item.h_fin }}
                                     </td>
                                     <td>
-                                        {{ row.item.customer }}
+                                        <!-- {{ row.item.customer }} -->
+                                         <v-autocomplete
+                                        :items="customers"
+                                        item-text="Name"
+                                        item-value="Id"
+                                        v-model="row.item.customer"
+                                        return-object
+                                        small
+                                        dense
+                                    ></v-autocomplete>
+
                                     </td>
                                     <td>
-                                        {{ row.item.clasificacion_nombre }}
-                                    </td>
-                                    <td>
-                                        <v-chip
-                                            v-for="actividad in row.item
-                                                .descripcion"
-                                            :key="actividad"
+                                        <v-autocomplete
+                                            :items="clasificaciones"
+                                            item-text="nombre"
+                                            item-value="id"
+                                            v-model="row.item.clasificacion"
+                                            return-objects
                                             small
-                                            label
-                                            class="ma-1"
-                                        >
-                                            {{ actividad }}
-                                        </v-chip>
+                                            dense
+                                        ></v-autocomplete>
                                     </td>
                                     <td>
-                                        <v-edit-dialog
+
+                                        <v-combobox
+                                            v-model="row.item.descripcion"
+                                            :items="itemsDescripcion"
+                                            hide-selected
+                                            multiple
+                                            persistent-hint
+                                            small-chips
+                                            deletable-chips
+                                            dense
+                                            :delimiters="[';']"
+                                            @change="delimitActividades"
+                                        >
+                                        </v-combobox>
+                                    </td>
+                                    <!-- <td> -->
+                                       <!--  <v-edit-dialog
                                             :return-value.sync="
                                                 row.item.colaboradores
                                             "
@@ -283,8 +319,8 @@
                                                 >
                                                 </v-combobox>
                                             </template>
-                                        </v-edit-dialog>
-                                    </td>
+                                        </v-edit-dialog> -->
+                                    <!-- </td> -->
                                     <td>
                                         <v-edit-dialog
                                             :return-value.sync="
@@ -318,14 +354,14 @@
                                         </v-edit-dialog>
                                     </td>
 
-                                    <td >
+
+                                    <td>
                                         <v-checkbox
                                             v-model="row.item.estado"
                                             color="success"
                                             dense
+                                            title="Completada/No completada"
                                         ></v-checkbox>
-                                    </td>
-                                    <td>
                                         <v-btn
                                             icon
                                             color="error"
@@ -333,6 +369,15 @@
                                             @click="deleteActivityLine(row.item)"
                                         >
                                             <v-icon dark>mdi-delete</v-icon>
+                                        </v-btn>
+                                        <v-btn
+                                            icon
+                                            color="blue"
+                                            x-small
+                                            @click="duplicateActivityLine(row.item)"
+                                            title="Duplicar"
+                                        >
+                                            <v-icon dark>mdi-content-duplicate</v-icon>
                                         </v-btn>
                                     </td>
                                 </tr>
@@ -392,7 +437,7 @@
 
             <v-card-actions v-if="ActivityLine.length > 0">
                 <v-spacer></v-spacer>
-                <v-btn block color="primary" large @click="enviarActividades"
+                <v-btn block color="primary" large @click="verificarFechaActividades"
                     >enviar {{ActivityLine.length}} actividades</v-btn
                 >
             </v-card-actions>
@@ -447,10 +492,10 @@ export default {
                 { text: "Clasificación", value: "clasificacion_nombre", sortable: false },
                 //{ text: "Tipo", value: "tipo", sortable: false },
                 { text: "Actividades", value: "descripcion", sortable: false },
-                { text: "Colaboradores", value: "colaborador", sortable: false },
+               // { text: "Colaboradores", value: "colaborador", sortable: false },
                 { text: "Observación / Resultados", value: "observacion", sortable: false },
-                { text: "Completada", value: "estado", sortable: false },
-                { text: "Eliminar", value: "controls", sortable: false }
+                //{ text: "Completada", value: "estado", sortable: false },
+                { text: "Acciones", value: "controls", sortable: false }
             ],
             foto: null,
             ActivityLine: [],
@@ -575,8 +620,9 @@ export default {
                     var activityLine = {};
                     this.ActivityLine = this.ActivityLine || [];
                     console.log(this.modelDescripcion);
-                    activityLine.customer = this.customer.Name;
-                    activityLine.clasificacion = this.clasificacion.id;
+                    activityLine.customer = this.customer;
+                    activityLine.clasificacion = this.clasificacion;
+                    activityLine.clasificacion_id = this.clasificacion.id;
                     activityLine.clasificacion_nombre = this.clasificacion.nombre;
                     activityLine.tipo_actividad = this.tipoActividad.id;
                     activityLine.tipo_actividad_nombre = this.tipoActividad.descripcion;
@@ -592,6 +638,8 @@ export default {
                     //this.tipoActividad.id=null;
                     this.end = null;
                     this.descripcion = null;
+                    this.customer={}
+                    this.clasificacion={}
                     this.modelDescripcion = [];
 
 
@@ -602,6 +650,44 @@ export default {
                 el.h_inicio
             );
             this.ActivityLine.splice(i, 1);
+        },
+        duplicateActivityLine(el) {
+
+            console.log(el);
+            var activityLine = {};
+                    this.ActivityLine = this.ActivityLine || [];
+                    activityLine.customer = el.customer;
+                    activityLine.clasificacion = el.clasificacion;
+                    //activityLine.tipo_actividad = el.tipoActividad.id;
+                    //activityLine.tipo_actividad_nombre = el.tipoActividad.descripcion;
+                    activityLine.descripcion = el.descripcion;
+                    activityLine.observacion = null;
+                    activityLine.colaboradores = el.modelColaboradores || [];
+                    activityLine.h_inicio = el.h_inicio;
+                    activityLine.h_fin = el.h_fin;
+                    activityLine.estado = true;
+                    console.log(activityLine);
+                    this.ActivityLine.push(activityLine);
+        },
+        verificarFechaActividades(){
+
+            this.axios.get(`/api/verificar-actividades/${this.fechaHoy}/${this.$store.state.user.id}`).then(res => {
+                if (res.data.length>0) { //verifica si tiene actividades registradas con la misma fecha
+                    this.$swal.fire({
+                                title: 'Error',
+                                html: `Estimado usuario ya tiene actividades registradas con fecha ${this.fechaHoy}, procure modificar la actividad creada anteriormente`,
+                                icon: 'error'
+                                })
+                } else {
+                    this.enviarActividades()
+                }
+            }).catch((err)=> {
+                    this.$swal.fire({
+                                title: 'Error',
+                                html: `${err}`,
+                                icon: 'error'
+                                })
+                }).finally();
         },
         enviarActividades() {
             //this.loading = true;
@@ -615,7 +701,8 @@ export default {
             //this.Activity.colaboradores = this.modelColaboradores;
             this.Activity.activities = this.ActivityLine;
 
-            console.log(this.ActivityLine);
+            console.log(this.Activity);
+            //return true;
             var min = this.ActivityLine[0].h_inicio;
             var max = this.ActivityLine[0].h_fin;
             var diff = 0.0;
@@ -630,7 +717,7 @@ export default {
                         }
                         diff = moment.duration(moment(max,'HH:mm').diff(moment(min,'HH:mm'))).asHours();
 
-                    if (this.ActivityLine[i].tipo_actividad == 6 ) { // tipo break
+                    if (this.ActivityLine[i].clasificacion == 14 ) { // tipo break
                         diff_tiempo_libre = moment.duration(moment(this.ActivityLine[i].h_fin,'HH:mm').diff(moment(this.ActivityLine[i].h_inicio,'HH:mm'))).asHours();
                     }
 
@@ -664,7 +751,7 @@ export default {
                     this.Activity.activities.forEach(element => {
                     //actividade tipo break / almuerzo
 
-                        tiempo_libre+=(element.tipo_actividad==6) ? true: false;
+                        tiempo_libre+=(element.clasificacion==14) ? true: false;
 
                     });
                 }
@@ -680,8 +767,11 @@ export default {
                 this.$swal
                 .fire({
                     title: "Esta seguro?",
-                    html: `Estimado ${this.$store.state.user.name} a continuación registrará <strong>${this.Activity.activities.length}</strong>
-                    actividades correspondientes al <strong>${this.Activity.fecha}</strong> <br>
+                    html: `Estimado ${this.$store.state.user.name} a continuación registrará sus actividades de acuerdo a lo siguiente: <br>
+                    Fecha: <strong>${this.Activity.fecha}</strong> <br>
+                    Actividades: <strong>${this.Activity.activities.length}</strong> <br>
+                    Inicio: <strong>${min}</strong> <br>
+                    Fin: <strong>${max}</strong> <br>
                     Con un total de <strong>${(diff-diff_tiempo_libre).toFixed(2)}</strong> horas registradas.`,
                     icon: "question",
                     showConfirmButton: true,

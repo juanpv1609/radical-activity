@@ -22,6 +22,7 @@ import TipoActividad from "../components/tipoActividad/AllTipoActividad.vue";
 import ReporteDetalle from "../components/reportes/ReporteResumen.vue";
 import ReporteContable from "../components/reportes/Reporte.vue";
 import Dashboard from "../components/dashboard/Dashboard.vue";
+import DashboardAdmin from "../components/dashboard/DashboardAdmin.vue";
 
 //PROACTIVANET
 import cierreTickets from "../components/panet/cierreTickets.vue";
@@ -184,6 +185,15 @@ const router = new VueRouter({
             name: "dashboard",
             path: "/dashboard",
             component: Dashboard,
+            meta: {
+                requiresAuth: true
+            }
+        }
+        ,
+        {
+            name: "dashboard-admin",
+            path: "/dashboard-admin",
+            component: DashboardAdmin,
             meta: {
                 requiresAuth: true
             }

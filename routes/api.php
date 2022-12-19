@@ -65,6 +65,8 @@ Route::middleware('api')->group(function () {
     Route::get('mi-actividad/{usuario}', [ActividadesController::class, 'miActividad']);
 
     Route::get('detalle-actividades/{id}', [ActividadesController::class,'detalleActividades']);
+    Route::get('verificar-actividades/{fecha}/{usuario}', [ActividadesController::class,'verificarActividades']);
+
     Route::get('actividades-calendar', [ActividadesController::class,'actividadesCalendar']);
     Route::get('mi-actividad-calendar/{usuario}', [ActividadesController::class,'miActividadCalendar']);
 
@@ -80,6 +82,12 @@ Route::middleware('api')->group(function () {
     Route::resource('roles', RoleController::class);
     Route::resource('dashboard', DashboardController::class);
     Route::get('dashboardPorTipo', [DashboardController::class,'porTipo']);
+
+    Route::get('dashboardPorCliente', [DashboardController::class,'porCliente']);
+
+    Route::get('dashboardPorUsuario', [DashboardController::class,'porUsuario']);
+
+
     Route::get('dashboardPorFecha', [DashboardController::class,'porFecha']);
 
     Route::get('dashboardCalendario/{usuario}', [DashboardController::class,'calendario']);

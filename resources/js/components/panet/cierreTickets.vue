@@ -9,6 +9,23 @@
                                     <v-icon >mdi-help-circle </v-icon>
                                 </v-btn>
           <v-spacer></v-spacer>
+          <v-btn-toggle
+
+                                >
+                                    <v-btn
+                                    color="green"
+                                    dark
+                                    @click="filtraTicketsA"
+                                    >
+                                    Abiertos: {{ abiertos.length }}
+                                    </v-btn>
+                                    <v-btn
+                                    color="red"
+                                    dark
+                                    >
+                                    Cerrados: {{ cerrados.length }}
+                                    </v-btn>
+                                </v-btn-toggle>
            <v-col cols="auto">
               <v-btn
                     class="mx-2"
@@ -16,10 +33,10 @@
                     elevation="2"
                     x-large
                     color="primary"
-                    @click="sendMultiple"
-                    :disabled="(tickets.length==0)"
+                    @click="verificarTickets"
+                    :disabled="(ticketsFile.length==0)"
                 >
-                    ENVIAR {{ (tickets.length>0) ? tickets.length+' TICKETS' : '' }}
+               TICKETS ANALIZADOS:  {{ (tickets.length>0) ? tickets.length+' de '+ticketsFile.length : '' }}
                 </v-btn>
           </v-col>
 
@@ -96,20 +113,18 @@
                                 <template v-slot:item="row">
                                     <tr>
                                         <td>{{row.item.code}}</td>
-                                        <td>{{row.item.customerName}}</td>
-                                        <td>{{row.item.typeName}}</td>
-                                        <td>{{row.item.comment}}</td>
-                                      <!-- <td>
+                                       <td>
                                             <v-chip small dark
-                                            :color="(row.item.status=='Closed') ? 'red' : 'green'">
-                                                {{(row.item.status=='Closed') ? 'Cerrado' : 'Nuevo'}}
+                                            color="blue" >
+                                               {{ row.item.status_name }}
                                             </v-chip>
-                                            </td> -->
-                                        <td>
+                                            </td>
+                                        <td>{{row.item.comment}}</td>
+                                        <!-- <td>
                                                 <v-btn  icon color="error" @click="deleteItem(row.item)">
                                                 <v-icon dark>mdi-delete</v-icon>
                                             </v-btn>
-                                        </td>
+                                        </td> -->
                                     </tr>
                                 </template>
                                 </v-data-table>
@@ -141,21 +156,24 @@ export default {
             },
             ticket: {},
             tickets: [],
+            ticketsFile: [],
             loading: false,
             titleForm: null,
             search: "",
             headers: [
                 { text: "Ticket",value: "code", sortable: false  },
-                { text: "Cliente",value: "customerName", sortable: false  },
-                { text: "Tipo", value: "typeName" },
+
+                { text: "Estado", value: "status" },
                 { text: "Comentario de cierre", value: "comment" },
-                { text: "Eliminar", sortable: false }
+                // { text: "Eliminar", sortable: false }
             ],
             request: {},
             customers:[],
             customer:{},
             types:[],
-            type:{}
+            type:{},
+            cerrados:[],
+            abiertos:[],
         };
     },
     created() {
@@ -172,6 +190,23 @@ export default {
 
     },
     methods: {
+        filtraTicketsA(){
+        this.tickets=this.tickets.filter((item) => item.status_name !== 'Closed');
+        this.ticketsFile = this.tickets.map((item) => {
+                        return {
+                            Id: null,
+                            code: item.code,
+                            comment: item.comment,
+                            customer_id: this.customer.Id,
+                            customerName: this.customer.Name,
+                            type: this.type.Id,
+                            typeName: this.type.Name,
+                            status: null,
+                            statusName: null,
+                        }
+                    });
+
+    },
         helpFile(){
             this.$swal.fire({
                         title: 'Atención',
@@ -223,7 +258,7 @@ export default {
                     var aux = XLSX.utils.sheet_to_json(worksheet);
 
 
-                     this.tickets = aux.map((item) => {
+                     this.ticketsFile = aux.map((item) => {
                         return {
                             Id: null,
                             code: item.ticket,
@@ -233,6 +268,7 @@ export default {
                             type: this.type.Id,
                             typeName: this.type.Name,
                             status: null,
+                            statusName: null,
                         }
                     });
 
@@ -246,16 +282,37 @@ export default {
 
 
        },
-       async verificarTickets(tickets){
-           var auxTickets=[];
-                      tickets.forEach(element => {
-                        //console.log(element);
-                        this.axios
-                            .post('/api/verify-tickets', element)
-                            .then(resp => {
-                                //console.log(resp.data);
-                                auxTickets.push(resp.data)
 
+        verificarTickets(){
+           var auxTickets=[];
+           this.abiertos=[];
+           this.cerrados=[];
+            this.$swal
+                .fire({
+                    title: "Esta seguro?",
+                    html: `Estimado ${this.$store.state.user.name} a continuación enviará <strong>${this.ticketsFile.length}</strong>
+                    tickets de tipo <strong>${this.type.Name}</strong> para su cierre del cliente <strong>${this.customer.Name}</strong> <br>`,
+                    icon: "question",
+                    showConfirmButton: true,
+                    showCancelButton: true
+                })
+                .then(res => {
+                    if (res.value) {
+                      this.ticketsFile.forEach(element => {
+                          this.loading = true;
+                        //console.log(element);
+
+                        this.axios
+                            .post('/api/close-tickets', element)
+                            .then(resp => {
+                                console.log(resp.data);
+                                auxTickets.unshift(resp.data);
+                                if (resp.data.status_name=== 'Closed') {
+                                    this.cerrados.push(resp.data)
+                                } else {
+                                    console.log(resp.data);
+                                    this.abiertos.push(resp.data)
+                                }
 
                             })
                             .catch((err) => {
@@ -263,12 +320,77 @@ export default {
 
                             })
                     });
-                    this.tickets = await auxTickets;
-       },
-        sendMultiple(){
-            console.log(this.tickets);
+                    this.tickets =  auxTickets;
+                    }
+                });
+                    this.loading = false;
 
-        this.request.tickets=this.tickets;
+
+       },
+        async sendMultiple(){
+            //console.log(this.ticketsFile);
+        var auxTickets=[];
+        var enviados=0;
+        this.$swal
+                .fire({
+                    title: "Esta seguro?",
+                    html: `Estimado ${this.$store.state.user.name} a continuación enviará <strong>${this.ticketsFile.length}</strong>
+                    tickets de tipo <strong>${this.type.Name}</strong> para su cierre del cliente <strong>${this.customer.Name}</strong> <br>`,
+                    icon: "question",
+                    showConfirmButton: true,
+                    showCancelButton: true
+                })
+                .then(res => {
+                    if (res.value) {
+                        this.loading=true;
+                        this.$swal.fire({
+                        title: 'Espere',
+                        html: `Enviando tickets para el cierre...\n
+                                ${enviados} de ${this.ticketsFile.length}`,
+                        icon: 'warning',
+                        allowOutsideClick: false
+                    });
+                    this.$swal.showLoading();
+                        this.ticketsFile.forEach(element => {
+                            console.log(element);
+                            this.axios
+                                   .post('/api/close-tickets', element)
+                                   .then((resp) => {
+                                       console.log(resp.data);
+                                       auxTickets.push(resp.data);
+                                       enviados++;
+                                       //this.tickets=resp.data;
+                                       //this.$toasted.success("Información importada correctamente!");
+                                      /*  this.$swal.fire({
+                                           title: 'Correcto',
+                                           html: `Tickets cerrados correctamente!`,
+                                           icon: 'success',
+                                           timer: 1500,
+                                           timerProgressBar: true,
+                                           }); */
+
+                                   })
+                                   .catch((err) => {
+                                       console.log(err);
+                                    })
+                                   .finally(() => {
+
+                                   })
+                        });
+
+                    }
+                });
+                this.tickets =  auxTickets;
+                this.loading = false;
+                this.ticketsFile=[];
+                this.request={};
+                this.file=null;
+
+    },
+     sendMultiple2(){
+            console.log(this.ticketsFile);
+
+        this.request.tickets=this.ticketsFile;
         this.request.customer_id=this.customer.Id;
         this.request.type_id=this.type.Id;
         this.request.customer_name=this.customer.Name;
@@ -277,7 +399,7 @@ export default {
         this.$swal
                 .fire({
                     title: "Esta seguro?",
-                    html: `Estimado ${this.$store.state.user.name} a continuación enviará <strong>${this.tickets.length}</strong>
+                    html: `Estimado ${this.$store.state.user.name} a continuación enviará <strong>${this.ticketsFile.length}</strong>
                     tickets de tipo <strong>${this.type.Name}</strong> para su cierre del cliente <strong>${this.customer.Name}</strong> <br>`,
                     icon: "question",
                     showConfirmButton: true,

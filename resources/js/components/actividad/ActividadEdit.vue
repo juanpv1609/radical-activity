@@ -82,6 +82,7 @@
                             offset-y
                             max-width="290px"
                             min-width="290px"
+                            dense
                         >
                             <template v-slot:activator="{ on, attrs }">
                                 <v-text-field
@@ -91,6 +92,7 @@
                                     v-bind="attrs"
                                     v-on="on"
                                     :disabled="!horario.id"
+                                    dense
                                 ></v-text-field>
                             </template>
                             <v-time-picker
@@ -118,6 +120,7 @@
                             offset-y
                             max-width="290px"
                             min-width="290px"
+                            dense
                         >
                             <template v-slot:activator="{ on, attrs }">
                                 <v-text-field
@@ -127,6 +130,7 @@
                                     v-bind="attrs"
                                     v-on="on"
                                     :disabled="!horario.id"
+                                    dense
                                 ></v-text-field>
                             </template>
                             <v-time-picker
@@ -152,6 +156,8 @@
                                 return-object
                                 small
                                 :disabled="(!start || !end)"
+                                clearable
+                                dense
                             ></v-autocomplete>
                     </v-col>
                     <v-col cols="12" sm="2">
@@ -163,6 +169,8 @@
                             label="Clasificación"
                             return-object
                             :disabled="(!start || !end)"
+                            clearable
+                            dense
                         ></v-autocomplete>
                     </v-col>
                     <!-- <v-col cols="12" sm="2">
@@ -190,6 +198,7 @@
                             :delimiters="[',']"
                             @change="delimitActividades"
                             :disabled="!tipoActividad"
+                            dense
                         >
                         </v-combobox>
                     </v-col>
@@ -212,7 +221,7 @@
                             <template v-slot:item="row">
                                 <tr>
                                     <!-- <td>{{ row.item.fecha }}</td> -->
-                                    <td>
+                                    <td >
                                          {{ row.item.h_inicio }} - {{ row.item.h_fin }}
                                     </td>
                                     <td>
@@ -543,8 +552,8 @@ export default {
                     var activityLine = {};
                     this.ActivityLine = this.ActivityLine || [];
                     activityLine.customer = element.cliente;
-                    activityLine.clasificacion = element.clasificacion.id;
-                    activityLine.clasificacion_nombre = element.clasificacion.nombre;
+                    activityLine.clasificacion = element.clasif.id;
+                    activityLine.clasificacion_nombre = element.clasif.nombre;
                     //activityLine.tipo_actividad = element.tipo_actividad;
                     //activityLine.tipo_actividad_nombre = element.tipo.descripcion;
                     //this.modelDescripcion=(element.descripcion).split(',')
@@ -656,16 +665,16 @@ export default {
 
             //this.loading = true;
             var f = new Date();
+            this.Activity.planificada = (this.fechaHoy<=f.toISOString().substr(0, 10)) ? 0 : 1
             this.Activity.usuario = this.usuario.id;
             this.Activity.horario = this.horario.id;
             this.Activity.fecha = this.fechaHoy;
-            this.Activity.planificada = (this.fechaHoy<=f.toISOString().substr(0, 10)) ? 0 : 1
             //this.Activity.enviaMail = this.enviar;
             this.Activity.destinatarios = this.modelDestinatarios;
             //this.Activity.colaboradores = this.modelColaboradores;
             this.Activity.activities = this.ActivityLine;
 
-            console.log(this.ActivityLine);
+            console.log(this.Activity);
             var min = this.ActivityLine[0].h_inicio;
             var max = this.ActivityLine[0].h_fin;
             var diff = 0.0;
@@ -683,7 +692,7 @@ export default {
                         }
                         diff = moment.duration(moment(max,'HH:mm').diff(moment(min,'HH:mm'))).asHours();
 
-                    if (this.ActivityLine[i].tipo_actividad == 6 ) {
+                    if (this.ActivityLine[i].clasificacion == 14 ) {
                         diff_tiempo_libre = moment.duration(moment(this.ActivityLine[i].h_fin,'HH:mm').diff(moment(this.ActivityLine[i].h_inicio,'HH:mm'))).asHours();
                     }
 
@@ -719,7 +728,7 @@ export default {
                     this.Activity.activities.forEach(element => {
                     //actividade tipo break / almuerzo
 
-                        tiempo_libre+=(element.tipo_actividad==6) ? 1: 0;
+                        tiempo_libre+=(element.clasificacion==14) ? true: false;
 
                     });
                 }
@@ -737,8 +746,11 @@ export default {
                  this.$swal
                 .fire({
                     title: "Esta seguro?",
-                    html: `Estimado ${this.$store.state.user.name} a continuación actualizará <strong>${this.Activity.activities.length}</strong>
-                    actividades correspondientes al <strong>${this.Activity.fecha}.</strong> <br>
+                    html: `Estimado ${this.$store.state.user.name} a continuación registrará sus actividades de acuerdo a lo siguiente: <br>
+                    Fecha: <strong>${this.Activity.fecha}</strong> <br>
+                    Actividades: <strong>${this.Activity.activities.length}</strong> <br>
+                    Inicio: <strong>${min}</strong> <br>
+                    Fin: <strong>${max}</strong> <br>
                     Con un total de <strong>${(diff-diff_tiempo_libre).toFixed(2)}</strong> horas registradas.`,
                     icon: "question",
                     showConfirmButton: true,
@@ -772,7 +784,7 @@ export default {
                                     text: `Ocurrió un error!\n${err}`,
                                     icon: 'error',
                                     });
-                                    console.log(err);
+                                    //console.log(err);
                     })
                     .finally(() => {
                         this.Activity = {};
