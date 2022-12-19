@@ -35,16 +35,20 @@ class ActividadesController extends Controller
 
             if ((auth()->user()->cargo==9) || (auth()->user()->cargo==10)) { // Jefe de operaciones
                 $role = [1,3];
-                $cargo = [1,2,3,4,5,6,7,8,9,10,11];
+                $cargo = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
             } else if (auth()->user()->cargo==4) { // coordinador del CERT
                 $role = [1,3];
                 $cargo = [1,3,4];
             } else if (auth()->user()->cargo==8) { //coordinador del infraestructura
                 $role = [1];
-                $cargo = [7];
-            } else if (auth()->user()->cargo==6) { //coordinador del infraestructura
+                $cargo = [7,13];
+            } else if (auth()->user()->cargo==6) { //coordinador del ciberseguridad
                 $role = [1];
-                $cargo = [5];
+                $cargo = [5,12];
+            }
+            else if (auth()->user()->cargo==15) { //coordinador preventa
+                $role = [1];
+                $cargo = [14,16];
             }
         }
 
