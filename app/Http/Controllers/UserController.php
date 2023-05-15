@@ -46,7 +46,7 @@ class UserController extends Controller
             $cond = [];
         } elseif (auth()->user()->role==3) { //SUPERVISOR
             $role = [1,2,3];
-            $cargo = [1,2,3,4,5,6,7,8,9,10,11];
+            $cargo = [1,2,3,4,5,6,7,8,9,10,11,12];
 
             if ((auth()->user()->cargo==9) || (auth()->user()->cargo==10)) { // coordinador CERT
                 $role = [1,3];
@@ -56,7 +56,7 @@ class UserController extends Controller
                 $cargo = [1,3,4];
             } elseif (auth()->user()->cargo==8) { //coordinador del infraestructura
                 $role = [1,3];
-                $cargo = [7,8];
+                $cargo = [7,8,13];
             } elseif (auth()->user()->cargo==6) { //coordinador del infraestructura
                 $role = [1,3];
                 $cargo = [5,6];

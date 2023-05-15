@@ -307,7 +307,7 @@ export default {
                 var arrayCoordinador = [];
                 if (response.data.length>1) {
                     response.data.forEach(element => {
-                    if (element.puesto.id==1) { //N1
+                    if (element.puesto.id==1 || element.puesto.id==12) { //N1
                         arrayN1.push({
                                 id: element.id,
                                 name: element.name,
@@ -328,7 +328,7 @@ export default {
 
                 });
                 } else {
-                    if (response.data.puesto.id==1) { //N1
+                    if (response.data.puesto.id==1 || element.puesto.id==12) { //N1
                         arrayN1.push({
                                 id: response.data.id,
                                 name: response.data.name,
