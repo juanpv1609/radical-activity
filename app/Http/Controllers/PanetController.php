@@ -16,7 +16,7 @@ class PanetController extends Controller
 {
     public const API_PANET='https://soporte.gruporadical.com/proactivanet/api/'; //PRODUCCION
     //public const API_PANET='http://10.1.11.99/proactivanet/api/'; //LOCAL
-    public const PANET_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwYW5ldC5hZG1pbiIsIm92ciI6ImZhbHNlIiwiYXV0IjoiMCIsIm5iZiI6MTY1NDYxMjIxMiwiZXhwIjoxNjg2MTQ4MjEyLCJpYXQiOjE2NTQ2MTIyMTIsImlzcyI6InByb2FjdGl2YW5ldCIsImF1ZCI6ImFwaSJ9.cCb5Dn4eyFiY9dEKC7Pb9OOA92uyR71pDMrCG0Rdx5k';
+    public const PANET_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwYW5ldC5hZG1pbiIsIm92ciI6ImZhbHNlIiwiYXV0IjoiMCIsIm5iZiI6MTY4NjM0NDcwNiwiZXhwIjoxNzE3ODgwNzA2LCJpYXQiOjE2ODYzNDQ3MDYsImlzcyI6InByb2FjdGl2YW5ldCIsImF1ZCI6ImFwaSJ9.8PHCIFVfIIme_twFYH9WHZB0T8-7KymKgXyhTC6OZIw';
 
 
     public function verifyTicket(Request $request){
